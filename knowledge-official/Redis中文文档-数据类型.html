@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head><base href="https://redis.com.cn/topics/data-types-intro.html">
+<meta charset='utf-8'>
+<title>Redis 数据类型与抽象入门</title>
+<meta content='Redis 数据类型与抽象入门 - Redis中文学习网提供Redis教程、命令手册、安装配置、性能优化、集群搭建等中文文档。' name='Description'>
+<meta content='Redis 数据类型与抽象入门,Redis,Redis教程,Redis命令,Redis中文文档' name='keywords'>
+<link href='https://redis.com.cn' rel='canonical'>
+<meta content='index, follow' name='robots'>
+<meta content='Redis 数据类型与抽象入门' property='og:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' property='og:description'>
+<meta content='website' property='og:type'>
+<meta content='https://redis.com.cn' property='og:url'>
+<meta content='summary' name='twitter:card'>
+<meta content='Redis 数据类型与抽象入门' name='twitter:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' name='twitter:description'>
+<link href='/styles.css' rel='stylesheet'>
+<link href='/search.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css' rel='stylesheet'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+  });
+</script>
+<link href='/images/favicon.png' rel='shortcut icon'>
+<meta content='width=device-width, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+</head>
+<body class='topics data-types-intro'>
+<div class='mobile-menu slideout-menu'>
+<header class='menu-header'></header>
+<section class='menu-section'>
+<ul class='menu-section-list'>
+<li>
+<a class='home' href='/'>首页</a>
+</li>
+<li>
+<a href='/commands.html'>Redis 命令</a>
+</li>
+<li>
+<a href='/management.html'>Redis 管理</a>
+</li>
+<li>
+<a href='/tutorial.html'>Redis 教程</a>
+</li>
+<li>
+<a href='/documentation.html'>Redis 进阶</a>
+</li>
+<li>
+<a href='/clients.html'>Redis 客户端　</a>
+</li>
+<li>
+<a href='/download.html'>Redis 下载</a>
+</li>
+</ul>
+</section>
+</div>
+<div class='site-wrapper'>
+<header class='site-header'>
+<nav class='container'>
+<div class='mobile-header'>
+<button class='btn-hamburger js-slideout-toggle'>
+<span class='fa fa-bars'></span>
+</button>
+<a class='home' href='/'>&nbsp;</a>
+</div>
+<div class='desktop-header'>
+<a class='home' href='/'>首页</a>
+<a href='/commands.html' title='Redis命令手册'>Redis 命令</a>
+<a href='/management.html'>Redis 管理</a>
+<a href='/tutorial.html'>Redis 教程</a>
+<a href='/documentation.html'>Redis 进阶</a>
+<a href='/clients.html'>Redis 客户端</a>
+<a href='/download.html'>Redis 下载</a>
+<a href='/best-practices.html'>最佳实践</a>
+<form action='/search' class='search-form' method='get'>
+<div class='search-input-wrapper'>
+<input name='q' placeholder='搜索命令、教程...' type='text'>
+<button class='search-btn' type='submit'>
+<i class='fa fa-search'></i>
+</button>
+</div>
+</form>
+</div>
+</nav>
+</header>
+<div class='site-content'>
+<div class='text'>
+<article id='topic'>
+<span id="redis-数据类型与抽象入门" class=anchor></span><h1><a href="#redis-数据类型与抽象入门" class=anchor-link>*</a>Redis 数据类型与抽象入门</h1>
+
+<p>Redis 不仅仅是一个简单的键值存储，它实际上是一个<strong>数据结构服务器</strong>，支持多种类型的值。这意味着，在传统的键值存储中，你只能将字符串键关联到字符串值，而在 Redis 中，值不局限于简单的字符串，还可以持有更复杂的数据结构。</p>
+
+<p>以下是 Redis 支持的主要数据结构列表，本教程将逐一介绍：</p>
+
+<ul>
+<li><strong>二进制安全字符串 (Strings)</strong></li>
+<li><strong>列表 (Lists)</strong>：按插入顺序排序的字符串元素集合，其底层实现是<strong>链表</strong>。</li>
+<li><strong>集合 (Sets)</strong>：唯一且无序的字符串元素集合。</li>
+<li><strong>有序集合 (Sorted Sets)</strong>：类似于集合，但每个字符串元素都关联一个称为<strong>分数 (Score)</strong> 的浮点数。元素始终按分数排序，因此可以获取指定范围内的元素（例如：获取前 10 名或后 10 名）。</li>
+<li><strong>哈希 (Hashes)</strong>：由字段 (Field) 与值 (Value) 组成的映射表，字段和值均为字符串。这与 Ruby 或 Python 的 Hash/Dict 非常相似。</li>
+<li><strong>位图 (Bitmaps)</strong>：利用特殊命令将字符串值当作位数组处理：你可以设置/清除单个比特位、统计设为 1 的位数、查找第一个设置或未设置的位等。</li>
+<li><strong>HyperLogLogs</strong>：一种概率数据结构，用于估算集合的基数（去重计数）。它比听起来简单得多，请参阅后文相关章节。</li>
+<li><strong>流 (Streams)</strong>：一种仅追加 (Append-only) 的类映射条目集合，提供抽象的日志数据类型。</li>
+</ul>
+
+<p>仅通过<a href="https://www.google.com/search?q=/commands">命令参考</a>来理解这些类型的工作原理及其适用场景并不直观，因此本文档旨在作为 Redis 数据类型及其常见模式的速成课程。</p>
+
+<p>示例中我们将使用 <code>redis-cli</code> 工具，这是一个简单方便的命令行界面，用于向 Redis 服务器发出指令。</p>
+
+<hr>
+
+<span id="redis-键-keys" class=anchor></span><h2><a href="#redis-键-keys" class=anchor-link>*</a>Redis 键 (Keys)</h2>
+
+<p>Redis 键是<strong>二进制安全</strong>的，这意味着你可以使用任何二进制序列作为键，从简单的字符串 &quot;foo&quot; 到 JPEG 文件的二进制内容。空字符串也是有效的键。</p>
+
+<p><strong>关于键的设计准则：</strong></p>
+
+<ul>
+<li><strong>避免过长的键</strong>：例如，1024 字节的键不仅浪费内存，且在查找该键时会产生高昂的比较成本。如果需要匹配大数据，对其进行哈希处理（如 SHA1）是更好的选择。</li>
+<li><strong>避免过短的键</strong>：相比于 <code>u1000flw</code>，<code>user:1000:followers</code> 的可读性明显更高，而增加的空间开销相对于值对象本身微乎其微。你需要在可读性与空间占用之间找到平衡点。</li>
+<li><strong>遵循固定模式 (Schema)</strong>：推荐使用冒号分隔，如 <code>object-type:id</code>（例如 <code>user:1000</code>）。多个单词可以使用点或破折号，如 <code>comment:1234:reply-to</code>。</li>
+<li><strong>最大限制</strong>：键的最大长度为 <strong>512 MB</strong>。</li>
+</ul>
+
+<hr>
+
+<span id="redis-字符串-strings" class=anchor></span><h2><a href="#redis-字符串-strings" class=anchor-link>*</a>Redis 字符串 (Strings)</h2>
+
+<p>字符串是 Redis 最基础的值类型。由于 Redis 键本身也是字符串，所以当值也是字符串时，我们本质上是在执行字符串到字符串的映射。它非常适合缓存 HTML 片段或页面数据。</p>
+
+<pre><code class="bash">&gt; set mykey somevalue
+OK
+&gt; get mykey
+&quot;somevalue&quot;
+</code></pre>
+
+<ul>
+<li><a href="/commands/set.html">SET</a> 会替换键中存储的任何现有值（即使类型不同）。</li>
+<li>值最大为 512 MB。</li>
+</ul>
+
+<span id="原子操作" class=anchor></span><h3><a href="#原子操作" class=anchor-link>*</a>原子操作</h3>
+
+<p>即使字符串是基础类型，你也可以对其执行原子操作，例如<strong>原子递增</strong>：</p>
+
+<pre><code class="bash">&gt; set counter 100
+OK
+&gt; incr counter
+(integer) 101
+&gt; incrby counter 50
+(integer) 152
+</code></pre>
+
+<p><strong>INCR 的原子性意味着什么？</strong>
+这意味着即使多个客户端同时对同一个键执行 <a href="/commands/incr.html">INCR</a>，也永远不会产生<strong>竞态条件 (Race Condition)</strong>。读取-递增-写回操作在执行期间，其他客户端无法介入。最终值始终是准确的。</p>
+
+<hr>
+
+<span id="修改与查询键空间" class=anchor></span><h2><a href="#修改与查询键空间" class=anchor-link>*</a>修改与查询键空间</h2>
+
+<p>有些命令并不针对特定数据类型，而是用于管理整个键空间：</p>
+
+<ul>
+<li><a href="/commands/exists.html">EXISTS</a>：检查键是否存在。</li>
+<li><a href="/commands/del.html">DEL</a>：删除键及其关联的值（无论类型）。</li>
+<li><a href="/commands/type.html">TYPE</a>：返回存储在键中的值的类型。</li>
+</ul>
+
+<!-- end list -->
+
+<pre><code class="bash">&gt; set mykey x
+OK
+&gt; type mykey
+string
+&gt; del mykey
+(integer) 1
+&gt; type mykey
+none
+</code></pre>
+
+<hr>
+
+<span id="redis-过期时间-expires" class=anchor></span><h2><a href="#redis-过期时间-expires" class=anchor-link>*</a>Redis 过期时间 (Expires)</h2>
+
+<p>你可以为任何键设置生存时间 (TTL)。当时间耗尽时，键会被自动销毁。</p>
+
+<ul>
+<li>精度支持秒或毫秒。</li>
+<li>过期时间的分辨率始终为 1 毫秒。</li>
+<li>过期信息会持久化到磁盘；当服务器停止时，时间实际上仍在流逝（Redis 保存的是过期的绝对日期）。</li>
+</ul>
+
+<!-- end list -->
+
+<pre><code class="bash">&gt; set key some-value
+OK
+&gt; expire key 5
+(integer) 1
+# 5 秒后
+&gt; get key
+(nil)
+</code></pre>
+
+<hr>
+
+<span id="redis-列表-lists" class=anchor></span><h2><a href="#redis-列表-lists" class=anchor-link>*</a>Redis 列表 (Lists)</h2>
+
+<p>Redis 列表是通过<strong>链表 (Linked List)</strong> 实现的。这意味着在列表的头部或尾部添加元素的时间复杂度是常数级 $O(1)$，无论列表中有 10 个还是 1000 万个元素。</p>
+
+<ul>
+<li><strong>LPUSH/RPUSH</strong>：在左侧（头部）或右侧（尾部）添加元素。</li>
+<li><strong>LPOP/RPOP</strong>：弹出并删除元素。</li>
+<li><strong>LRANGE</strong>：获取指定范围内的元素（支持负索引，-1 表示最后一个元素）。</li>
+</ul>
+
+<span id="阻塞操作-blocking" class=anchor></span><h3><a href="#阻塞操作-blocking" class=anchor-link>*</a>阻塞操作 (Blocking)</h3>
+
+<p><a href="/commands/brpop.html">BRPOP</a> 和 <a href="/commands/blpop.html">BLPOP</a> 是 <a href="/commands/rpop.html">RPOP</a>/<a href="/commands/lpop.html">LPOP</a> 的阻塞版本。如果列表为空，它们会保持连接直到有新元素加入或超时。这是实现<strong>生产者-消费者</strong>模式的理想构建块。</p>
+
+<hr>
+
+<span id="redis-哈希-hashes" class=anchor></span><h2><a href="#redis-哈希-hashes" class=anchor-link>*</a>Redis 哈希 (Hashes)</h2>
+
+<p>哈希是表示“对象”的绝佳选择，它由字段-值对组成：</p>
+
+<pre><code class="bash">&gt; hmset user:1000 username antirez birthyear 1977 verified 1
+OK
+&gt; hgetall user:1000
+1) &quot;username&quot;
+2) &quot;antirez&quot;
+...
+</code></pre>
+
+<p><strong>内存优化</strong>：包含少量字段且值较小的哈希在内存中会以特殊的编码方式存储，非常节省空间。</p>
+
+<hr>
+
+<span id="redis-集合-sets" class=anchor></span><h2><a href="#redis-集合-sets" class=anchor-link>*</a>Redis 集合 (Sets)</h2>
+
+<p>集合是字符串的无序集合。<a href="/commands/sadd.html">SADD</a> 用于添加新元素。</p>
+
+<ul>
+<li><strong>特性</strong>：元素具有唯一性。</li>
+<li><strong>操作</strong>：支持交集 (<a href="/commands/sinter.html">SINTER</a>)、并集 (<a href="/commands/sunion.html">SUNION</a>) 和差集 (<a href="/commands/sdiff.html">SDIFF</a>)。</li>
+<li><strong>场景</strong>：标签 (Tagging)、好友列表、随机抽取 (<a href="/commands/spop.html">SPOP</a>)。</li>
+</ul>
+
+<hr>
+
+<span id="redis-有序集合-sorted-sets" class=anchor></span><h2><a href="#redis-有序集合-sorted-sets" class=anchor-link>*</a>Redis 有序集合 (Sorted Sets)</h2>
+
+<p>有序集合是集合与哈希的结合。元素唯一，且每个元素都关联一个分数 (Score)。</p>
+
+<ul>
+<li><strong>排序逻辑</strong>：默认按分数升序排列；分数相同时按字典序排列。</li>
+<li><strong>场景</strong>：实时排行榜、带权重的任务队列。</li>
+</ul>
+
+<hr>
+
+<span id="位图-bitmaps" class=anchor></span><h2><a href="#位图-bitmaps" class=anchor-link>*</a>位图 (Bitmaps)</h2>
+
+<p>位图不是独立的数据类型，而是定义在字符串类型上的一组位操作。</p>
+
+<ul>
+<li><strong>优势</strong>：极度节省空间。例如，记录 40 亿用户的单比特状态（如“是否签到”），仅需 512 MB 内存。</li>
+<li><strong>命令</strong>：<a href="/commands/setbit.html">SETBIT</a>、<a href="/commands/getbit.html">GETBIT</a>、<a href="/commands/bitcount.html">BITCOUNT</a>、<a href="/commands/bitop.html">BITOP</a>。</li>
+</ul>
+
+<hr>
+
+<span id="hyperloglogs" class=anchor></span><h2><a href="#hyperloglogs" class=anchor-link>*</a>HyperLogLogs</h2>
+
+<p>这是一种估算集合基数（去重数量）的概率算法。</p>
+
+<ul>
+<li><strong>神奇之处</strong>：无论统计多少个元素，最坏情况下仅占用 <strong>12 KB</strong> 内存，标准误差小于 1%。</li>
+<li><strong>场景</strong>：统计每日搜索关键词的去重数量、统计网站的 UV（独立访客）。</li>
+</ul>
+
+<!-- end list -->
+
+<pre><code class="bash">&gt; pfadd hll a b c d
+(integer) 1
+&gt; pfcount hll
+(integer) 4
+</code></pre>
+
+<hr>
+
+<span id="键的自动创建与销毁" class=anchor></span><h2><a href="#键的自动创建与销毁" class=anchor-link>*</a>键的自动创建与销毁</h2>
+
+<p>对于容器类数据类型（Lists, Sets, Hashes, ZSets），Redis 遵循以下规则：</p>
+
+<ol>
+<li> <strong>自动创建</strong>：向不存在的键添加元素时，会自动创建一个空的聚合类型容器。</li>
+<li> <strong>自动删除</strong>：当容器变空时，键会被自动从内存中销毁（Streams 除外）。</li>
+<li> <strong>兼容空键</strong>：对不存在的键调用只读命令（如 <a href="/commands/llen.html">LLEN</a>），其返回结果等同于操作一个空的容器。</li>
+</ol>
+
+</article>
+</div>
+</div>
+
+<footer class='site-footer'>
+<div class='container'>
+<p>
+本站关于Redis的资料和教程整理或翻译自网络，内容或翻译不正确的地方欢迎大家指出。
+</p>
+<p>
+联系方式:
+<a class='social weixin' href='javascript:'>
+<img class='qrcode' src='https://redis.com.cn/wp-content/uploads/2019/06/标准二维码.jpg'>微信号</img>
+</a>
+</p>
+</div>
+</footer>
+</div>
+<script src='https://libs.baidu.com/jquery/1.4.3/jquery.min.js'></script>
+<script src='/app.js?1606485746'></script>
+<script src='/search.js'></script>
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?365afc578d51b66b6cc9104a0598015a";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+</body>
+</html>

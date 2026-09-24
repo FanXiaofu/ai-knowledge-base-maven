@@ -1,0 +1,49 @@
+services:
+
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: ai-knowledge-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ai_knowledge
+      POSTGRES_USER: ai_user
+      POSTGRES_PASSWORD: ai_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ai-knowledge-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai-knowledge-redis
+    restart: unless-stopped
+    environment:
+      REDIS_APPENDONLY: "yes"
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai-knowledge-network
+
+  reranker:
+    image: ai-knowledge-reranker:latest
+    container_name: ai-knowledge-reranker
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    volumes:
+      - reranker_cache:/root/.cache/huggingface
+    networks:
+      - ai-knowledge-network
+
+networks:
+  ai-knowledge-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
+  reranker_cache:

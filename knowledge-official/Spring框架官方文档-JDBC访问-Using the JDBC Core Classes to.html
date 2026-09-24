@@ -1,0 +1,3924 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-domain-script="018ee325-b3a7-7753-937b-b8b3e643b1a7"></script><script>function OptanonWrapper() {}</script><script>function setGTM(w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js"}); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); } if (document.cookie.indexOf("OptanonConsent") > -1 && document.cookie.indexOf("groups=") > -1) { setGTM(window, document, "script", "dataLayer", "GTM-W8CQ8TL"); } else { waitForOnetrustActiveGroups(); } var timer; function waitForOnetrustActiveGroups() { if (document.cookie.indexOf("OptanonConsent") > -1 && document.cookie.indexOf("groups=") > -1) { clearTimeout(timer); setGTM(window, document, "script", "dataLayer", "GTM-W8CQ8TL"); } else { timer = setTimeout(waitForOnetrustActiveGroups, 250); }}</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling :: Spring Framework</title>
+    <link rel="canonical" href="https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html">
+    <link rel="prev" href="packages.html">
+    <link rel="next" href="connections.html">
+    <meta name="generator" content="Antora 3.2.0-alpha.12">
+    <script>
+!function (theme, navWidth) {
+  if (theme === 'dark') document.documentElement.classList.add('dark-theme')
+  if (navWidth) document.documentElement.style.setProperty('--nav-width', `${navWidth}px`)
+}(localStorage && localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)')?.matches && 'dark'),
+  localStorage && localStorage.getItem('nav-width'))
+    </script>
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/search.css">
+    <link rel="stylesheet" href="../../_/css/vendor/page-search.css">
+    <link rel="stylesheet" href="../../_/css/vendor/onetrust.css">
+    <link rel="stylesheet" href="../../_/css/vendor/asciidoctor-tabs.css">
+
+    <meta name="antora-ui-version" content="v0.4.26"> 
+    <meta name="version" content="7.0.9">
+    <meta name="generation" content="7.0">
+    <meta name="versioned-url" content="https://docs.spring.io/spring-framework/reference/7.0/data-access/jdbc/core.html">
+    <meta name="component" content="framework">
+    <meta name="latest-version" content="true">
+    <link rel="icon" href="../../_/img/favicon.ico" type="image/vnd.microsoft.icon">
+  </head>
+  <body class="article">
+<header class="header"><base href="https://docs.spring.io/spring-framework/reference/data-access/jdbc/core.html">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://spring.io">
+        <img
+          id="springlogo"
+          class="block"
+          src="../../_/img/spring-logo.svg"
+          alt="Spring"
+        />
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Why Spring</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/why-spring">Overview</a>
+            <li class="navbar-item navbar-item-special-3">Trending</li>
+            <a class="navbar-item" href="https://spring.io/ai">Generative AI</a>
+            <a class="navbar-item" href="https://spring.io/cloud">Cloud</a>
+            <li class="navbar-item navbar-item-special-3">Architecture Patterns</li>
+            <a class="navbar-item" href="https://spring.io/microservices">Microservices</a>
+            <a class="navbar-item" href="https://spring.io/reactive">Reactive</a>
+            <a class="navbar-item" href="https://spring.io/event-driven">Event Driven</a>
+            <li class="navbar-item navbar-item-special-3">Application Types</li>
+            <a class="navbar-item" href="https://spring.io/web-applications">Web Applications</a>
+            <a class="navbar-item" href="https://spring.io/serverless">Serverless</a>
+            <a class="navbar-item" href="https://spring.io/batch">Batch</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Learn</a>
+          <div class="navbar-dropdown">
+            <li class="navbar-item navbar-item-special-3">Getting Started</li>
+            <a class="navbar-item" href="https://spring.io/quickstart">Quickstart</a>
+            <a class="navbar-item" href="https://spring.io/guides">Guides</a>
+            <li class="navbar-item navbar-item-special-3">Academy</li>
+            <a class="navbar-item" href="https://spring.academy/courses">Courses
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://spring.academy/learning-path">Get Certified
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Projects</a>
+          <div class="navbar-dropdown" style="min-width: 280px">
+            <a class="navbar-item" href="https://spring.io/projects">Overview</a>
+            <li class="navbar-item navbar-item-special-3">Projects</li>
+            <a class="navbar-item" href="https://spring.io/projects/spring-boot">Spring Boot</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-framework">Spring Framework</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-cloud">Spring Cloud</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-ai">Spring AI</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-data">Spring Data</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-integration">Spring Integration</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-batch">Spring Batch</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-security">Spring Security</a>
+            <li class="navbar-item navbar-item-special-3">Foundational Projects</li>
+            <a class="navbar-item" href="https://micrometer.io">Micrometer
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://projectreactor.io">Reactor
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <li class="navbar-item navbar-item-special-3">Development Tools</li>
+            <a class="navbar-item" href="https://spring.io/tools">Spring Tools</a>
+            <a class="navbar-item navbar-item-special-2" href="https://start.spring.io">Spring Initializr
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Resources</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/blog">Blog</a>
+            <a class="navbar-item" href="https://spring.io/projects#release-calendar">Release Calendar</a>
+            <a class="navbar-item" href="https://spring.io/projects/generations">Version Mappings</a>
+            <a class="navbar-item" href="https://spring.io/projects/release-highlights">Release Highlights</a>
+            <a class="navbar-item" href="https://spring.io/security">Security Advisories</a>
+            <li class="navbar-item navbar-item-special-3">GitHub Orgs</li>
+            <a class="navbar-item" href="https://github.com/spring-projects">Spring Projects
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://github.com/spring-cloud">Spring Cloud
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Community</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/community">Overview</a>
+            <a class="navbar-item" href="https://spring.io/events">Events</a>
+            <a class="navbar-item" href="https://spring.io/authors">Authors</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable is-enterprise">
+          <a class="navbar-link" href="#">Enterprise</a>
+          <div class="navbar-dropdown lg is-right">
+            <a class="navbar-item" href="https://enterprise.spring.io/">Overview</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/lts-releases">Long-term Support</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/spring-application-advisor">Automated Upgrades</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/enterprise-extensions">Governance and Compliance</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/enterprise-components">Modern App Development</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <label class="theme-toggler">
+      <input
+        type="checkbox"
+        type="checkbox"
+        id="switch-theme-checkbox"
+        name="switch-theme-checkbox"
+      />
+      <span class="icon"><svg
+          aria-hidden="true"
+          focusable="false"
+          data-prefix="fas"
+          data-icon="moon"
+          class="svg-inline--fa fa-moon moon"
+          role="img"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
+        ><path
+            fill="currentColor"
+            d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"
+          ></path>
+        </svg>
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          data-prefix="fas"
+          data-icon="sun"
+          class="svg-inline--fa fa-sun sun"
+          role="img"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+        ><path
+            fill="currentColor"
+            d="M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zm224 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0z"
+          ></path>
+        </svg></span>
+      <span class="text">light</span>
+    </label>
+  </nav>
+</header>
+<script>
+!function (theme) {
+  if (theme === 'dark') {
+    document.getElementById('switch-theme-checkbox').parentElement.classList.add('active')
+  }
+}(localStorage && localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)')?.matches && 'dark'))
+</script>
+<div class="body">
+<div class="nav-container" data-component="framework" data-version="7.0.9">
+  <aside class="nav">
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+        <nav class="nav-menu">
+<div class="context">
+  <span class="title">Spring Framework</span>
+  <span class="version">7.0.9</span>
+  <button class="browse-version" id="browse-version">
+    <svg
+      height="24px"
+      id="Layer_1"
+      style="enable-background:new 0 0 512 512;"
+      version="1.1"
+      viewBox="0 0 512 512"
+      width="24px"
+      xml:space="preserve"
+    ><g><path
+          d="M256,224c-17.7,0-32,14.3-32,32s14.3,32,32,32c17.7,0,32-14.3,32-32S273.7,224,256,224L256,224z"
+        ></path><path
+          d="M128.4,224c-17.7,0-32,14.3-32,32s14.3,32,32,32c17.7,0,32-14.3,32-32S146,224,128.4,224L128.4,224z"
+        ></path><path
+          d="M384,224c-17.7,0-32,14.3-32,32s14.3,32,32,32s32-14.3,32-32S401.7,224,384,224L384,224z"
+        ></path></g></svg>
+  </button>
+  <div class="search">
+  <button class="DocSearch-Button search-button">
+    <svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path d="M27.414,24.586l-5.077-5.077C23.386,17.928,24,16.035,24,14c0-5.514-4.486-10-10-10S4,8.486,4,14  s4.486,10,10,10c2.035,0,3.928-0.614,5.509-1.663l5.077,5.077c0.78,0.781,2.048,0.781,2.828,0  C28.195,26.633,28.195,25.367,27.414,24.586z M7,14c0-3.86,3.14-7,7-7s7,3.14,7,7s-3.14,7-7,7S7,17.86,7,14z" id="XMLID_223_"/>
+    </svg>
+    <span>Search</span>
+    <span class="search-key"></span>
+  </button>
+</div>
+</div><ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link"  href="../../overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core.html">Core Technologies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/beans.html">The IoC Container</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/introduction.html">Introduction to the Spring IoC Container and Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/basics.html">Container Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/definition.html">Bean Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/beans/dependencies.html">Dependencies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-collaborators.html">Dependency Injection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-properties-detailed.html">Dependencies and Configuration in Detail</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-dependson.html">Using <code>depends-on</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-lazy-init.html">Lazy-initialized Beans</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-autowire.html">Autowiring Collaborators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/dependencies/factory-method-injection.html">Method Injection</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/factory-scopes.html">Bean Scopes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/factory-nature.html">Customizing the Nature of a Bean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/child-bean-definitions.html">Bean Definition Inheritance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/factory-extension.html">Container Extension Points</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/beans/annotation-config.html">Annotation-based Container Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/autowired.html">Using <code>@Autowired</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/autowired-primary.html">Fine-tuning Annotation-based Autowiring with <code>@Primary</code> or <code>@Fallback</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/autowired-qualifiers.html">Fine-tuning Annotation-based Autowiring with Qualifiers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/generics-as-qualifiers.html">Using Generics as Autowiring Qualifiers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/custom-autowire-configurer.html">Using <code>CustomAutowireConfigurer</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/resource.html">Injection with <code>@Resource</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/value-annotations.html">Using <code>@Value</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/annotation-config/postconstruct-and-predestroy-annotations.html">Using <code>@PostConstruct</code> and <code>@PreDestroy</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/classpath-scanning.html">Classpath Scanning and Managed Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/standard-annotations.html">Using JSR-330 Standard Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/beans/java.html">Java-based Container Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/basic-concepts.html">Basic Concepts: <code>@Bean</code> and <code>@Configuration</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/instantiating-container.html">Instantiating the Spring Container by Using <code>AnnotationConfigApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/bean-annotation.html">Using the <code>@Bean</code> Annotation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/configuration-annotation.html">Using the <code>@Configuration</code> annotation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/composing-configuration-classes.html">Composing Java-based Configurations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/beans/java/programmatic-bean-registration.html">Programmatic Bean Registration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/environment.html">Environment Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/context-load-time-weaver.html">Registering a <code>LoadTimeWeaver</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/context-introduction.html">Additional Capabilities of the <code>ApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/beans/beanfactory.html">The <code>BeanFactory</code> API</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../core/resources.html">Resources</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/validation.html">Validation, Data Binding, and Type Conversion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/validator.html">Validation Using Spring&#8217;s Validator Interface</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/error-code-resolution.html">Resolving Error Codes to Error Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/convert.html">Spring Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/format.html">Spring Field Formatting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/format-configuring-formatting-globaldatetimeformat.html">Configuring a Global Date and Time Format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/validation/beanvalidation.html">Java Bean Validation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/expressions.html">Spring Expression Language (SpEL)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/expressions/evaluation.html">Evaluation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/expressions/beandef.html">Expressions in Bean Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/expressions/language-ref.html">Language Reference</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/literal.html">Literal Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/properties-arrays.html">Properties, Arrays, Lists, Maps, and Indexers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/inline-lists.html">Inline Lists</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/inline-maps.html">Inline Maps</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/array-construction.html">Array Construction</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/methods.html">Methods</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/operators.html">Operators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/types.html">Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/constructors.html">Constructors</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/variables.html">Variables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/functions.html">Functions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/varargs.html">Varargs Invocations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/bean-references.html">Bean References</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/operator-ternary.html">Ternary Operator (If-Then-Else)</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/operator-elvis.html">The Elvis Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/operator-safe-navigation.html">Safe Navigation Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/collection-selection.html">Collection Selection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/collection-projection.html">Collection Projection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/expressions/language-ref/templating.html">Expression Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/expressions/example-classes.html">Classes Used in the Examples</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/aop.html">Aspect Oriented Programming with Spring</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/introduction-defn.html">AOP Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/introduction-spring-defn.html">Spring AOP Capabilities and Goals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/introduction-proxies.html">AOP Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/aop/ataspectj.html">@AspectJ support</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/aspectj-support.html">Enabling @AspectJ Support</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/at-aspectj.html">Declaring an Aspect</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/pointcuts.html">Declaring a Pointcut</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/advice.html">Declaring Advice</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/introductions.html">Introductions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/instantiation-models.html">Aspect Instantiation Models</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../core/aop/ataspectj/example.html">An AOP Example</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/schema.html">Schema-based AOP Support</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/choosing.html">Choosing which AOP Declaration Style to Use</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/mixing-styles.html">Mixing Aspect Types</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/proxying.html">Proxying Mechanisms</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/aspectj-programmatic.html">Programmatic Creation of @AspectJ Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/using-aspectj.html">Using AspectJ with Spring Applications</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/aop-api.html">Spring AOP APIs</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/pointcuts.html">Pointcut API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/advice.html">Advice API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/advisor.html">The Advisor API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/pfb.html">Using the <code>ProxyFactoryBean</code> to Create AOP Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/concise-proxy.html">Concise Proxy Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/prog.html">Creating AOP Proxies Programmatically with the <code>ProxyFactory</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/advised.html">Manipulating Advised Objects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/autoproxy.html">Using the "auto-proxy" facility</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/targetsource.html">Using <code>TargetSource</code> Implementations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/aop-api/extensibility.html">Defining New Advice Types</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../core/resilience.html">Resilience Features</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../core/null-safety.html">Null-safety</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../core/databuffer-codec.html">Data Buffers and Codecs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../core/aot.html">Ahead of Time Optimizations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core/appendix.html">Appendix</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/appendix/xsd-schemas.html">XML Schemas</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/appendix/xml-custom.html">XML Schema Authoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../core/appendix/application-startup-steps.html">Application Startup Steps</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access.html">Data Access</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../transaction.html">Transaction Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/motivation.html">Advantages of the Spring Framework&#8217;s Transaction Support Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/strategies.html">Understanding the Spring Framework Transaction Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/tx-resource-synchronization.html">Synchronizing Resources with Transactions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../transaction/declarative.html">Declarative Transaction Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/tx-decl-explained.html">Understanding the Spring Framework&#8217;s Declarative Transaction Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/first-example.html">Example of Declarative Transaction Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/rolling-back.html">Rolling Back a Declarative Transaction</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/diff-tx.html">Configuring Different Transactional Semantics for Different Beans</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/txadvice-settings.html">&lt;tx:advice/&gt; Settings</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/annotations.html">Using <code>@Transactional</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/tx-propagation.html">Transaction Propagation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/applying-more-than-just-tx-advice.html">Advising Transactional Operations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../transaction/declarative/aspectj.html">Using <code>@Transactional</code> with AspectJ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/programmatic.html">Programmatic Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/tx-decl-vs-prog.html">Choosing Between Programmatic and Declarative Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/event.html">Transaction-bound Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/application-server-integration.html">Application server-specific integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/solutions-to-common-problems.html">Solutions to Common Problems</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../transaction/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../dao.html">DAO Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../jdbc.html">Data Access with JDBC</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="choose-style.html">Choosing an Approach for JDBC Database Access</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="packages.html">Package Hierarchy</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link"  href="core.html">Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="connections.html">Controlling Database Connections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="advanced.html">JDBC Batch Operations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="simple.html">Simplifying JDBC Operations with the <code>SimpleJdbc</code> Classes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="object.html">Modeling JDBC Operations as Java Objects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="parameter-handling.html">Common Problems with Parameter and Data Value Handling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="embedded-database-support.html">Embedded Database Support</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="initializing-datasource.html">Initializing a <code>DataSource</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../r2dbc.html">Data Access with R2DBC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../orm.html">Object Relational Mapping (ORM) Data Access</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../orm/introduction.html">Introduction to ORM with Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../orm/general.html">General ORM Integration Considerations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../orm/hibernate.html">Hibernate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../orm/jpa.html">JPA</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../oxm.html">Marshalling XML by Using Object-XML Mappers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web.html">Web on Servlet Stack</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc.html">Spring Web MVC</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet.html">DispatcherServlet</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/context-hierarchy.html">Context Hierarchy</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/special-bean-types.html">Special Bean Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/config.html">Web MVC Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/container-config.html">Servlet Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/sequence.html">Processing</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/handlermapping-path.html">Path Matching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/handlermapping-interceptor.html">Interception</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/exceptionhandlers.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/viewresolver.html">View Resolution</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/localeresolver.html">Locale</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/multipart.html">Multipart Resolver</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/logging.html">Logging</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/filters.html">Filters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/message-converters.html">HTTP Message Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller.html">Annotated Controllers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann.html">Declaration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-requestmapping.html">Mapping Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods.html">Handler Methods</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/arguments.html">Method Arguments</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/return-types.html">Return Values</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/typeconversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/matrix-variables.html">Matrix Variables</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestparam.html"><code>@RequestParam</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestheader.html"><code>@RequestHeader</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/cookievalue.html"><code>@CookieValue</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/modelattrib-method-args.html"><code>@ModelAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/sessionattributes.html"><code>@SessionAttributes</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/sessionattribute.html"><code>@SessionAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestattrib.html"><code>@RequestAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/redirecting-passing-data.html">Redirect Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/flash-attributes.html">Flash Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/multipart-forms.html">Multipart</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestbody.html"><code>@RequestBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/httpentity.html">HttpEntity</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/responsebody.html"><code>@ResponseBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/responseentity.html">ResponseEntity</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/jackson.html">Jackson JSON</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-modelattrib-methods.html">Model</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-initbinder.html"><code>@InitBinder</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-exceptionhandler.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-advice.html">Controller Advice</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-functional.html">Functional Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-uri-building.html">URI Links</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-ann-async.html">Asynchronous Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-range.html">Range Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-cors.html">CORS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-versioning.html">API Versioning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-ann-rest-exceptions.html">Error Responses</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-security.html">Web Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-caching.html">HTTP Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc-view.html">View Technologies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-thymeleaf.html">Thymeleaf</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-freemarker.html">FreeMarker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-groovymarkup.html">Groovy Markup</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-script.html">Script Views</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-fragments.html">HTML Fragments</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-jsp.html">JSP and JSTL</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-feeds.html">RSS and Atom</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-document.html">PDF and Excel</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-jackson.html">Jackson</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-xml-marshalling.html">XML Marshalling</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-xslt.html">XSLT Views</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-config.html">MVC Config</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/enable.html">Enable MVC Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/customize.html">MVC Config API</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/conversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/interceptors.html">Interceptors</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/content-negotiation.html">Content Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/message-converters.html">Message Converters</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/view-controller.html">View Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/view-resolvers.html">View Resolvers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/static-resources.html">Static Resources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/default-servlet-handler.html">Default Servlet</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/path-matching.html">Path Matching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/api-version.html">API Version</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/advanced-java.html">Advanced Java Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/advanced-xml.html">Advanced XML Config</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-http2.html">HTTP/2</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webmvc-client.html">REST Clients</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webmvc-test.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/websocket.html">WebSockets</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/websocket/server.html">WebSocket API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/websocket/fallback.html">SockJS Fallback</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/websocket/stomp.html">STOMP</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/benefits.html">Benefits</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/enable.html">Enable STOMP</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/server-config.html">WebSocket Transport</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/message-flow.html">Flow of Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-annotations.html">Annotated Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-send.html">Sending Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-simple-broker.html">Simple Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-broker-relay.html">External Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-broker-relay-configure.html">Connecting to a Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/destination-separator.html">Dots as Separators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authentication.html">Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authentication-token-based.html">Token Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authorization.html">Authorization</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/user-destination.html">User Destinations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/ordered-messages.html">Order of Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/application-context-events.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/interceptors.html">Interception</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/client.html">STOMP Client</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/scope.html">WebSocket Scope</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/configuration-performance.html">Performance</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/stats.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/testing.html">Testing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web-reactive.html">Web on Reactive Stack</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux.html">Spring WebFlux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/new-framework.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/reactive-spring.html">Reactive Core</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/dispatcher-handler.html"><code>DispatcherHandler</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux/controller.html">Annotated Controllers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann.html"><code>@Controller</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-requestmapping.html">Mapping Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods.html">Handler Methods</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/arguments.html">Method Arguments</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/return-types.html">Return Values</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/typeconversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/matrix-variables.html">Matrix Variables</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestparam.html"><code>@RequestParam</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestheader.html"><code>@RequestHeader</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/cookievalue.html"><code>@CookieValue</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/modelattrib-method-args.html"><code>@ModelAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/sessionattributes.html"><code>@SessionAttributes</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/sessionattribute.html"><code>@SessionAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestattrib.html"><code>@RequestAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/multipart-forms.html">Multipart Content</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestbody.html"><code>@RequestBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/httpentity.html"><code>HttpEntity</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/responsebody.html"><code>@ResponseBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/responseentity.html"><code>ResponseEntity</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/jackson.html">Jackson JSON</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-modelattrib-methods.html"><code>Model</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-initbinder.html"><code>DataBinder</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-exceptions.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-advice.html">Controller Advice</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-functional.html">Functional Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/uri-building.html">URI Links</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/range.html">Range Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-cors.html">CORS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-versioning.html">API Versioning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/ann-rest-exceptions.html">Error Responses</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/security.html">Web Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/caching.html">HTTP Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-view.html">View Technologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/config.html">WebFlux Config</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/http2.html">HTTP/2</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux-webclient.html">WebClient</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-builder.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-retrieve.html"><code>retrieve()</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-exchange.html">Exchange</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-body.html">Request Body</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-filter.html">Filters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-attributes.html">Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-context.html">Context</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-synchronous.html">Synchronous Use</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-testing.html">Testing</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-http-service-client.html">HTTP Service Client</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-websocket.html">WebSockets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-test.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../rsocket.html">RSocket</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-reactive-libraries.html">Reactive Libraries</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing.html">Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/introduction.html">Introduction to Spring Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/unit.html">Unit Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/integration.html">Integration Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/support-jdbc.html">JDBC Testing Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/testcontext-framework.html">Spring TestContext Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/key-abstractions.html">Key Abstractions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/bootstrapping.html">Bootstrapping the TestContext Framework</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/tel-config.html"><code>TestExecutionListener</code> Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/application-events.html">Application Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/test-execution-events.html">Test Execution Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management.html">Context Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/javaconfig.html">Context Configuration with Component Classes</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/xml.html">Context Configuration with XML Resources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/groovy.html">Context Configuration with Groovy Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/default-config.html">Default Context Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/mixed-config.html">Mixing Component Classes, XML, and Groovy Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/context-customizers.html">Context Configuration with Context Customizers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/initializers.html">Context Configuration with Context Initializers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/inheritance.html">Context Configuration Inheritance</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/env-profiles.html">Context Configuration with Environment Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/property-sources.html">Context Configuration with Test Property Sources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/dynamic-property-sources.html">Context Configuration with Dynamic Property Sources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/web.html">Loading a <code>WebApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/web-mocks.html">Working with Web Mocks</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/caching.html">Context Caching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/context-pausing.html">Context Pausing</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/failure-threshold.html">Context Failure Threshold</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/hierarchies.html">Context Hierarchies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/fixture-di.html">Dependency Injection of Test Fixtures</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/bean-overriding.html">Bean Overriding in Tests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/web-scoped-beans.html">Testing Request- and Session-scoped Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/tx.html">Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/executing-sql.html">Executing SQL Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/parallel-test-execution.html">Parallel Test Execution</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/support-classes.html">TestContext Framework Support Classes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/aot.html">Ahead of Time Support for Tests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/webtestclient.html">WebTestClient</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/resttestclient.html">RestTestClient</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc.html">MockMvc</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/setup-options.html">Setup Options</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest.html">Hamcrest Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/static-imports.html">Static Imports</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/setup.html">Configuring MockMvc</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/setup-steps.html">Setup Features</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/requests.html">Performing Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/expectations.html">Defining Expectations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/async-requests.html">Async Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/vs-streaming-response.html">Streaming Responses</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/filters.html">Filter Registrations</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/assertj.html">AssertJ Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/setup.html">Configuring MockMvcTester</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/requests.html">Performing Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/assertions.html">Defining Expectations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/integration.html">MockMvc integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit.html">HtmlUnit Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/why.html">Why HtmlUnit Integration?</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/mah.html">MockMvc and HtmlUnit</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/webdriver.html">MockMvc and WebDriver</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/geb.html">MockMvc and Geb</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/vs-end-to-end-integration-tests.html">MockMvc vs End-to-End Tests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/resources.html">Further Examples</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/spring-mvc-test-client.html">Testing Client Applications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/appendix.html">Appendix</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/annotations.html">Annotations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-standard.html">Standard Annotation Support</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/annotations/integration-spring.html">Spring Testing Annotations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-bootstrapwith.html"><code>@BootstrapWith</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contextconfiguration.html"><code>@ContextConfiguration</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-webappconfiguration.html"><code>@WebAppConfiguration</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contexthierarchy.html"><code>@ContextHierarchy</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contextcustomizerfactories.html"><code>@ContextCustomizerFactories</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-activeprofiles.html"><code>@ActiveProfiles</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testpropertysource.html"><code>@TestPropertySource</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-dynamicpropertysource.html"><code>@DynamicPropertySource</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testbean.html"><code>@TestBean</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-mockitobean.html"><code>@MockitoBean</code> and <code>@MockitoSpyBean</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-dirtiescontext.html"><code>@DirtiesContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testexecutionlisteners.html"><code>@TestExecutionListeners</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-recordapplicationevents.html"><code>@RecordApplicationEvents</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-commit.html"><code>@Commit</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-rollback.html"><code>@Rollback</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-beforetransaction.html"><code>@BeforeTransaction</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-aftertransaction.html"><code>@AfterTransaction</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sql.html"><code>@Sql</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlconfig.html"><code>@SqlConfig</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlmergemode.html"><code>@SqlMergeMode</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlgroup.html"><code>@SqlGroup</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-disabledinaotmode.html"><code>@DisabledInAotMode</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-junit4.html">Spring JUnit 4 Testing Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-junit-jupiter.html">Spring JUnit Jupiter Testing Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-meta.html">Meta-Annotation Support for Testing</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration.html">Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/rest-clients.html">REST Clients</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/jms.html">JMS (Java Message Service)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/using.html">Using Spring JMS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/sending.html">Sending a Message</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/receiving.html">Receiving a Message</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/jca-message-endpoint-manager.html">Support for JCA Message Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/annotated.html">Annotation-driven Listener Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/namespace.html">JMS Namespace Support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/jmx.html">JMX</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/exporting.html">Exporting Your Beans to JMX</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/interface.html">Controlling the Management Interface of Your Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/naming.html">Controlling  <code>ObjectName</code> Instances for Your Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/jsr160.html">Using JSR-160 Connectors</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/proxy.html">Accessing MBeans through Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/notifications.html">Notifications</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/email.html">Email</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/scheduling.html">Task Execution and Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/cache.html">Cache Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/strategies.html">Understanding the Cache Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/annotations.html">Declarative Annotation-based Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/jsr-107.html">JCache (JSR-107) Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/declarative-xml.html">Declarative XML-based Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/store-configuration.html">Configuring the Cache Storage</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/plug.html">Plugging-in Different Back-end Caches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/specific-config.html">How can I Set the TTL/TTI/Eviction policy/XXX feature?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/observability.html">Observability Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/aot-cache.html">JVM AOT Cache</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/checkpoint-restore.html">JVM Checkpoint Restore</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../languages.html">Language Support</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../languages/kotlin.html">Kotlin</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/requirements.html">Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/extensions.html">Extensions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/null-safety.html">Null-safety</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/classes-interfaces.html">Classes and Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/annotations.html">Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/bean-registration-dsl.html">Bean Registration DSL</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/web.html">Web</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/coroutines.html">Coroutines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/spring-projects-in.html">Spring Projects in Kotlin</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/resources.html">Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../languages/groovy.html">Apache Groovy</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link"  href="../../appendix.html">Appendix</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/">Java API</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://docs.spring.io/spring-framework/docs/7.0.9/kdoc-api/">Kotlin API</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://github.com/spring-projects/spring-framework/wiki">Wiki</a>
+  </li>
+</ul>
+  </li>
+</ul>
+          <div class="toggle-sm">
+            <button id="nav-toggle-2" class="nav-toggle"></button>
+          </div>
+        </nav>
+      </div>
+      <div class="nav-collapse">
+        <button id="nav-collapse-toggle"><span></span></button>        
+      </div>
+    </div>
+    <div class="nav-resize"></div>
+  </aside>
+</div>
+<script>
+!function (sidebar) {
+  if (sidebar) {
+    document.body.classList.add('nav-sm')
+  }
+}(localStorage && localStorage.getItem('sidebar') === 'close')
+</script><main class="article">
+<div class="toolbar" role="navigation">
+  <button id="nav-toggle-1" class="nav-toggle"></button>
+<div class="search">
+  <button class="DocSearch-Button search-button">
+    <svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path d="M27.414,24.586l-5.077-5.077C23.386,17.928,24,16.035,24,14c0-5.514-4.486-10-10-10S4,8.486,4,14  s4.486,10,10,10c2.035,0,3.928-0.614,5.509-1.663l5.077,5.077c0.78,0.781,2.048,0.781,2.828,0  C28.195,26.633,28.195,25.367,27.414,24.586z M7,14c0-3.86,3.14-7,7-7s7,3.14,7,7s-3.14,7-7,7S7,17.86,7,14z" id="XMLID_223_"/>
+    </svg>
+    <span>Search</span>
+    <span class="search-key"></span>
+  </button>
+</div>
+</div>
+  <div class="content">
+<aside class="sidebar">
+  <div class="content">
+    <div
+      class="toc"
+      data-title="Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling"
+      data-levels="2"
+    >
+      <div class="toc-menu"></div>
+    </div>
+    <div class="sidebar-links">
+        <a href="https://github.com/spring-projects/spring-framework/blob/v7.0.9/framework-docs/modules/ROOT/pages/data-access/jdbc/core.adoc">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+          ><path
+              d="m16 2.012 3 3L16.713 7.3l-3-3zM4 14v3h3l8.299-8.287-3-3zm0 6h16v2H4z"
+            ></path></svg>
+          Edit this Page
+        </a>
+              <a href="https://github.com/spring-projects/spring-framework" title="GitHub">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="512px"
+            id="Layer_1"
+            version="1.1"
+            viewBox="0 0 512 512"
+            width="512px"
+          ><style type="text/css"><![CDATA[
+              .st0{fill-rule:evenodd;clip-rule:evenodd;} ]]></style><g><path
+                class="st0"
+                d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"
+              ></path></g></svg>
+          GitHub Project
+        </a>
+        <a href="https://stackoverflow.com/questions/tagged/spring">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path
+              d="M290.7 311L95 269.7 86.8 309l195.7 41zm51-87L188.2 95.7l-25.5 30.8 153.5 128.3zm-31.2 39.7L129.2 179l-16.7 36.5L293.7 300zM262 32l-32 24 119.3 160.3 32-24zm20.5 328h-200v39.7h200zm39.7 80H42.7V320h-40v160h359.5V320h-40z"
+            ></path></svg>
+          Stack Overflow
+        </a>
+    </div>
+  </div>
+</aside>
+<article class="doc">
+<div class="breadcrumbs-container">
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+    <ul>
+      <li id="copy-url" title="Copy versioned URL"></li>
+      <li><a href="../../index.html">Spring Framework</a></li>
+      <li><a href="../../data-access.html">Data Access</a></li>
+      <li><a href="../jdbc.html">Data Access with JDBC</a></li>
+      <li><a href="core.html">Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling</a></li>
+    </ul>
+  </nav>
+</div><h1 id="page-title" class="page">Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section covers how to use the JDBC core classes to control basic JDBC processing,
+including error handling. It includes the following topics:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#jdbc-JdbcTemplate">Using <code>JdbcTemplate</code></a></p>
+</li>
+<li>
+<p><a href="#jdbc-NamedParameterJdbcTemplate">Using <code>NamedParameterJdbcTemplate</code></a></p>
+</li>
+<li>
+<p><a href="#jdbc-JdbcClient">Unified JDBC Query/Update Operations: <code>JdbcClient</code></a></p>
+</li>
+<li>
+<p><a href="#jdbc-SQLExceptionTranslator">Using <code>SQLExceptionTranslator</code></a></p>
+</li>
+<li>
+<p><a href="#jdbc-statements-executing">Running Statements</a></p>
+</li>
+<li>
+<p><a href="#jdbc-statements-querying">Running Queries</a></p>
+</li>
+<li>
+<p><a href="#jdbc-updates">Updating the Database</a></p>
+</li>
+<li>
+<p><a href="#jdbc-auto-generated-keys">Retrieving Auto-generated Keys</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-JdbcTemplate"><a class="anchor" href="#jdbc-JdbcTemplate"></a>Using <code>JdbcTemplate</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>JdbcTemplate</code> is the central class in the JDBC core package. It handles the
+creation and release of resources, which helps you avoid common errors, such as
+forgetting to close the connection. It performs the basic tasks of the core JDBC
+workflow (such as statement creation and execution), leaving application code to provide
+SQL and extract results. The <code>JdbcTemplate</code> class:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Runs SQL queries</p>
+</li>
+<li>
+<p>Updates statements and stored procedure calls</p>
+</li>
+<li>
+<p>Performs iteration over <code>ResultSet</code> instances and extraction of returned parameter values.</p>
+</li>
+<li>
+<p>Catches JDBC exceptions and translates them to the generic, more informative, exception
+hierarchy defined in the <code>org.springframework.dao</code> package. (See <a href="../dao.html#dao-exceptions" class="xref page">Consistent Exception Hierarchy</a>.)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When you use the <code>JdbcTemplate</code> for your code, you need only to implement callback
+interfaces, giving them a clearly defined contract. Given a <code>Connection</code> provided by the
+<code>JdbcTemplate</code> class, the <code>PreparedStatementCreator</code> callback interface creates a prepared
+statement, providing SQL and any necessary parameters. The same is true for the
+<code>CallableStatementCreator</code> interface, which creates callable statements. The
+<code>RowCallbackHandler</code> interface extracts values from each row of a <code>ResultSet</code>.</p>
+</div>
+<div class="paragraph">
+<p>You can use <code>JdbcTemplate</code> within a DAO implementation through direct instantiation
+with a <code>DataSource</code> reference, or you can configure it in a Spring IoC container and give it to
+DAOs as a bean reference.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>DataSource</code> should always be configured as a bean in the Spring IoC container. In
+the first case the bean is given to the service directly; in the second case it is given
+to the prepared template.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>All SQL issued by this class is logged at the <code>DEBUG</code> level under the category
+corresponding to the fully qualified class name of the template instance (typically
+<code>JdbcTemplate</code>, but it may be different if you use a custom subclass of the
+<code>JdbcTemplate</code> class).</p>
+</div>
+<div class="paragraph">
+<p>The following sections provide some examples of <code>JdbcTemplate</code> usage. These examples
+are not an exhaustive list of all of the functionality exposed by the <code>JdbcTemplate</code>.
+See the attendant <a href="https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/org/springframework/jdbc/core/JdbcTemplate.html">javadoc</a> for that.</p>
+</div>
+<div class="sect2">
+<h3 id="jdbc-JdbcTemplate-examples-query"><a class="anchor" href="#jdbc-JdbcTemplate-examples-query"></a>Querying (<code>SELECT</code>)</h3>
+<div class="paragraph">
+<p>The following query gets the number of rows in a relation:</p>
+</div>
+<div id="_tabs_1" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_1_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_1_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_1_java--panel" class="tabpanel" aria-labelledby="_tabs_1_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">int rowCount = this.jdbcTemplate.queryForObject("select count(*) from t_actor", Integer.class);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_1_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_1_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val rowCount = jdbcTemplate.queryForObject&lt;Int&gt;("select count(*) from t_actor")!!</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following query uses a bind variable:</p>
+</div>
+<div id="_tabs_2" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_2_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_2_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_2_java--panel" class="tabpanel" aria-labelledby="_tabs_2_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">int countOfActorsNamedJoe = this.jdbcTemplate.queryForObject(
+		"select count(*) from t_actor where first_name = ?", Integer.class, "Joe");</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_2_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_2_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val countOfActorsNamedJoe = jdbcTemplate.queryForObject&lt;Int&gt;(
+		"select count(*) from t_actor where first_name = ?", arrayOf("Joe"))!!</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following query looks for a <code>String</code>:</p>
+</div>
+<div id="_tabs_3" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_3_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_3_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_3_java--panel" class="tabpanel" aria-labelledby="_tabs_3_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">String lastName = this.jdbcTemplate.queryForObject(
+		"select last_name from t_actor where id = ?",
+		String.class, 1212L);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_3_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_3_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val lastName = this.jdbcTemplate.queryForObject&lt;String&gt;(
+		"select last_name from t_actor where id = ?",
+		arrayOf(1212L))!!</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following query finds and populates a single domain object:</p>
+</div>
+<div id="_tabs_4" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_4_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_4_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_4_java--panel" class="tabpanel" aria-labelledby="_tabs_4_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Actor actor = jdbcTemplate.queryForObject(
+		"select first_name, last_name from t_actor where id = ?",
+		(resultSet, rowNum) -&gt; {
+			Actor newActor = new Actor();
+			newActor.setFirstName(resultSet.getString("first_name"));
+			newActor.setLastName(resultSet.getString("last_name"));
+			return newActor;
+		},
+		1212L);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_4_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_4_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val actor = jdbcTemplate.queryForObject(
+			"select first_name, last_name from t_actor where id = ?",
+			arrayOf(1212L)) { rs, _ -&gt;
+		Actor(rs.getString("first_name"), rs.getString("last_name"))
+	}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following query finds and populates a list of domain objects:</p>
+</div>
+<div id="_tabs_5" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_5_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_5_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_5_java--panel" class="tabpanel" aria-labelledby="_tabs_5_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">List&lt;Actor&gt; actors = this.jdbcTemplate.query(
+		"select first_name, last_name from t_actor",
+		(resultSet, rowNum) -&gt; {
+			Actor actor = new Actor();
+			actor.setFirstName(resultSet.getString("first_name"));
+			actor.setLastName(resultSet.getString("last_name"));
+			return actor;
+		});</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_5_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_5_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val actors = jdbcTemplate.query("select first_name, last_name from t_actor") { rs, _ -&gt;
+		Actor(rs.getString("first_name"), rs.getString("last_name"))</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If the last two snippets of code actually existed in the same application, it would make
+sense to remove the duplication present in the two <code>RowMapper</code> lambda expressions and
+extract them out into a single field that could then be referenced by DAO methods as needed.
+For example, it may be better to write the preceding code snippet as follows:</p>
+</div>
+<div id="_tabs_6" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_6_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_6_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_6_java--panel" class="tabpanel" aria-labelledby="_tabs_6_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private final RowMapper&lt;Actor&gt; actorRowMapper = (resultSet, rowNum) -&gt; {
+	Actor actor = new Actor();
+	actor.setFirstName(resultSet.getString("first_name"));
+	actor.setLastName(resultSet.getString("last_name"));
+	return actor;
+};
+
+public List&lt;Actor&gt; findAllActors() {
+	return this.jdbcTemplate.query("select first_name, last_name from t_actor", actorRowMapper);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_6_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_6_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val actorMapper = RowMapper&lt;Actor&gt; { rs: ResultSet, rowNum: Int -&gt;
+	Actor(rs.getString("first_name"), rs.getString("last_name"))
+}
+
+fun findAllActors(): List&lt;Actor&gt; {
+	return jdbcTemplate.query("select first_name, last_name from t_actor", actorMapper)
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jdbc-JdbcTemplate-examples-update"><a class="anchor" href="#jdbc-JdbcTemplate-examples-update"></a>Updating (<code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code>) with <code>JdbcTemplate</code></h3>
+<div class="paragraph">
+<p>You can use the <code>update(..)</code> method to perform insert, update, and delete operations.
+Parameter values are usually provided as variable arguments or, alternatively, as an object array.</p>
+</div>
+<div class="paragraph">
+<p>The following example inserts a new entry:</p>
+</div>
+<div id="_tabs_7" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_7_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_7_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_7_java--panel" class="tabpanel" aria-labelledby="_tabs_7_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcTemplate.update(
+		"insert into t_actor (first_name, last_name) values (?, ?)",
+		"Leonor", "Watling");</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_7_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_7_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">jdbcTemplate.update(
+		"insert into t_actor (first_name, last_name) values (?, ?)",
+		"Leonor", "Watling")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example updates an existing entry:</p>
+</div>
+<div id="_tabs_8" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_8_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_8_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_8_java--panel" class="tabpanel" aria-labelledby="_tabs_8_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcTemplate.update(
+		"update t_actor set last_name = ? where id = ?",
+		"Banjo", 5276L);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_8_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_8_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">jdbcTemplate.update(
+		"update t_actor set last_name = ? where id = ?",
+		"Banjo", 5276L)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example deletes an entry:</p>
+</div>
+<div id="_tabs_9" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_9_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_9_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_9_java--panel" class="tabpanel" aria-labelledby="_tabs_9_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcTemplate.update(
+		"delete from t_actor where id = ?",
+		Long.valueOf(actorId));</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_9_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_9_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">jdbcTemplate.update("delete from t_actor where id = ?", actorId.toLong())</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jdbc-JdbcTemplate-examples-other"><a class="anchor" href="#jdbc-JdbcTemplate-examples-other"></a>Other <code>JdbcTemplate</code> Operations</h3>
+<div class="paragraph">
+<p>You can use the <code>execute(..)</code> method to run any arbitrary SQL. Consequently, the
+method is often used for DDL statements. It is heavily overloaded with variants that take
+callback interfaces, binding variable arrays, and so on. The following example creates a
+table:</p>
+</div>
+<div id="_tabs_10" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_10_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_10_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_10_java--panel" class="tabpanel" aria-labelledby="_tabs_10_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcTemplate.execute("create table mytable (id integer, name varchar(100))");</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_10_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_10_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">jdbcTemplate.execute("create table mytable (id integer, name varchar(100))")</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example invokes a stored procedure:</p>
+</div>
+<div id="_tabs_11" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_11_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_11_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_11_java--panel" class="tabpanel" aria-labelledby="_tabs_11_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcTemplate.update(
+		"call SUPPORT.REFRESH_ACTORS_SUMMARY(?)",
+		Long.valueOf(unionId));</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_11_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_11_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">jdbcTemplate.update(
+		"call SUPPORT.REFRESH_ACTORS_SUMMARY(?)",
+		unionId.toLong())</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>More sophisticated stored procedure support is <a href="object.html#jdbc-StoredProcedure" class="xref page">covered later</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jdbc-jdbctemplate-idioms"><a class="anchor" href="#jdbc-jdbctemplate-idioms"></a><code>JdbcTemplate</code> Best Practices</h3>
+<div class="paragraph">
+<p>Instances of the <code>JdbcTemplate</code> class are thread-safe, once configured. This is
+important because it means that you can configure a single instance of a <code>JdbcTemplate</code>
+and then safely inject this shared reference into multiple DAOs (or repositories).
+The <code>JdbcTemplate</code> is stateful, in that it maintains a reference to a <code>DataSource</code>, but
+this state is not conversational state.</p>
+</div>
+<div class="paragraph">
+<p>A common practice when using the <code>JdbcTemplate</code> class (and the associated
+<a href="#jdbc-NamedParameterJdbcTemplate"><code>NamedParameterJdbcTemplate</code></a> class) is to
+configure a <code>DataSource</code> in your Spring configuration file and then dependency-inject
+that shared <code>DataSource</code> bean into your DAO classes. The <code>JdbcTemplate</code> is created in
+the setter for the <code>DataSource</code> or in the constructor. This leads to DAOs that resemble the following:</p>
+</div>
+<div id="_tabs_12" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_12_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_12_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_12_java--panel" class="tabpanel" aria-labelledby="_tabs_12_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class JdbcCorporateEventDao implements CorporateEventDao {
+
+	private final JdbcTemplate jdbcTemplate;
+
+	public JdbcCorporateEventDao(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	// JDBC-backed implementations of the methods on the CorporateEventDao follow...
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_12_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_12_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class JdbcCorporateEventDao(dataSource: DataSource): CorporateEventDao {
+
+	private val jdbcTemplate = JdbcTemplate(dataSource)
+
+	// JDBC-backed implementations of the methods on the CorporateEventDao follow...
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example shows the corresponding configuration:</p>
+</div>
+<div id="_tabs_13" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_13_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_13_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+<li id="_tabs_13_xml" class="tab">
+<p>Xml</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_13_java--panel" class="tabpanel" aria-labelledby="_tabs_13_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Bean
+JdbcCorporateEventDao corporateEventDao(DataSource dataSource) {
+	return new JdbcCorporateEventDao(dataSource);
+}
+
+@Bean(destroyMethod = "close")
+BasicDataSource dataSource() {
+	BasicDataSource dataSource = new BasicDataSource();
+	dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
+	dataSource.setUrl("jdbc:hsqldb:hsql://localhost:");
+	dataSource.setUsername("sa");
+	dataSource.setPassword("");
+	return dataSource;
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_13_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_13_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">@Bean
+fun corporateEventDao(dataSource: DataSource) = JdbcCorporateEventDao(dataSource)
+
+@Bean(destroyMethod = "close")
+fun dataSource() = BasicDataSource().apply {
+	driverClassName = "org.hsqldb.jdbcDriver"
+	url = "jdbc:hsqldb:hsql://localhost:"
+	username = "sa"
+	password = ""
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_13_xml--panel" class="tabpanel" aria-labelledby="_tabs_13_xml">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;bean id="corporateEventDao" class="org.example.jdbc.JdbcCorporateEventDao"&gt;
+	&lt;constructor-arg ref="dataSource"/&gt;
+&lt;/bean&gt;
+
+&lt;bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"&gt;
+	&lt;property name="driverClassName" value="${jdbc.driverClassName}"/&gt;
+	&lt;property name="url" value="${jdbc.url}"/&gt;
+	&lt;property name="username" value="${jdbc.username}"/&gt;
+	&lt;property name="password" value="${jdbc.password}"/&gt;
+&lt;/bean&gt;
+
+&lt;context:property-placeholder location="jdbc.properties"/&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>An alternative to explicit configuration is to use component-scanning and annotation
+support for dependency injection. In this case, you can annotate the class with <code>@Repository</code>
+(which makes it a candidate for component-scanning). The following example shows how to do so:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Repository
+public class JdbcCorporateEventRepository implements CorporateEventRepository {
+
+	private JdbcTemplate jdbcTemplate;
+
+	// Implicitly autowire the DataSource constructor parameter
+	public JdbcCorporateEventRepository(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	// JDBC-backed implementations of the methods on the CorporateEventRepository follow...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example shows the corresponding configuration:</p>
+</div>
+<div id="_tabs_14" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_14_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_14_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+<li id="_tabs_14_xml" class="tab">
+<p>Xml</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_14_java--panel" class="tabpanel" aria-labelledby="_tabs_14_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Configuration
+@ComponentScan("org.example.jdbc")
+public class JdbcCorporateEventRepositoryConfiguration {
+
+	@Bean(destroyMethod = "close")
+	BasicDataSource dataSource() {
+		BasicDataSource dataSource = new BasicDataSource();
+		dataSource.setDriverClassName("org.hsqldb.jdbcDriver");
+		dataSource.setUrl("jdbc:hsqldb:hsql://localhost:");
+		dataSource.setUsername("sa");
+		dataSource.setPassword("");
+		return dataSource;
+	}
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_14_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_14_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">@Configuration
+@ComponentScan("org.example.jdbc")
+class JdbcCorporateEventRepositoryConfiguration {
+
+	@Bean(destroyMethod = "close")
+	fun dataSource() = BasicDataSource().apply {
+		driverClassName = "org.hsqldb.jdbcDriver"
+		url = "jdbc:hsqldb:hsql://localhost:"
+		username = "sa"
+		password = ""
+	}
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_14_xml--panel" class="tabpanel" aria-labelledby="_tabs_14_xml">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;!-- Scans within the base package of the application for @Component classes to configure as beans --&gt;
+&lt;context:component-scan base-package="org.example.jdbc" /&gt;
+
+&lt;bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"&gt;
+	&lt;property name="driverClassName" value="${jdbc.driverClassName}"/&gt;
+	&lt;property name="url" value="${jdbc.url}"/&gt;
+	&lt;property name="username" value="${jdbc.username}"/&gt;
+	&lt;property name="password" value="${jdbc.password}"/&gt;
+&lt;/bean&gt;
+
+&lt;context:property-placeholder location="jdbc.properties"/&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If you use Spring&#8217;s <code>JdbcDaoSupport</code> class and your various JDBC-backed DAO classes
+extend from it, your sub-class inherits a <code>setDataSource(..)</code> method from the
+<code>JdbcDaoSupport</code> class. You can choose whether to inherit from this class. The
+<code>JdbcDaoSupport</code> class is provided as a convenience only.</p>
+</div>
+<div class="paragraph">
+<p>Regardless of which of the above template initialization styles you choose to use (or
+not), it is seldom necessary to create a new instance of a <code>JdbcTemplate</code> class each
+time you want to run SQL. Once configured, a <code>JdbcTemplate</code> instance is thread-safe.
+If your application accesses multiple databases, you may want multiple <code>JdbcTemplate</code>
+instances, which requires multiple <code>DataSources</code> and, subsequently, multiple differently
+configured <code>JdbcTemplate</code> instances.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-NamedParameterJdbcTemplate"><a class="anchor" href="#jdbc-NamedParameterJdbcTemplate"></a>Using <code>NamedParameterJdbcTemplate</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>NamedParameterJdbcTemplate</code> class adds support for programming JDBC statements
+by using named parameters, as opposed to programming JDBC statements using only classic
+placeholder ( <code>'?'</code>) arguments. The <code>NamedParameterJdbcTemplate</code> class wraps a
+<code>JdbcTemplate</code> and delegates to the wrapped <code>JdbcTemplate</code> to do much of its work. This
+section describes only those areas of the <code>NamedParameterJdbcTemplate</code> class that differ
+from the <code>JdbcTemplate</code> itself&#8201;&#8212;&#8201;namely, programming JDBC statements by using named
+parameters. The following example shows how to use <code>NamedParameterJdbcTemplate</code>:</p>
+</div>
+<div id="_tabs_15" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_15_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_15_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_15_java--panel" class="tabpanel" aria-labelledby="_tabs_15_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// some JDBC-backed DAO class...
+private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+public void setDataSource(DataSource dataSource) {
+	this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+}
+
+public int countOfActorsByFirstName(String firstName) {
+	String sql = "select count(*) from t_actor where first_name = :first_name";
+	SqlParameterSource namedParameters = new MapSqlParameterSource("first_name", firstName);
+	return this.namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Integer.class);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_15_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_15_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">private val namedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+
+fun countOfActorsByFirstName(firstName: String): Int {
+	val sql = "select count(*) from t_actor where first_name = :first_name"
+	val namedParameters = MapSqlParameterSource("first_name", firstName)
+	return namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Int::class.java)!!
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the use of the named parameter notation in the value assigned to the <code>sql</code>
+variable and the corresponding value that is plugged into the <code>namedParameters</code>
+variable (of type <code>MapSqlParameterSource</code>).</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can pass along named parameters and their corresponding values to a
+<code>NamedParameterJdbcTemplate</code> instance by using the <code>Map</code>-based style. The remaining
+methods exposed by the <code>NamedParameterJdbcOperations</code> and implemented by the
+<code>NamedParameterJdbcTemplate</code> class follow a similar pattern and are not covered here.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows the use of the <code>Map</code>-based style:</p>
+</div>
+<div id="_tabs_16" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_16_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_16_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_16_java--panel" class="tabpanel" aria-labelledby="_tabs_16_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// some JDBC-backed DAO class...
+private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+public void setDataSource(DataSource dataSource) {
+	this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+}
+
+public int countOfActorsByFirstName(String firstName) {
+	String sql = "select count(*) from t_actor where first_name = :first_name";
+	Map&lt;String, String&gt; namedParameters = Collections.singletonMap("first_name", firstName);
+	return this.namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Integer.class);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_16_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_16_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">// some JDBC-backed DAO class...
+private val namedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+
+fun countOfActorsByFirstName(firstName: String): Int {
+	val sql = "select count(*) from t_actor where first_name = :first_name"
+	val namedParameters = mapOf("first_name" to firstName)
+	return namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Int::class.java)!!
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>One nice feature related to the <code>NamedParameterJdbcTemplate</code> (and existing in the same
+Java package) is the <code>SqlParameterSource</code> interface. You have already seen an example of
+an implementation of this interface in one of the previous code snippets (the
+<code>MapSqlParameterSource</code> class). An <code>SqlParameterSource</code> is a source of named parameter
+values to a <code>NamedParameterJdbcTemplate</code>. The <code>MapSqlParameterSource</code> class is a
+simple implementation that is an adapter around a <code>java.util.Map</code>, where the keys
+are the parameter names and the values are the parameter values.</p>
+</div>
+<div class="paragraph">
+<p>Another <code>SqlParameterSource</code> implementation is the <code>BeanPropertySqlParameterSource</code>
+class. This class wraps an arbitrary JavaBean (that is, an instance of a class that
+adheres to <a href="https://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html">the
+JavaBean conventions</a>) and uses the properties of the wrapped JavaBean as the source
+of named parameter values.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows a typical JavaBean:</p>
+</div>
+<div id="_tabs_17" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_17_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_17_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_17_java--panel" class="tabpanel" aria-labelledby="_tabs_17_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class Actor {
+
+	private Long id;
+	private String firstName;
+	private String lastName;
+
+	public String getFirstName() {
+		return this.firstName;
+	}
+
+	public String getLastName() {
+		return this.lastName;
+	}
+
+	public Long getId() {
+		return this.id;
+	}
+
+	// setters omitted...
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_17_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_17_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">data class Actor(val id: Long, val firstName: String, val lastName: String)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example uses a <code>NamedParameterJdbcTemplate</code> to return the count of the
+members of the class shown in the preceding example:</p>
+</div>
+<div id="_tabs_18" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_18_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_18_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_18_java--panel" class="tabpanel" aria-labelledby="_tabs_18_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// some JDBC-backed DAO class...
+private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+public void setDataSource(DataSource dataSource) {
+	this.namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+}
+
+public int countOfActors(Actor exampleActor) {
+	// notice how the named parameters match the properties of the above 'Actor' class
+	String sql = "select count(*) from t_actor where first_name = :firstName and last_name = :lastName";
+	SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(exampleActor);
+	return this.namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Integer.class);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_18_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_18_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">// some JDBC-backed DAO class...
+private val namedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+
+private val namedParameterJdbcTemplate = NamedParameterJdbcTemplate(dataSource)
+
+fun countOfActors(exampleActor: Actor): Int {
+	// notice how the named parameters match the properties of the above 'Actor' class
+	val sql = "select count(*) from t_actor where first_name = :firstName and last_name = :lastName"
+	val namedParameters = BeanPropertySqlParameterSource(exampleActor)
+	return namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Int::class.java)!!
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember that the <code>NamedParameterJdbcTemplate</code> class wraps a classic <code>JdbcTemplate</code>
+template. If you need access to the wrapped <code>JdbcTemplate</code> instance to access
+functionality that is present only in the <code>JdbcTemplate</code> class, you can use the
+<code>getJdbcOperations()</code> method to access the wrapped <code>JdbcTemplate</code> through the
+<code>JdbcOperations</code> interface.</p>
+</div>
+<div class="paragraph">
+<p>See also <a href="#jdbc-jdbctemplate-idioms"><code>JdbcTemplate</code> Best Practices</a>
+for guidelines on using the <code>NamedParameterJdbcTemplate</code> class in the context of an application.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-JdbcClient"><a class="anchor" href="#jdbc-JdbcClient"></a>Unified JDBC Query/Update Operations: <code>JdbcClient</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As of 6.1, the named parameter statements of <code>NamedParameterJdbcTemplate</code> and the positional
+parameter statements of a regular <code>JdbcTemplate</code> are available through a unified client API
+with a fluent interaction model.</p>
+</div>
+<div class="paragraph">
+<p>For example, with positional parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private JdbcClient jdbcClient = JdbcClient.create(dataSource);
+
+public int countOfActorsByFirstName(String firstName) {
+	return this.jdbcClient.sql("select count(*) from t_actor where first_name = ?")
+			.param(firstName)
+			.query(Integer.class).single();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example, with named parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private JdbcClient jdbcClient = JdbcClient.create(dataSource);
+
+public int countOfActorsByFirstName(String firstName) {
+	return this.jdbcClient.sql("select count(*) from t_actor where first_name = :firstName")
+			.param("firstName", firstName)
+			.query(Integer.class).single();
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>RowMapper</code> capabilities are available as well, with flexible result resolution:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">List&lt;Actor&gt; actors = this.jdbcClient.sql("select first_name, last_name from t_actor")
+		.query((rs, rowNum) -&gt; new Actor(rs.getString("first_name"), rs.getString("last_name")))
+		.list();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of a custom <code>RowMapper</code>, you may also specify a class to map to.
+For example, assuming that <code>Actor</code> has <code>firstName</code> and <code>lastName</code> properties
+as a record class, a custom constructor, bean properties, or plain fields:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">List&lt;Actor&gt; actors = this.jdbcClient.sql("select first_name, last_name from t_actor")
+		.query(Actor.class)
+		.list();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With a required single object result:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Actor actor = this.jdbcClient.sql("select first_name, last_name from t_actor where id = ?")
+		.param(1212L)
+		.query(Actor.class)
+		.single();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With a <code>java.util.Optional</code> result:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Optional&lt;Actor&gt; actor = this.jdbcClient.sql("select first_name, last_name from t_actor where id = ?")
+		.param(1212L)
+		.query(Actor.class)
+		.optional();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And for an update statement:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcClient.sql("insert into t_actor (first_name, last_name) values (?, ?)")
+		.param("Leonor").param("Watling")
+		.update();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or an update statement with named parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcClient.sql("insert into t_actor (first_name, last_name) values (:firstName, :lastName)")
+		.param("firstName", "Leonor").param("lastName", "Watling")
+		.update();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Instead of individual named parameters, you may also specify a parameter source object –
+for example, a record class, a class with bean properties, or a plain field holder which
+provides <code>firstName</code> and <code>lastName</code> properties, such as the <code>Actor</code> class from above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">this.jdbcClient.sql("insert into t_actor (first_name, last_name) values (:firstName, :lastName)")
+		.paramSource(new Actor("Leonor", "Watling"))
+		.update();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The automatic <code>Actor</code> class mapping for parameters as well as the query results above is
+provided through implicit <code>SimplePropertySqlParameterSource</code> and <code>SimplePropertyRowMapper</code>
+strategies which are also available for direct use. They can serve as a common replacement
+for <code>BeanPropertySqlParameterSource</code> and <code>BeanPropertyRowMapper</code>/<code>DataClassRowMapper</code>,
+also with <code>JdbcTemplate</code> and <code>NamedParameterJdbcTemplate</code> themselves.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<code>JdbcClient</code> is a flexible but simplified facade for JDBC query/update statements.
+Advanced capabilities such as batch inserts and stored procedure calls typically require
+extra customization: consider Spring&#8217;s <code>SimpleJdbcInsert</code> and <code>SimpleJdbcCall</code> classes or
+plain direct <code>JdbcTemplate</code> usage for any such capabilities not available in <code>JdbcClient</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-SQLExceptionTranslator"><a class="anchor" href="#jdbc-SQLExceptionTranslator"></a>Using <code>SQLExceptionTranslator</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>SQLExceptionTranslator</code> is an interface to be implemented by classes that can translate
+between <code>SQLException</code>s and Spring&#8217;s own <code>org.springframework.dao.DataAccessException</code>,
+which is agnostic in regard to data access strategy. Implementations can be generic (for
+example, using SQLState codes for JDBC) or proprietary (for example, using Oracle error
+codes) for greater precision. This exception translation mechanism is used behind the
+common <code>JdbcTemplate</code> and <code>JdbcTransactionManager</code> entry points which do not
+propagate <code>SQLException</code> but rather <code>DataAccessException</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+As of 6.0, the default exception translator is <code>SQLExceptionSubclassTranslator</code>,
+detecting JDBC 4 <code>SQLException</code> subclasses with a few extra checks, and with a fallback
+to <code>SQLState</code> introspection through <code>SQLStateSQLExceptionTranslator</code>. This is usually
+sufficient for common database access and does not require vendor-specific detection.
+For backwards compatibility, consider using <code>SQLErrorCodeSQLExceptionTranslator</code> as
+described below, potentially with custom error code mappings.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>SQLErrorCodeSQLExceptionTranslator</code> is the implementation of <code>SQLExceptionTranslator</code>
+that is used by default when a file named <code>sql-error-codes.xml</code> is present in the root
+of the classpath. This implementation uses specific vendor codes. It is more precise than
+<code>SQLState</code> or <code>SQLException</code> subclass translation. The error code translations are based
+on codes held in a JavaBean type class called <code>SQLErrorCodes</code>. This class is created and
+populated by an <code>SQLErrorCodesFactory</code>, which (as the name suggests) is a factory for
+creating <code>SQLErrorCodes</code> based on the contents of a configuration file named
+<code>sql-error-codes.xml</code>. This file is populated with vendor codes and based on the
+<code>DatabaseProductName</code> taken from <code>DatabaseMetaData</code>. The codes for the actual
+database you are using are used.</p>
+</div>
+<div class="paragraph">
+<p>The <code>SQLErrorCodeSQLExceptionTranslator</code> applies matching rules in the following sequence:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Any custom translation implemented by a subclass. Normally, the provided concrete
+<code>SQLErrorCodeSQLExceptionTranslator</code> is used, so this rule does not apply. It
+applies only if you have actually provided a subclass implementation.</p>
+</li>
+<li>
+<p>Any custom implementation of the <code>SQLExceptionTranslator</code> interface that is provided
+as the <code>customSqlExceptionTranslator</code> property of the <code>SQLErrorCodes</code> class.</p>
+</li>
+<li>
+<p>The list of instances of the <code>CustomSQLErrorCodesTranslation</code> class (provided for the
+<code>customTranslations</code> property of the <code>SQLErrorCodes</code> class) are searched for a match.</p>
+</li>
+<li>
+<p>Error code matching is applied.</p>
+</li>
+<li>
+<p>Use the fallback translator. <code>SQLExceptionSubclassTranslator</code> is the default fallback
+translator. If this translation is not available, the next fallback translator is
+the <code>SQLStateSQLExceptionTranslator</code>.</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The <code>SQLErrorCodesFactory</code> is used by default to define error codes and custom
+exception translations. They are looked up in a file named <code>sql-error-codes.xml</code> from the
+classpath, and the matching <code>SQLErrorCodes</code> instance is located based on the database
+name from the database metadata of the database in use.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can extend <code>SQLErrorCodeSQLExceptionTranslator</code>, as the following example shows:</p>
+</div>
+<div id="_tabs_19" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_19_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_19_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_19_java--panel" class="tabpanel" aria-labelledby="_tabs_19_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class CustomSQLErrorCodesTranslator extends SQLErrorCodeSQLExceptionTranslator {
+
+	protected DataAccessException customTranslate(String task, String sql, SQLException sqlEx) {
+		if (sqlEx.getErrorCode() == -12345) {
+			return new DeadlockLoserDataAccessException(task, sqlEx);
+		}
+		return null;
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_19_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_19_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class CustomSQLErrorCodesTranslator : SQLErrorCodeSQLExceptionTranslator() {
+
+	override fun customTranslate(task: String, sql: String?, sqlEx: SQLException): DataAccessException? {
+		if (sqlEx.errorCode == -12345) {
+			return DeadlockLoserDataAccessException(task, sqlEx)
+		}
+		return null
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In the preceding example, the specific error code (<code>-12345</code>) is translated while
+other errors are left to be translated by the default translator implementation.
+To use this custom translator, you must pass it to the <code>JdbcTemplate</code> through the
+method <code>setExceptionTranslator</code>, and you must use this <code>JdbcTemplate</code> for all of the
+data access processing where this translator is needed. The following example shows
+how you can use this custom translator:</p>
+</div>
+<div id="_tabs_20" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_20_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_20_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_20_java--panel" class="tabpanel" aria-labelledby="_tabs_20_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private JdbcTemplate jdbcTemplate;
+
+public void setDataSource(DataSource dataSource) {
+	// create a JdbcTemplate and set data source
+	this.jdbcTemplate = new JdbcTemplate();
+	this.jdbcTemplate.setDataSource(dataSource);
+
+	// create a custom translator and set the DataSource for the default translation lookup
+	CustomSQLErrorCodesTranslator tr = new CustomSQLErrorCodesTranslator();
+	tr.setDataSource(dataSource);
+	this.jdbcTemplate.setExceptionTranslator(tr);
+}
+
+public void updateShippingCharge(long orderId, long pct) {
+	// use the prepared JdbcTemplate for this update
+	this.jdbcTemplate.update("update orders" +
+		" set shipping_charge = shipping_charge * ? / 100" +
+		" where id = ?", pct, orderId);
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_20_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_20_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">// create a JdbcTemplate and set data source
+private val jdbcTemplate = JdbcTemplate(dataSource).apply {
+	// create a custom translator and set the DataSource for the default translation lookup
+	exceptionTranslator = CustomSQLErrorCodesTranslator().apply {
+		this.dataSource = dataSource
+	}
+}
+
+fun updateShippingCharge(orderId: Long, pct: Long) {
+	// use the prepared JdbcTemplate for this update
+	this.jdbcTemplate!!.update("update orders" +
+			" set shipping_charge = shipping_charge * ? / 100" +
+			" where id = ?", pct, orderId)
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The custom translator is passed a data source in order to look up the error codes in
+<code>sql-error-codes.xml</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-statements-executing"><a class="anchor" href="#jdbc-statements-executing"></a>Running Statements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Running an SQL statement requires very little code. You need a <code>DataSource</code> and a
+<code>JdbcTemplate</code>, including the convenience methods that are provided with the
+<code>JdbcTemplate</code>. The following example shows what you need to include for a minimal but
+fully functional class that creates a new table:</p>
+</div>
+<div id="_tabs_21" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_21_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_21_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_21_java--panel" class="tabpanel" aria-labelledby="_tabs_21_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"><span class="fold-block is-hidden-folded">import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+</span><span class="fold-block">public class ExecuteAStatement {
+
+	private JdbcTemplate jdbcTemplate;
+
+	public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	public void doExecute() {
+		this.jdbcTemplate.execute("create table mytable (id integer, name varchar(100))");
+	}
+}</span></code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_21_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_21_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin"><span class="fold-block is-hidden-folded">import javax.sql.DataSource
+import org.springframework.jdbc.core.JdbcTemplate
+
+</span><span class="fold-block">class ExecuteAStatement(dataSource: DataSource) {
+
+	private val jdbcTemplate = JdbcTemplate(dataSource)
+
+	fun doExecute() {
+		jdbcTemplate.execute("create table mytable (id integer, name varchar(100))")
+	}
+}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-statements-querying"><a class="anchor" href="#jdbc-statements-querying"></a>Running Queries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some query methods return a single value. To retrieve a count or a specific value from
+one row, use <code>queryForObject(..)</code>. The latter converts the returned JDBC <code>Type</code> to the
+Java class that is passed in as an argument. If the type conversion is invalid, an
+<code>InvalidDataAccessApiUsageException</code> is thrown. The following example contains two
+query methods, one for an <code>int</code> and one that queries for a <code>String</code>:</p>
+</div>
+<div id="_tabs_22" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_22_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_22_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_22_java--panel" class="tabpanel" aria-labelledby="_tabs_22_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"><span class="fold-block is-hidden-folded">import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+</span><span class="fold-block">public class RunAQuery {
+
+	private JdbcTemplate jdbcTemplate;
+
+	public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	public int getCount() {
+		return this.jdbcTemplate.queryForObject("select count(*) from mytable", Integer.class);
+	}
+
+	public String getName() {
+		return this.jdbcTemplate.queryForObject("select name from mytable", String.class);
+	}
+}</span></code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_22_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_22_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin"><span class="fold-block is-hidden-folded">import javax.sql.DataSource
+import org.springframework.jdbc.core.JdbcTemplate
+
+</span><span class="fold-block">class RunAQuery(dataSource: DataSource) {
+
+	private val jdbcTemplate = JdbcTemplate(dataSource)
+
+	val count: Int
+		get() = jdbcTemplate.queryForObject("select count(*) from mytable")!!
+
+	val name: String?
+		get() = jdbcTemplate.queryForObject("select name from mytable")
+}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In addition to the single result query methods, several methods return a list with an
+entry for each row that the query returned. The most generic method is <code>queryForList(..)</code>,
+which returns a <code>List</code> where each element is a <code>Map</code> containing one entry for each column,
+using the column name as the key. If you add a method to the preceding example to retrieve a
+list of all the rows, it might be as follows:</p>
+</div>
+<div id="_tabs_23" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_23_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_23_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_23_java--panel" class="tabpanel" aria-labelledby="_tabs_23_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">private JdbcTemplate jdbcTemplate;
+
+public void setDataSource(DataSource dataSource) {
+	this.jdbcTemplate = new JdbcTemplate(dataSource);
+}
+
+public List&lt;Map&lt;String, Object&gt;&gt; getList() {
+	return this.jdbcTemplate.queryForList("select * from mytable");
+}</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_23_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_23_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">private val jdbcTemplate = JdbcTemplate(dataSource)
+
+fun getList(): List&lt;Map&lt;String, Any&gt;&gt; {
+	return jdbcTemplate.queryForList("select * from mytable")
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The returned list would resemble the following:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>[{name=Bob, id=1}, {name=Mary, id=2}]</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-updates"><a class="anchor" href="#jdbc-updates"></a>Updating the Database</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The following example updates a column for a certain primary key:</p>
+</div>
+<div id="_tabs_24" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_24_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_24_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_24_java--panel" class="tabpanel" aria-labelledby="_tabs_24_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java"><span class="fold-block is-hidden-folded">import javax.sql.DataSource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+</span><span class="fold-block">public class ExecuteAnUpdate {
+
+	private JdbcTemplate jdbcTemplate;
+
+	public void setDataSource(DataSource dataSource) {
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
+	}
+
+	public void setName(int id, String name) {
+		this.jdbcTemplate.update("update mytable set name = ? where id = ?", name, id);
+	}
+}</span></code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_24_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_24_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin"><span class="fold-block is-hidden-folded">import javax.sql.DataSource
+import org.springframework.jdbc.core.JdbcTemplate
+
+</span><span class="fold-block">class ExecuteAnUpdate(dataSource: DataSource) {
+
+	private val jdbcTemplate = JdbcTemplate(dataSource)
+
+	fun setName(id: Int, name: String) {
+		jdbcTemplate.update("update mytable set name = ? where id = ?", name, id)
+	}
+}</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>In the preceding example,
+an SQL statement has placeholders for row parameters. You can pass the parameter values
+in as varargs or, alternatively, as an array of objects. Thus, you should explicitly wrap primitives
+in the primitive wrapper classes, or you should use auto-boxing.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="jdbc-auto-generated-keys"><a class="anchor" href="#jdbc-auto-generated-keys"></a>Retrieving Auto-generated Keys</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An <code>update()</code> convenience method supports the retrieval of primary keys generated by the
+database. This support is part of the JDBC 3.0 standard. See Chapter 13.6 of the
+specification for details. The method takes a <code>PreparedStatementCreator</code> as its first
+argument, and this is the way the required insert statement is specified. The other
+argument is a <code>KeyHolder</code>, which contains the generated key on successful return from the
+update. There is no standard single way to create an appropriate <code>PreparedStatement</code>
+(which explains why the method signature is the way it is). The following example works
+on Oracle but may not work on other platforms:</p>
+</div>
+<div id="_tabs_25" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_25_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_25_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_25_java--panel" class="tabpanel" aria-labelledby="_tabs_25_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">final String INSERT_SQL = "insert into my_test (name) values(?)";
+final String name = "Rob";
+
+KeyHolder keyHolder = new GeneratedKeyHolder();
+jdbcTemplate.update(connection -&gt; {
+	PreparedStatement ps = connection.prepareStatement(INSERT_SQL, new String[] { "id" });
+	ps.setString(1, name);
+	return ps;
+}, keyHolder);
+
+// keyHolder.getKey() now contains the generated key</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_25_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_25_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val INSERT_SQL = "insert into my_test (name) values(?)"
+val name = "Rob"
+
+val keyHolder = GeneratedKeyHolder()
+jdbcTemplate.update({
+	it.prepareStatement (INSERT_SQL, arrayOf("id")).apply { setString(1, name) }
+}, keyHolder)
+
+// keyHolder.getKey() now contains the generated key</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="packages.html">Package Hierarchy</a></span>
+  <span class="next"><a href="connections.html">Controlling Database Connections</a></span>
+</nav>
+</article>  </div>
+</main>
+<div class="modal micromodal-slide" id="modal-versions" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true">
+            <main class="modal__content" id="modal-versions-content">
+              <button data-micromodal-close class="modal-versions-close">
+                <svg width="28px" height="28px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><style>.cls-1h{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1h" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1h" x1="7" x2="25" y1="25" y2="7"/></g></svg>
+              </button>
+              <div class="colset">
+                <div class="col-left">
+
+                  <ul class="nav-versions">
+                      <li class="component">
+                        <div>
+                          <a class="title" href="../../index.html">Spring Framework</a>
+                        </div>                        <div class="version-item is-active">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Stable
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="core.html">
+      7.0.9
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../6.2/data-access/jdbc/core.html">
+      6.2.19
+    </a>
+  </li>
+</ul>                        </div>
+                        <div class="version-item">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Preview
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="../../7.1/data-access/jdbc/core.html">
+      7.1.0-M1
+    </a>
+  </li>
+</ul>                        </div>
+                        <div class="version-item">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Snapshot
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="../../7.1-SNAPSHOT/data-access/jdbc/core.html">
+      7.1.0-SNAPSHOT
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../7.0-SNAPSHOT/data-access/jdbc/core.html">
+      7.0.10-SNAPSHOT
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../6.2-SNAPSHOT/data-access/jdbc/core.html">
+      6.2.20-SNAPSHOT
+    </a>
+  </li>
+</ul>                        </div>
+                        
+                      </li>
+                  </ul>
+                </div>
+                <div class="col-right">
+                  <ul class="projects">
+  <li>
+    Related Spring Documentation
+    <ul class="projects-list">
+        <li>
+<a href="https://docs.spring.io/spring-boot/">
+  Spring Boot
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-framework/reference/">
+  Spring Framework
+</a>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+  Spring Cloud
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-build/reference/">
+  Spring Cloud Build
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-bus/reference/">
+  Spring Cloud Bus
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-circuitbreaker/reference/">
+  Spring Cloud Circuit Breaker
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-commons/reference/">
+  Spring Cloud Commons
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-config/reference/">
+  Spring Cloud Config
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-consul/reference/">
+  Spring Cloud Consul
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-contract/reference/">
+  Spring Cloud Contract
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-function/reference/">
+  Spring Cloud Function
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-gateway/reference/">
+  Spring Cloud Gateway
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-kubernetes/reference/">
+  Spring Cloud Kubernetes
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-netflix/reference/">
+  Spring Cloud Netflix
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-openfeign/reference/">
+  Spring Cloud OpenFeign
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-stream/reference/">
+  Spring Cloud Stream
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-task/reference/">
+  Spring Cloud Task
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-vault/reference/">
+  Spring Cloud Vault
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-zookeeper/reference/">
+  Spring Cloud Zookeeper
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+  Spring Data
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-data/cassandra/reference/">
+  Spring Data Cassandra
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/commons/reference/">
+  Spring Data Commons
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/couchbase/reference/">
+  Spring Data Couchbase
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/elasticsearch/reference/">
+  Spring Data Elasticsearch
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/jpa/reference/">
+  Spring Data JPA
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/keyvalue/reference/">
+  Spring Data KeyValue
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/ldap/reference/">
+  Spring Data LDAP
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/mongodb/reference/">
+  Spring Data MongoDB
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/neo4j/reference/">
+  Spring Data Neo4j
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/redis/reference/">
+  Spring Data Redis
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/relational/reference/">
+  Spring Data JDBC &amp; R2DBC
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/rest/reference/">
+  Spring Data REST
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-integration/reference/">
+  Spring Integration
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-batch/reference/">
+  Spring Batch
+</a>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+<a href="https://docs.spring.io/spring-security/reference/">
+  Spring Security
+</a>
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-authorization-server/reference/">
+  Spring Authorization Server
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-ldap/reference/">
+  Spring LDAP
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-security-kerberos/reference/">
+  Spring Security Kerberos
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-session/reference/">
+  Spring Session
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-vault/reference/">
+  Spring Vault
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-ai/reference/">
+  Spring AI
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-amqp/reference/">
+  Spring AMQP
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-cli/reference/">
+  Spring CLI
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-graphql/reference/">
+  Spring GraphQL
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-kafka/reference/">
+  Spring for Apache Kafka
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-modulith/reference/">
+  Spring Modulith
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-pulsar/reference/">
+  Spring for Apache Pulsar
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-shell/reference/">
+  Spring Shell
+</a>
+</li>
+    </ul>
+  </li
+  <li><a href="../../spring-projects.html">All Docs...</a></li>
+</ul>
+                </div>
+              </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+</div>
+<footer class="footer flex">
+    <div id="spring-links flex">
+        <img id="springlogo" src="../../_/img/spring-logo.svg" alt="Spring">
+        <p class="smallest antialiased">Copyright © 2005 - <script>var d = new Date();
+        document.write(d.getFullYear());</script> Broadcom. All Rights Reserved. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.<br /><a href="https://www.vmware.com/help/legal.html">Terms of Use</a> • <a href="https://www.vmware.com/help/privacy.html" rel="noopener noreferrer">Privacy</a> • <a href="https://spring.io/trademarks">Trademark Guidelines</a> <span id="thank-you-mobile">• <a href="https://spring.io/thank-you">Thank you</a></span> • <a href="https://www.vmware.com/help/privacy/california-privacy-rights.html">Your California Privacy Rights</a> • <a class="ot-sdk-show-settings">Cookie Settings</a> <span id="teconsent"></span></p>
+        <p class="smallest antialiased has-gray-text">Apache®, Apache Tomcat®, Apache Kafka®, Apache Cassandra&trade;, and Apache Geode&trade; are trademarks or registered trademarks of the Apache Software Foundation in the United States and/or other countries. Java&trade;, Java&trade; SE, Java&trade; EE, and OpenJDK&trade; are trademarks of Oracle and/or its affiliates. Kubernetes® is a registered trademark of the Linux Foundation in the United States and other countries. Linux® is the registered trademark of Linus Torvalds in the United States and other countries. Windows® and Microsoft® Azure are registered trademarks of Microsoft Corporation. “AWS” and “Amazon Web Services” are trademarks or registered trademarks of Amazon.com Inc. or its affiliates. All other trademarks and copyrights are property of their respective owners and are only mentioned for informative purposes. Other names may be trademarks of their respective owners.</p>
+    </div>
+    <div id="social-icons" class="flex jc-between">
+        <a href="https://www.youtube.com/user/SpringSourceDev" title="Youtube"><svg id="youtube-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle class="cls-1" cx="20" cy="20" r="20"/><path class="cls-2" d="M30.91,14.53a2.89,2.89,0,0,0-2-2C27.12,12,20,12,20,12s-7.12,0-8.9.47a2.9,2.9,0,0,0-2,2A30.56,30.56,0,0,0,8.63,20a30.44,30.44,0,0,0,.46,5.47,2.89,2.89,0,0,0,2,2C12.9,28,20,28,20,28s7.12,0,8.9-.47a2.87,2.87,0,0,0,2-2A30.56,30.56,0,0,0,31.37,20,28.88,28.88,0,0,0,30.91,14.53ZM17.73,23.41V16.59L23.65,20Z"/></svg></a>
+        <a href="https://github.com/spring-projects" title="GitHub"><svg id="github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.93 75.93"><path class="cls-1" d="M38,0a38,38,0,1,0,38,38A38,38,0,0,0,38,0Z"/></g><path class="cls-2" d="M38,15.59A22.95,22.95,0,0,0,30.71,60.3c1.15.21,1.57-.5,1.57-1.11s0-2,0-3.9c-6.38,1.39-7.73-3.07-7.73-3.07A6.09,6.09,0,0,0,22,48.86c-2.09-1.42.15-1.39.15-1.39a4.81,4.81,0,0,1,3.52,2.36c2,3.5,5.37,2.49,6.67,1.91a4.87,4.87,0,0,1,1.46-3.07c-5.09-.58-10.45-2.55-10.45-11.34a8.84,8.84,0,0,1,2.36-6.15,8.29,8.29,0,0,1,.23-6.07s1.92-.62,6.3,2.35a21.82,21.82,0,0,1,11.49,0c4.38-3,6.3-2.35,6.3-2.35a8.29,8.29,0,0,1,.23,6.07,8.84,8.84,0,0,1,2.36,6.15c0,8.81-5.37,10.75-10.48,11.32a5.46,5.46,0,0,1,1.56,4.25c0,3.07,0,5.54,0,6.29s.42,1.33,1.58,1.1A22.94,22.94,0,0,0,38,15.59Z"/></svg></a>
+        <a href="https://twitter.com/springcentral" title="Twitter"><svg id="twitter-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.93 75.93"><circle class="cls-1" cx="37.97" cy="37.97" r="37.97"/><path id="Twitter-2" data-name="Twitter" class="cls-2" d="M55.2,22.73a15.43,15.43,0,0,1-4.88,1.91,7.56,7.56,0,0,0-5.61-2.49A7.78,7.78,0,0,0,37,30a7.56,7.56,0,0,0,.2,1.79,21.63,21.63,0,0,1-15.84-8.23,8,8,0,0,0,2.37,10.52,7.66,7.66,0,0,1-3.48-1v.09A7.84,7.84,0,0,0,26.45,41a7.54,7.54,0,0,1-2,.28A7.64,7.64,0,0,1,23,41.09a7.71,7.71,0,0,0,7.18,5.47,15.21,15.21,0,0,1-9.55,3.37,15.78,15.78,0,0,1-1.83-.11,21.41,21.41,0,0,0,11.78,3.54c14.13,0,21.86-12,21.86-22.42,0-.34,0-.68,0-1a15.67,15.67,0,0,0,3.83-4.08,14.9,14.9,0,0,1-4.41,1.24A7.8,7.8,0,0,0,55.2,22.73Z"/></svg></a>
+    </div>
+</footer>
+<script src="../../_/js/vendor/import.js"></script>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/asciidoctor-tabs.js" data-sync-storage-key="docs:preferred-tab"></script>
+
+<div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <main class="modal__content" id="modal-1-content">
+                <div id="searchbox"></div>
+                <div id="counter"></div>
+                <div class="search-link-box">
+                    <a class="search-link" href="../../search.html">Search in all Spring Docs</a>
+                </div>
+                <div class="search-by">
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.algolia.com/" aria-label="Search by Algolia">
+                        <img class="light" width="140" src="../../_/img/algolia-light.svg" />
+                        <img class="dark" width="140" src="../../_/img/algolia-dark.svg" />
+                    </a>
+                </div>
+                <div id="hits"></div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script src="../../_/js/vendor/hotkeys.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.17.0/dist/algoliasearch-lite.umd.js" integrity="sha256-Lf9DrpGmcRip6OQzbcL6lnvNmoZNSKpyQX5pMlwatWE=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.54.1/dist/instantsearch.production.min.js" integrity="sha256-xYsZPDeNjYNTBWLvqD2Lxe98hOxcDgOHyMPfz4tVAbk=" crossorigin="anonymous"></script>
+<script async id="search-script" src="../../_/js/vendor/search.js" data-app-id="WB1FQYI187" data-api-key="c2e84f15fa630d534f1c62b1c413bb77" data-index-name="springdocs" data-stylesheet="../../_/css/vendor/search.css" data-page-version="7.0.9" data-page-generation="7.0" data-page-component="framework"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"bffcb8a918ae4755926f76178bfbd26b","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

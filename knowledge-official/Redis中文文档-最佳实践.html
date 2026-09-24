@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head><base href="https://redis.com.cn/topics/redis-best-practices.html">
+<meta charset='utf-8'>
+<title>Redis 最佳实践</title>
+<meta content='Redis 最佳实践 - Redis中文学习网提供Redis教程、命令手册、安装配置、性能优化、集群搭建等中文文档。' name='Description'>
+<meta content='Redis 最佳实践,Redis,Redis教程,Redis命令,Redis中文文档' name='keywords'>
+<link href='https://redis.com.cn' rel='canonical'>
+<meta content='index, follow' name='robots'>
+<meta content='Redis 最佳实践' property='og:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' property='og:description'>
+<meta content='website' property='og:type'>
+<meta content='https://redis.com.cn' property='og:url'>
+<meta content='summary' name='twitter:card'>
+<meta content='Redis 最佳实践' name='twitter:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' name='twitter:description'>
+<link href='/styles.css' rel='stylesheet'>
+<link href='/search.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css' rel='stylesheet'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+  });
+</script>
+<link href='/images/favicon.png' rel='shortcut icon'>
+<meta content='width=device-width, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+</head>
+<body class='topics redis-best-practices'>
+<div class='mobile-menu slideout-menu'>
+<header class='menu-header'></header>
+<section class='menu-section'>
+<ul class='menu-section-list'>
+<li>
+<a class='home' href='/'>首页</a>
+</li>
+<li>
+<a href='/commands.html'>Redis 命令</a>
+</li>
+<li>
+<a href='/management.html'>Redis 管理</a>
+</li>
+<li>
+<a href='/tutorial.html'>Redis 教程</a>
+</li>
+<li>
+<a href='/documentation.html'>Redis 进阶</a>
+</li>
+<li>
+<a href='/clients.html'>Redis 客户端　</a>
+</li>
+<li>
+<a href='/download.html'>Redis 下载</a>
+</li>
+</ul>
+</section>
+</div>
+<div class='site-wrapper'>
+<header class='site-header'>
+<nav class='container'>
+<div class='mobile-header'>
+<button class='btn-hamburger js-slideout-toggle'>
+<span class='fa fa-bars'></span>
+</button>
+<a class='home' href='/'>&nbsp;</a>
+</div>
+<div class='desktop-header'>
+<a class='home' href='/'>首页</a>
+<a href='/commands.html' title='Redis命令手册'>Redis 命令</a>
+<a href='/management.html'>Redis 管理</a>
+<a href='/tutorial.html'>Redis 教程</a>
+<a href='/documentation.html'>Redis 进阶</a>
+<a href='/clients.html'>Redis 客户端</a>
+<a href='/download.html'>Redis 下载</a>
+<a href='/best-practices.html'>最佳实践</a>
+<form action='/search' class='search-form' method='get'>
+<div class='search-input-wrapper'>
+<input name='q' placeholder='搜索命令、教程...' type='text'>
+<button class='search-btn' type='submit'>
+<i class='fa fa-search'></i>
+</button>
+</div>
+</form>
+</div>
+</nav>
+</header>
+<div class='site-content'>
+<div class='text'>
+<article id='topic'>
+<span id="redis-最佳实践" class=anchor></span><h1><a href="#redis-最佳实践" class=anchor-link>*</a>Redis 最佳实践</h1>
+
+<span id="概述" class=anchor></span><h2><a href="#概述" class=anchor-link>*</a>概述</h2>
+
+<p>本文档总结 Redis 在实际项目中的最佳实践，帮助开发者避免常见问题，提高系统稳定性和性能。</p>
+
+<span id="键设计规范" class=anchor></span><h2><a href="#键设计规范" class=anchor-link>*</a>键设计规范</h2>
+
+<span id="1-命名规范" class=anchor></span><h3><a href="#1-命名规范" class=anchor-link>*</a>1. 命名规范</h3>
+
+<p>使用冒号分隔的层级命名，便于管理和查询：</p>
+
+<pre><code># 用户相关
+user:1000:profile
+user:1000:settings
+user:1000:session
+
+# 订单相关
+order:2024:10001
+order:2024:10002
+</code></pre>
+
+<span id="2-设置过期时间" class=anchor></span><h3><a href="#2-设置过期时间" class=anchor-link>*</a>2. 设置过期时间</h3>
+
+<p>为临时数据设置合理的过期时间：</p>
+
+<pre><code>SET session:abc123 &quot;user_data&quot; EX 3600
+SET cache:product:1001 &quot;product_data&quot; EX 300
+</code></pre>
+
+<span id="3-避免大键" class=anchor></span><h3><a href="#3-避免大键" class=anchor-link>*</a>3. 避免大键</h3>
+
+<p>单个键值不宜过大，建议：</p>
+
+<ul>
+<li>String 类型值不超过 10KB</li>
+<li>Hash、List、Set、ZSet 元素数量不超过 5000</li>
+</ul>
+
+<span id="数据类型选择" class=anchor></span><h2><a href="#数据类型选择" class=anchor-link>*</a>数据类型选择</h2>
+
+<span id="1-字符串string" class=anchor></span><h3><a href="#1-字符串string" class=anchor-link>*</a>1. 字符串（String）</h3>
+
+<p>适用场景：</p>
+
+<ul>
+<li>缓存对象</li>
+<li>计数器</li>
+<li>分布式锁</li>
+<li>Session 存储</li>
+</ul>
+
+<pre><code>SET page:view:1001 100
+INCR page:view:1001
+SETNX lock:resource:1001 &quot;owner_id&quot; EX 30
+</code></pre>
+
+<span id="2-哈希hash" class=anchor></span><h3><a href="#2-哈希hash" class=anchor-link>*</a>2. 哈希（Hash）</h3>
+
+<p>适用场景：</p>
+
+<ul>
+<li>存储对象属性</li>
+<li>购物车数据</li>
+<li>用户信息</li>
+</ul>
+
+<pre><code>HSET cart:user:1001 product:2001 2
+HGETALL cart:user:1001
+</code></pre>
+
+<span id="3-列表list" class=anchor></span><h3><a href="#3-列表list" class=anchor-link>*</a>3. 列表（List）</h3>
+
+<p>适用场景：</p>
+
+<ul>
+<li>消息队列</li>
+<li>时间线</li>
+<li>最新 N 条数据</li>
+</ul>
+
+<pre><code>LPUSH timeline:user:1001 &quot;post:5001&quot;
+LRANGE timeline:user:1001 0 9
+</code></pre>
+
+<span id="4-集合set" class=anchor></span><h3><a href="#4-集合set" class=anchor-link>*</a>4. 集合（Set）</h3>
+
+<p>适用场景：</p>
+
+<ul>
+<li>标签系统</li>
+<li>共同好友</li>
+<li>去重统计</li>
+</ul>
+
+<pre><code>SADD tags:post:1001 &quot;redis&quot;
+SADD tags:post:1001 &quot;database&quot;
+SINTER tags:post:1001 tags:post:1002
+</code></pre>
+
+<span id="5-有序集合sorted-set" class=anchor></span><h3><a href="#5-有序集合sorted-set" class=anchor-link>*</a>5. 有序集合（Sorted Set）</h3>
+
+<p>适用场景：</p>
+
+<ul>
+<li>排行榜</li>
+<li>延迟队列</li>
+<li>范围查询</li>
+</ul>
+
+<pre><code>ZADD leaderboard 1000 &quot;user:1001&quot;
+ZADD leaderboard 950 &quot;user:1002&quot;
+ZREVRANGE leaderboard 0 9 WITHSCORES
+</code></pre>
+
+<span id="安全实践" class=anchor></span><h2><a href="#安全实践" class=anchor-link>*</a>安全实践</h2>
+
+<span id="1-设置密码" class=anchor></span><h3><a href="#1-设置密码" class=anchor-link>*</a>1. 设置密码</h3>
+
+<pre><code>requirepass your_strong_password
+</code></pre>
+
+<span id="2-绑定指定-ip" class=anchor></span><h3><a href="#2-绑定指定-ip" class=anchor-link>*</a>2. 绑定指定 IP</h3>
+
+<pre><code>bind 127.0.0.1 192.168.1.100
+</code></pre>
+
+<span id="3-禁用危险命令" class=anchor></span><h3><a href="#3-禁用危险命令" class=anchor-link>*</a>3. 禁用危险命令</h3>
+
+<pre><code>rename-command FLUSHALL &quot;&quot;
+rename-command FLUSHDB &quot;&quot;
+rename-command CONFIG &quot;config_b9f2a3&quot;
+</code></pre>
+
+<span id="4-使用-aclredis-60-" class=anchor></span><h3><a href="#4-使用-aclredis-60-" class=anchor-link>*</a>4. 使用 ACL（Redis 6.0+）</h3>
+
+<pre><code>ACL SETUSER app_user on &gt;app_password ~app:* +get +set +del
+</code></pre>
+
+<span id="高可用实践" class=anchor></span><h2><a href="#高可用实践" class=anchor-link>*</a>高可用实践</h2>
+
+<span id="1-主从复制配置" class=anchor></span><h3><a href="#1-主从复制配置" class=anchor-link>*</a>1. 主从复制配置</h3>
+
+<pre><code># 从节点
+replicaof 192.168.1.100 6379
+masterauth your_password
+</code></pre>
+
+<span id="2-哨兵配置" class=anchor></span><h3><a href="#2-哨兵配置" class=anchor-link>*</a>2. 哨兵配置</h3>
+
+<pre><code>sentinel monitor mymaster 192.168.1.100 6379 2
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 10000
+</code></pre>
+
+<span id="3-集群配置" class=anchor></span><h3><a href="#3-集群配置" class=anchor-link>*</a>3. 集群配置</h3>
+
+<pre><code>cluster-enabled yes
+cluster-config-file nodes-6379.conf
+cluster-node-timeout 5000
+cluster-require-full-coverage no
+</code></pre>
+
+<span id="缓存设计模式" class=anchor></span><h2><a href="#缓存设计模式" class=anchor-link>*</a>缓存设计模式</h2>
+
+<span id="1-缓存穿透防护" class=anchor></span><h3><a href="#1-缓存穿透防护" class=anchor-link>*</a>1. 缓存穿透防护</h3>
+
+<p>使用布隆过滤器或空值缓存：</p>
+
+<pre><code class="python"># 空值缓存
+if not data:
+    redis.set(f&quot;null:{key}&quot;, &quot;1&quot;, ex=60)
+</code></pre>
+
+<span id="2-缓存击穿防护" class=anchor></span><h3><a href="#2-缓存击穿防护" class=anchor-link>*</a>2. 缓存击穿防护</h3>
+
+<p>使用互斥锁或热点数据永不过期：</p>
+
+<pre><code class="python"># 互斥锁
+if not redis.setnx(f&quot;lock:{key}&quot;, &quot;1&quot;, ex=10):
+    return cache_data
+</code></pre>
+
+<span id="3-缓存雪崩防护" class=anchor></span><h3><a href="#3-缓存雪崩防护" class=anchor-link>*</a>3. 缓存雪崩防护</h3>
+
+<p>设置随机过期时间：</p>
+
+<pre><code class="python">import random
+expire_time = 300 + random.randint(0, 60)
+redis.set(key, value, ex=expire_time)
+</code></pre>
+
+<span id="监控告警" class=anchor></span><h2><a href="#监控告警" class=anchor-link>*</a>监控告警</h2>
+
+<span id="1-关键指标监控" class=anchor></span><h3><a href="#1-关键指标监控" class=anchor-link>*</a>1. 关键指标监控</h3>
+
+<ul>
+<li>内存使用率</li>
+<li>连接数</li>
+<li>命令执行时间</li>
+<li>命中率</li>
+<li>复制延迟</li>
+</ul>
+
+<span id="2-告警阈值设置" class=anchor></span><h3><a href="#2-告警阈值设置" class=anchor-link>*</a>2. 告警阈值设置</h3>
+
+<pre><code># 内存使用率超过 80%
+# 连接数超过 10000
+# 慢查询超过 10ms
+# 复制延迟超过 1 秒
+</code></pre>
+
+<span id="常见问题" class=anchor></span><h2><a href="#常见问题" class=anchor-link>*</a>常见问题</h2>
+
+<span id="1-内存不足" class=anchor></span><h3><a href="#1-内存不足" class=anchor-link>*</a>1. 内存不足</h3>
+
+<ul>
+<li>检查是否有大键</li>
+<li>调整 maxmemory-policy</li>
+<li>增加物理内存或使用集群</li>
+</ul>
+
+<span id="2-连接数过多" class=anchor></span><h3><a href="#2-连接数过多" class=anchor-link>*</a>2. 连接数过多</h3>
+
+<ul>
+<li>使用连接池</li>
+<li>调整 timeout 配置</li>
+<li>检查是否有连接泄漏</li>
+</ul>
+
+<span id="3-性能下降" class=anchor></span><h3><a href="#3-性能下降" class=anchor-link>*</a>3. 性能下降</h3>
+
+<ul>
+<li>检查慢查询日志</li>
+<li>分析命令使用模式</li>
+<li>考虑使用 Pipeline</li>
+</ul>
+
+<span id="总结" class=anchor></span><h2><a href="#总结" class=anchor-link>*</a>总结</h2>
+
+<p>遵循以上最佳实践，可以帮助您构建稳定、高效、安全的 Redis 应用。建议定期审查配置和使用模式，持续优化系统性能。</p>
+
+<div class="wikiPrevNextLinks">
+  <a href="/topics/redis-config.html" class="preLinks"><i style="font-size:16px;margin-right:2px;" class="fa fa-arrow-left" aria-hidden="true"></i>Redis配置详解</a>
+  <a href="/topics/redis-performance-tuning.html" class="nextLinks">Redis性能优化<i style="font-size:16px;margin-left:2px" class="fa fa-arrow-right" aria-hidden="true"></i></a>
+</div>
+
+</article>
+</div>
+</div>
+
+<footer class='site-footer'>
+<div class='container'>
+<p>
+本站关于Redis的资料和教程整理或翻译自网络，内容或翻译不正确的地方欢迎大家指出。
+</p>
+<p>
+联系方式:
+<a class='social weixin' href='javascript:'>
+<img class='qrcode' src='https://redis.com.cn/wp-content/uploads/2019/06/标准二维码.jpg'>微信号</img>
+</a>
+</p>
+</div>
+</footer>
+</div>
+<script src='https://libs.baidu.com/jquery/1.4.3/jquery.min.js'></script>
+<script src='/app.js?1606485746'></script>
+<script src='/search.js'></script>
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?365afc578d51b66b6cc9104a0598015a";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+</body>
+</html>

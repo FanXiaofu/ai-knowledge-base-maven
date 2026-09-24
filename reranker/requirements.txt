@@ -1,0 +1,3 @@
+﻿fastapi
+uvicorn[standard]
+FlagEmbedding==1.4.2

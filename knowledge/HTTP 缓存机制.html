@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head><title>HTTP 缓存机制</title></head>
+<body>
+<div class="doc">
+  <h1>HTTP 缓存机制</h1>
+  <p>HTTP 缓存通过在中间或客户端保存资源副本，减少重复的网络请求和服务器压力，是 Web 性能优化的第一道防线
+  <div class="section">
+    <h2>强缓存</h2>
+    <p>强缓存由 Cache-Control 响应头控制，命中时浏览器直接使用本地副本，不会发起请求
+    <p>常用指令：max-age 设置副本有效秒数，no-cache 表示可以使用但必须协商验证，no-store 表示完全不缓存，private 只允许浏览器缓存，public 允许中间代理缓存
+    <p>Expires 是 HTTP/1.0 的旧头部，使用绝对时间，受客户端时钟影响，已被 Cache-Control 取代
+  </div>
+  <div class="section">
+    <h2>协商缓存</h2>
+    <p>强缓存过期后，浏览器发起条件请求向服务器验证副本是否仍然有效，有效则返回 304，浏览器继续使用本地副本
+    <p>协商缓存有两组头：服务器返回 ETag 标识资源版本，浏览器下次通过 If-None-Match 携带该值；服务器返回 Last-Modified 修改时间，浏览器通过 If-Modified-Since 携带
+    <p>ETag 优先级高于 Last-Modified，因为 ETag 能感知内容变化，而修改时间只精确到秒
+  </div>
+  <h2>常用头部速查</h2>
+  <table>
+    <tr><th>头部</th><th>方向</th><th>作用</th></tr>
+    <tr><td>Cache-Control: max-age</td><td>响应</td><td>设置强缓存有效期</td></tr>
+    <tr><td>ETag</td><td>响应</td><td>资源版本指纹</td></tr>
+    <tr><td>If-None-Match</td><td>请求</td><td>携带 ETag 参与协商</td></tr>
+    <tr><td>Last-Modified</td><td>响应</td><td>最后修改时间</td></tr>
+  </table>
+  <h2>缓存实践建议</h2>
+  <p>带文件名指纹的静态资源可以设置超长强缓存，内容变更时更换文件名强制更新
+  <p>HTML 入口页面建议使用 no-cache 走协商缓存，保证用户总能拿到最新的资源引用
+</div>
+</body>
+</html>

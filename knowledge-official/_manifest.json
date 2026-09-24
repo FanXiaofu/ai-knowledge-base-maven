@@ -1,0 +1,312 @@
+{
+  "total": 76,
+  "success": 0,
+  "skipped": 76,
+  "failed": 0,
+  "files": [
+    {
+      "label": "SpringBoot官方文档-SpringApplication启动",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/spring-application.html"
+    },
+    {
+      "label": "SpringBoot官方文档-外部化配置",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/external-config.html"
+    },
+    {
+      "label": "SpringBoot官方文档-配置Profiles",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/profiles.html"
+    },
+    {
+      "label": "SpringBoot官方文档-日志管理",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/logging.html"
+    },
+    {
+      "label": "SpringBoot官方文档-AOP支持",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/aop.html"
+    },
+    {
+      "label": "SpringBoot官方文档-JSON处理",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/json.html"
+    },
+    {
+      "label": "SpringBoot官方文档-任务执行与调度",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/task-execution-and-scheduling.html"
+    },
+    {
+      "label": "SpringBoot官方文档-自动配置原理",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/features/developing-auto-configuration.html"
+    },
+    {
+      "label": "SpringBoot官方文档-参数校验",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/io/validation.html"
+    },
+    {
+      "label": "SpringBoot官方文档-缓存抽象",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/io/caching.html"
+    },
+    {
+      "label": "SpringBoot官方文档-REST客户端",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/io/rest-client.html"
+    },
+    {
+      "label": "SpringBoot官方文档-数据库访问",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/data/sql.html"
+    },
+    {
+      "label": "SpringBoot官方文档-NoSQL访问",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/data/nosql.html"
+    },
+    {
+      "label": "SpringBoot官方文档-RabbitMQ集成",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/messaging/amqp.html"
+    },
+    {
+      "label": "SpringBoot官方文档-Kafka集成",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/messaging/kafka.html"
+    },
+    {
+      "label": "SpringBoot官方文档-WebServlet应用",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/web/servlet.html"
+    },
+    {
+      "label": "SpringBoot官方文档-优雅停机",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/web/graceful-shutdown.html"
+    },
+    {
+      "label": "SpringBoot官方文档-Actuator端点",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/actuator/endpoints.html"
+    },
+    {
+      "label": "SpringBoot官方文档-指标监控",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/actuator/metrics.html"
+    },
+    {
+      "label": "SpringBoot官方文档-链路追踪",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/actuator/tracing.html"
+    },
+    {
+      "label": "SpringBoot官方文档-容器镜像构建",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/packaging/container-images/dockerfiles.html"
+    },
+    {
+      "label": "SpringBoot官方文档-安全与认证",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/web/spring-security.html"
+    },
+    {
+      "label": "SpringBoot官方文档-WebSocket支持",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/messaging/websockets.html"
+    },
+    {
+      "label": "SpringBoot官方文档-Quartz定时任务",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/io/quartz.html"
+    },
+    {
+      "label": "SpringBoot官方文档-批处理",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/io/spring-batch.html"
+    },
+    {
+      "label": "SpringBoot官方文档-可观测性",
+      "url": "https://docs.spring.io/spring-boot/4.1/reference/actuator/observability.html"
+    },
+    {
+      "label": "Spring框架官方文档-IoC容器",
+      "url": "https://docs.spring.io/spring-framework/reference/core/beans.html"
+    },
+    {
+      "label": "Spring框架官方文档-注解配置",
+      "url": "https://docs.spring.io/spring-framework/reference/core/beans/annotation-config.html"
+    },
+    {
+      "label": "Spring框架官方文档-BeanFactory",
+      "url": "https://docs.spring.io/spring-framework/reference/core/beans/beanfactory.html"
+    },
+    {
+      "label": "Spring框架官方文档-Bean作用域",
+      "url": "https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html"
+    },
+    {
+      "label": "Spring框架官方文档-依赖注入细节",
+      "url": "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html"
+    },
+    {
+      "label": "Spring框架官方文档-AOP面向切面",
+      "url": "https://docs.spring.io/spring-framework/reference/core/aop.html"
+    },
+    {
+      "label": "Spring框架官方文档-资源管理",
+      "url": "https://docs.spring.io/spring-framework/reference/core/resources.html"
+    },
+    {
+      "label": "Spring框架官方文档-数据校验",
+      "url": "https://docs.spring.io/spring-framework/reference/core/validation.html"
+    },
+    {
+      "label": "Spring框架官方文档-SpEL表达式",
+      "url": "https://docs.spring.io/spring-framework/reference/core/expressions.html"
+    },
+    {
+      "label": "Spring框架官方文档-事务管理",
+      "url": "https://docs.spring.io/spring-framework/reference/data-access/transaction.html"
+    },
+    {
+      "label": "Spring框架官方文档-声明式事务",
+      "url": "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative.html"
+    },
+    {
+      "label": "Spring框架官方文档-JDBC访问",
+      "url": "https://docs.spring.io/spring-framework/reference/data-access/jdbc.html"
+    },
+    {
+      "label": "Spring框架官方文档-SpringMVC",
+      "url": "https://docs.spring.io/spring-framework/reference/web/webmvc.html"
+    },
+    {
+      "label": "Spring框架官方文档-控制器实现",
+      "url": "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller.html"
+    },
+    {
+      "label": "Spring框架官方文档-单元测试",
+      "url": "https://docs.spring.io/spring-framework/reference/testing/unit.html"
+    },
+    {
+      "label": "Spring框架官方文档-REST客户端",
+      "url": "https://docs.spring.io/spring-framework/reference/integration/rest-clients.html"
+    },
+    {
+      "label": "MySQL中文教程-索引",
+      "url": "https://www.runoob.com/mysql/mysql-index.html"
+    },
+    {
+      "label": "MySQL中文教程-事务",
+      "url": "https://www.runoob.com/mysql/mysql-transaction.html"
+    },
+    {
+      "label": "MySQL中文教程-数据类型",
+      "url": "https://www.runoob.com/mysql/mysql-data-types.html"
+    },
+    {
+      "label": "MySQL中文教程-连接查询",
+      "url": "https://www.runoob.com/mysql/mysql-join.html"
+    },
+    {
+      "label": "MySQL中文教程-SQL注入防护",
+      "url": "https://www.runoob.com/mysql/mysql-sql-injection.html"
+    },
+    {
+      "label": "MySQL中文教程-数据库管理",
+      "url": "https://www.runoob.com/mysql/mysql-administration.html"
+    },
+    {
+      "label": "MySQL中文教程-常用函数",
+      "url": "https://www.runoob.com/mysql/mysql-functions.html"
+    },
+    {
+      "label": "MySQL中文教程-修改表结构",
+      "url": "https://www.runoob.com/mysql/mysql-alter.html"
+    },
+    {
+      "label": "MySQL中文教程-重复数据处理",
+      "url": "https://www.runoob.com/mysql/mysql-handling-duplicates.html"
+    },
+    {
+      "label": "MySQL中文教程-创建数据表",
+      "url": "https://www.runoob.com/mysql/mysql-create-tables.html"
+    },
+    {
+      "label": "MySQL中文教程-运算符",
+      "url": "https://www.runoob.com/mysql/mysql-operator.html"
+    },
+    {
+      "label": "MySQL中文教程-正则表达式",
+      "url": "https://www.runoob.com/mysql/mysql-regexp.html"
+    },
+    {
+      "label": "RabbitMQ官方文档-队列",
+      "url": "https://www.rabbitmq.com/docs/queues"
+    },
+    {
+      "label": "RabbitMQ官方文档-交换机",
+      "url": "https://www.rabbitmq.com/docs/exchanges"
+    },
+    {
+      "label": "RabbitMQ官方文档-死信队列",
+      "url": "https://www.rabbitmq.com/docs/dlx"
+    },
+    {
+      "label": "RabbitMQ官方文档-消息过期时间",
+      "url": "https://www.rabbitmq.com/docs/ttl"
+    },
+    {
+      "label": "RabbitMQ官方文档-发布者确认",
+      "url": "https://www.rabbitmq.com/docs/confirms"
+    },
+    {
+      "label": "RabbitMQ官方文档-消费者",
+      "url": "https://www.rabbitmq.com/docs/consumers"
+    },
+    {
+      "label": "RabbitMQ官方文档-集群",
+      "url": "https://www.rabbitmq.com/docs/clustering"
+    },
+    {
+      "label": "RabbitMQ官方文档-内存管理",
+      "url": "https://www.rabbitmq.com/docs/memory"
+    },
+    {
+      "label": "Redis中文文档-数据类型",
+      "url": "https://redis.com.cn/topics/data-types-intro.html"
+    },
+    {
+      "label": "Redis中文文档-持久化",
+      "url": "https://redis.com.cn/topics/persistence.html"
+    },
+    {
+      "label": "Redis中文文档-主从复制",
+      "url": "https://redis.com.cn/topics/replication.html"
+    },
+    {
+      "label": "Redis中文文档-哨兵",
+      "url": "https://redis.com.cn/topics/sentinel.html"
+    },
+    {
+      "label": "Redis中文文档-集群规范",
+      "url": "https://redis.com.cn/topics/cluster-spec.html"
+    },
+    {
+      "label": "Redis中文文档-集群教程",
+      "url": "https://redis.com.cn/topics/cluster-tutorial.html"
+    },
+    {
+      "label": "Redis中文文档-分布式锁",
+      "url": "https://redis.com.cn/topics/distlock.html"
+    },
+    {
+      "label": "Redis中文文档-事务",
+      "url": "https://redis.com.cn/topics/transactions.html"
+    },
+    {
+      "label": "Redis中文文档-发布订阅",
+      "url": "https://redis.com.cn/topics/pubsub.html"
+    },
+    {
+      "label": "Redis中文文档-内存淘汰策略",
+      "url": "https://redis.com.cn/topics/lru-cache.html"
+    },
+    {
+      "label": "Redis中文文档-缓存问题",
+      "url": "https://redis.com.cn/topics/redis-cache-problems.html"
+    },
+    {
+      "label": "Redis中文文档-管道",
+      "url": "https://redis.com.cn/topics/pipelining.html"
+    },
+    {
+      "label": "Redis中文文档-最佳实践",
+      "url": "https://redis.com.cn/topics/redis-best-practices.html"
+    },
+    {
+      "label": "Redis中文文档-内存优化",
+      "url": "https://redis.com.cn/topics/memory-optimization.html"
+    }
+  ]
+}

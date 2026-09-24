@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head><title>Kubernetes 基础概念</title></head>
+<body>
+<h1>Kubernetes 基础概念</h1>
+<p>Kubernetes 是容器编排平台，负责容器的部署、伸缩、自愈和滚动升级
+<div class="intro">
+  <h2>Pod</h2>
+  <p>Pod 是最小的调度单元，一个 Pod 包含一个或多个共享网络和存储的容器
+  <p>同一个 Pod 内的容器通过 localhost 互相访问，生命周期一致，适合强关联的边车模式
+  <div class="detail">
+    <h2>Deployment</h2>
+    <p>Deployment 声明期望的副本数和镜像版本，控制器持续对比实际状态与期望状态，自动拉起失败的实例
+    <p>滚动更新逐批替换旧实例，保证升级过程中服务不中断，异常时可以一键回滚到上一个版本
+  </div>
+</div>
+<h2>核心对象速查</h2>
+<table>
+  <tr><th>对象</th><th>作用</th></tr>
+  <tr><td>Pod</td><td>最小调度单元</td></tr>
+  <tr><td>Deployment</td><td>管理副本与滚动更新</td></tr>
+  <tr><td>Service</td><td>为一组 Pod 提供稳定访问入口</td></tr>
+  <tr><td>ConfigMap</td><td>注入配置文件与环境变量</td></tr>
+  <tr><td>Ingress</td><td>七层路由，把外部流量转发到 Service</td></tr>
+</table>
+<h2>Service 与网络</h2>
+<p>Pod 的 IP 会随重建变化，Service 通过标签选择器关联一组 Pod 并提供固定的虚拟 IP 和 DNS 名称
+<p>Service 类型中 ClusterIP 仅供集群内部访问，NodePort 在每个节点打开端口，LoadBalancer 对接云厂商负载均衡器
+<p>控制面负责调度和决策，节点上的 kubelet 负责执行，二者配合实现声明式的容器编排
+</body>
+</html>

@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head><base href="https://redis.com.cn/topics/cluster-spec.html">
+<meta charset='utf-8'>
+<title>Redis 集群规范</title>
+<meta content='Redis 集群规范 - Redis中文学习网提供Redis教程、命令手册、安装配置、性能优化、集群搭建等中文文档。' name='Description'>
+<meta content='Redis 集群规范,Redis,Redis教程,Redis命令,Redis中文文档' name='keywords'>
+<link href='https://redis.com.cn' rel='canonical'>
+<meta content='index, follow' name='robots'>
+<meta content='Redis 集群规范' property='og:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' property='og:description'>
+<meta content='website' property='og:type'>
+<meta content='https://redis.com.cn' property='og:url'>
+<meta content='summary' name='twitter:card'>
+<meta content='Redis 集群规范' name='twitter:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' name='twitter:description'>
+<link href='/styles.css' rel='stylesheet'>
+<link href='/search.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css' rel='stylesheet'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+  });
+</script>
+<link href='/images/favicon.png' rel='shortcut icon'>
+<meta content='width=device-width, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+</head>
+<body class='topics cluster-spec'>
+<div class='mobile-menu slideout-menu'>
+<header class='menu-header'></header>
+<section class='menu-section'>
+<ul class='menu-section-list'>
+<li>
+<a class='home' href='/'>首页</a>
+</li>
+<li>
+<a href='/commands.html'>Redis 命令</a>
+</li>
+<li>
+<a href='/management.html'>Redis 管理</a>
+</li>
+<li>
+<a href='/tutorial.html'>Redis 教程</a>
+</li>
+<li>
+<a href='/documentation.html'>Redis 进阶</a>
+</li>
+<li>
+<a href='/clients.html'>Redis 客户端　</a>
+</li>
+<li>
+<a href='/download.html'>Redis 下载</a>
+</li>
+</ul>
+</section>
+</div>
+<div class='site-wrapper'>
+<header class='site-header'>
+<nav class='container'>
+<div class='mobile-header'>
+<button class='btn-hamburger js-slideout-toggle'>
+<span class='fa fa-bars'></span>
+</button>
+<a class='home' href='/'>&nbsp;</a>
+</div>
+<div class='desktop-header'>
+<a class='home' href='/'>首页</a>
+<a href='/commands.html' title='Redis命令手册'>Redis 命令</a>
+<a href='/management.html'>Redis 管理</a>
+<a href='/tutorial.html'>Redis 教程</a>
+<a href='/documentation.html'>Redis 进阶</a>
+<a href='/clients.html'>Redis 客户端</a>
+<a href='/download.html'>Redis 下载</a>
+<a href='/best-practices.html'>最佳实践</a>
+<form action='/search' class='search-form' method='get'>
+<div class='search-input-wrapper'>
+<input name='q' placeholder='搜索命令、教程...' type='text'>
+<button class='search-btn' type='submit'>
+<i class='fa fa-search'></i>
+</button>
+</div>
+</form>
+</div>
+</nav>
+</header>
+<div class='site-content'>
+<div class='text'>
+<article id='topic'>
+<span id="redis-集群规范" class=anchor></span><h1><a href="#redis-集群规范" class=anchor-link>*</a>Redis 集群规范</h1>
+
+<p>欢迎来到 <strong>Redis 集群规范</strong>。在这里你可以找到关于 Redis 集群算法和设计原理的信息。本文档是一项进行中的工作，因为它与实际 Redis 实现持续同步。</p>
+
+<span id="设计的主要属性和原理" class=anchor></span><h1><a href="#设计的主要属性和原理" class=anchor-link>*</a>设计的主要属性和原理</h1>
+
+<span id="redis-集群目标" class=anchor></span><h2><a href="#redis-集群目标" class=anchor-link>*</a>Redis 集群目标</h2>
+
+<p>Redis 集群是 Redis 的分布式实现，具有以下目标，按设计中的重要性排序：</p>
+
+<ul>
+<li>高性能和线性可扩展性，最高可达 1000 个节点。没有代理，使用异步复制，且不对值执行合并操作。</li>
+<li>可接受的写入安全度：系统试图（以尽力而为的方式）保留来自连接到大多数主节点的客户端的所有写入。通常存在已确认写入可能丢失的小窗口。当客户端处于少数分区时，丢失已确认写入的窗口更大。</li>
+<li>可用性：Redis 集群能够在大多数主节点可达且每个不可达主节点至少有一个可达从节点的分区中存活。此外使用 <em>副本迁移</em>，不再被任何从节点复制的主节点将从拥有多个从节点的主节点接收一个从节点。</li>
+</ul>
+
+<p>本文档中描述的内容在 Redis 3.0 或更高版本中实现。</p>
+
+<span id="已实现的子集" class=anchor></span><h2><a href="#已实现的子集" class=anchor-link>*</a>已实现的子集</h2>
+
+<p>Redis 集群实现了 Redis 非分布式版本中所有可用的单键命令。执行复杂多键操作的命令（如集合类型的并集或交集）也可以实现，只要所有键都哈希到同一个槽。</p>
+
+<p>Redis 集群实现了一个称为 <strong>哈希标签</strong> 的概念，可用于强制某些键存储在同一个哈希槽中。然而，在手动重新分片期间，多键操作可能会暂时不可用，而单键操作始终可用。</p>
+
+<p>Redis 集群不支持像 Redis 独立版本那样的多个数据库。只有数据库 0，且不允许使用 <a href="/commands/select.html">SELECT</a> 命令。</p>
+
+<span id="redis-集群协议中的客户端和服务器角色" class=anchor></span><h2><a href="#redis-集群协议中的客户端和服务器角色" class=anchor-link>*</a>Redis 集群协议中的客户端和服务器角色</h2>
+
+<p>在 Redis 集群中，节点负责保存数据和管理集群状态，包括将键映射到正确的节点。集群节点还能够自动发现其他节点、检测不工作的节点，并在需要时将从节点提升为主节点，以便在发生故障时继续运行。</p>
+
+<p>为了执行其任务，所有集群节点都使用 TCP 总线和称为 <strong>Redis 集群总线</strong> 的二进制协议进行连接。每个节点都通过集群总线与集群中的每个其他节点连接。节点使用八卦协议传播集群信息，以便发现新节点、发送 ping 数据包以确保所有其他节点正常工作，以及发送集群消息以信号特定条件。集群总线还用于在集群中传播 Pub/Sub 消息，以及编排用户请求的手动故障转移（手动故障转移不是由 Redis 集群故障检测器发起的，而是由系统管理员直接发起的）。</p>
+
+<p>由于集群节点无法代理请求，客户端可能会使用重定向错误 <code>-MOVED</code> 和 <code>-ASK</code> 被重定向到其他节点。客户端理论上可以向集群中的所有节点发送请求，并在需要时被重定向，因此客户端不需要持有集群状态。然而，能够缓存键与节点之间映射的客户端可以以明智的方式提高性能。</p>
+
+<span id="写入安全性" class=anchor></span><h2><a href="#写入安全性" class=anchor-link>*</a>写入安全性</h2>
+
+<p>Redis 集群在节点之间使用异步复制，以及 <strong>最后故障转移获胜</strong> 的隐式合并功能。这意味着最后选出的主节点数据集最终会替换所有其他副本。在分区期间，总是存在一个可能丢失写入的时间窗口。然而，这些窗口对于连接到大多数主节点的客户端和连接到少数主节点的客户端来说非常不同。</p>
+
+<p>与在少数端执行的写入相比，Redis 集群更努力地保留由连接到大多数主节点的客户端执行的写入。
+以下是在故障期间导致多数分区中已确认写入丢失的场景示例：</p>
+
+<ol>
+<li><p>写入可能到达主节点，但主节点可能能够回复客户端，而写入可能不会通过主从节点之间使用的异步复制传播到从节点。如果主节点在写入到达从节点之前死亡，并且主节点在足够长的时间内不可达以至于其中一个从节点被提升，则写入将永远丢失。在主节点完全突然故障的情况下，这通常很难观察到，因为主节点试图同时回复客户端（确认写入）和从节点（传播写入）。然而，这是一个真实世界的故障模式。</p></li>
+<li><p>另一个理论上可能导致写入丢失的故障模式如下：</p></li>
+</ol>
+
+<ul>
+<li>主节点由于分区而不可达。</li>
+<li>它的一个从节点对其执行故障转移。</li>
+<li>一段时间后，它可能再次可达。</li>
+<li>具有过期路由表的客户端可能会在集群将其转换为从节点（新主节点的从节点）之前向旧主节点写入。</li>
+</ul>
+
+<p>第二种故障模式不太可能发生，因为无法与大多数其他主节点通信足够长时间以被故障转移的主节点将不再接受写入，并且当分区修复后，写入仍然会在短时间内被拒绝，以允许其他节点通知配置更改。这种故障模式还要求客户端的路由表尚未更新。</p>
+
+<p>针对分区少数端的写入有更大的丢失窗口。例如，Redis 集群在存在少数主节点和至少一个或多个客户端的分区上丢失了大量写入，因为如果主节点在多数端被故障转移，则发送到主节点的所有写入都可能丢失。</p>
+
+<p>具体来说，主节点要被故障转移，它必须在至少 <code>NODE_TIMEOUT</code> 时间内被大多数主节点视为不可达，因此如果分区在该时间之前修复，则不会丢失写入。当分区持续超过 <code>NODE_TIMEOUT</code> 时，在少数端执行到该点的所有写入都可能丢失。然而，Redis 集群的少数端将在没有与大多数联系 <code>NODE_TIMEOUT</code> 时间后开始拒绝写入，因此存在一个最大窗口，之后少数端将不再可用。因此，在该时间之后不会接受或丢失写入。</p>
+
+<span id="可用性" class=anchor></span><h2><a href="#可用性" class=anchor-link>*</a>可用性</h2>
+
+<p>Redis 集群在分区的少数端不可用。在分区的多数端，假设至少有多数主节点且每个不可达主节点都有一个从节点，集群将在 <code>NODE_TIMEOUT</code> 时间加上从节点被选举并故障转移其主节点所需的额外几秒后再次可用（故障转移通常在 1 或 2 秒内执行）。</p>
+
+<p>这意味着 Redis 集群设计为在集群中少数节点故障时存活，但它不是适合在发生大型网络分裂时需要可用性的应用程序的解决方案。</p>
+
+<p>在由 N 个主节点组成的集群示例中，每个节点都有一个从节点，只要单个节点被分区隔离，集群的多数端就保持可用，并且当两个节点被分区隔离时，集群将以 <code>1-(1/(N*2-1))</code> 的概率保持可用（在第一个节点故障后，我们总共剩下 <code>N*2-1</code> 个节点，唯一没有副本的主节点故障的概率是 <code>1/(N*2-1)</code>）。</p>
+
+<p>例如，在具有 5 个节点且每个节点有一个从节点的集群中，在两个节点从多数端分区隔离后，集群将不再可用的概率为 <code>1/(5*2-1) = 11.11%</code>。</p>
+
+<p>由于称为 <strong>副本迁移</strong> 的 Redis 集群功能，集群可用性在许多实际场景中得到了改善，因为副本会迁移到孤立的主节点（不再有副本的主节点）。因此，在每次成功的故障事件中，集群可能会重新配置从节点布局，以便更好地抵抗下一次故障。</p>
+
+<span id="性能" class=anchor></span><h2><a href="#性能" class=anchor-link>*</a>性能</h2>
+
+<p>在 Redis 集群中，节点不会将命令代理到负责给定键的正确节点，而是将客户端重定向到服务给定键空间部分的正确节点。</p>
+
+<p>最终，客户端获得集群的最新表示以及哪个节点服务哪个键子集，因此在正常操作期间，客户端直接联系正确的节点以发送给定命令。</p>
+
+<p>由于使用异步复制，节点不会等待其他节点对写入的确认（除非使用 <a href="/commands/wait.html">WAIT</a> 命令显式请求）。</p>
+
+<p>此外，由于多键命令仅限于 <em>邻近</em> 键，数据永远不会在节点之间移动，除非在重新分片期间。</p>
+
+<p>正常操作的处理方式与单个 Redis 实例的情况完全相同。这意味着在具有 N 个主节点的 Redis 集群中，你可以期望与单个 Redis 实例相同的性能乘以 N，因为设计是线性扩展的。同时，查询通常在一次往返中执行，因为客户端通常与节点保持持久连接，因此延迟数字也与单个独立 Redis 节点的情况相同。</p>
+
+<p>在保持较弱但合理的数据安全性和可用性形式的同时，实现非常高的性能和可扩展性是 Redis 集群的主要目标。</p>
+
+<span id="为什么避免合并操作" class=anchor></span><h2><a href="#为什么避免合并操作" class=anchor-link>*</a>为什么避免合并操作</h2>
+
+<p>Redis 集群设计避免了在多个节点中出现同一键值对的冲突版本，因为在 Redis 数据模型的情况下，这并不总是可取的。Redis 中的值通常非常大；常见的是包含数百万个元素的列表或有序集合。此外，数据类型在语义上很复杂。传输和合并这类值可能成为主要瓶颈，并且/或可能需要应用程序端逻辑的非平凡参与、存储元数据的额外内存等等。</p>
+
+<p>这里没有严格的技术限制。CRDT 或同步复制的状态机可以对类似 Redis 的复杂数据类型建模。然而，这种系统的实际运行时行为不会与 Redis 集群相似。Redis 集群的设计目的是覆盖非集群 Redis 版本的精确用例。</p>
+
+<span id="redis-集群主要组件概述" class=anchor></span><h1><a href="#redis-集群主要组件概述" class=anchor-link>*</a>Redis 集群主要组件概述</h1>
+
+<span id="键分布模型" class=anchor></span><h2><a href="#键分布模型" class=anchor-link>*</a>键分布模型</h2>
+
+<p>键空间被分成 16384 个槽，有效地将集群大小上限设置为 16384 个主节点（然而，建议的最大节点数量约为 1000 个节点）。</p>
+
+<p>集群中的每个主节点处理 16384 个哈希槽的子集。当没有集群重新配置正在进行时（即哈希槽正在从一个节点移动到另一个节点），集群是 <strong>稳定的</strong>。当集群稳定时，单个哈希槽将由单个节点提供服务（然而，服务节点可以有一个或多个从节点，在发生网络分裂或故障时将替换它，并且可以用于扩展读取操作，其中读取过时数据是可接受的）。</p>
+
+<p>用于将键映射到哈希槽的基本算法如下（请阅读下一段了解哈希标签的例外规则）：</p>
+
+<pre><code>HASH_SLOT = CRC16(key) mod 16384
+</code></pre>
+
+<p>CRC16 规范如下：</p>
+
+<ul>
+<li>名称：XMODEM（也称为 ZMODEM 或 CRC-16/ACORN）</li>
+<li>宽度：16 位</li>
+<li>多项式：1021（实际上是 x<sup>16</sup> + x<sup>12</sup> + x<sup>5</sup> + 1）</li>
+<li>初始化：0000</li>
+<li>反射输入字节：False</li>
+<li>反射输出 CRC：False</li>
+<li>输出 CRC 的异或常数：0000</li>
+<li>&quot;123456789&quot; 的输出：31C3</li>
+</ul>
+
+<p>使用 CRC16 输出的 16 位中的 14 位（这就是上面公式中有模 16384 操作的原因）。</p>
+
+<p>在我们的测试中，CRC16 在将不同类型的键均匀分布到 16384 个槽方面表现出色。</p>
+
+<p><strong>注意</strong>：本文档附录 A 中提供了所用 CRC16 算法的参考实现。</p>
+
+<span id="键哈希标签" class=anchor></span><h2><a href="#键哈希标签" class=anchor-link>*</a>键哈希标签</h2>
+
+<p>哈希槽的计算存在一个例外，用于实现 <strong>哈希标签</strong>。哈希标签是一种确保多个键分配到同一哈希槽的方法。这用于在 Redis 集群中实现多键操作。</p>
+
+<p>为了实现哈希标签，键的哈希槽在某些条件下以稍微不同的方式计算。如果键包含 &quot;{...}&quot; 模式，则仅对 <code>{</code> 和 <code>}</code> 之间的子字符串进行哈希以获得哈希槽。然而，由于可能存在多次出现 <code>{</code> 或 <code>}</code>，算法由以下规则明确指定：</p>
+
+<ul>
+<li>如果键包含 <code>{</code> 字符。</li>
+<li>并且如果在 <code>{</code> 右侧有 <code>}</code> 字符</li>
+<li>并且在 <code>{</code> 的第一次出现和 <code>}</code> 的第一次出现之间有一个或多个字符。</li>
+</ul>
+
+<p>那么不是对整个键进行哈希，而是仅对 <code>{</code> 的第一次出现和后面 <code>}</code> 的第一次出现之间的内容进行哈希。</p>
+
+<p>示例：</p>
+
+<ul>
+<li>两个键 <code>{user1000}.following</code> 和 <code>{user1000}.followers</code> 将哈希到相同的哈希槽，因为只有子字符串 <code>user1000</code> 会被哈希以计算哈希槽。</li>
+<li>对于键 <code>foo{}{bar}</code>，整个键将像往常一样进行哈希，因为 <code>{</code> 的第一次出现后面紧跟着 <code>}</code>，中间没有字符。</li>
+<li>对于键 <code>foo{{bar}}zap</code>，子字符串 <code>{bar</code> 将被哈希，因为它是 <code>{</code> 的第一次出现和右侧 <code>}</code> 的第一次出现之间的子字符串。</li>
+<li>对于键 <code>foo{bar}{zap}</code>，子字符串 <code>bar</code> 将被哈希，因为算法在 <code>{</code> 和 <code>}</code> 的第一次有效或无效（内部没有字节）匹配处停止。</li>
+<li>从算法可以得出，如果键以 <code>{}</code> 开头，则保证对整个键进行哈希。这在使用二进制数据作为键名时非常有用。</li>
+</ul>
+
+<p>加上哈希标签例外，以下是 Ruby 和 C 语言中 <code>HASH_SLOT</code> 函数的实现。</p>
+
+<p>Ruby 示例代码：</p>
+
+<pre><code>def HASH_SLOT(key)
+    s = key.index &quot;{&quot;
+    if s
+        e = key.index &quot;}&quot;,s+1
+        if e &amp;&amp; e != s+1
+            key = key[s+1..e-1]
+        end
+    end
+    crc16(key) % 16384
+end
+</code></pre>
+
+<p>C 示例代码：</p>
+
+<pre><code>unsigned int HASH_SLOT(char *key, int keylen) {
+    int s, e; /* { 和 } 的起始-结束索引 */
+
+    /* 搜索 &#39;{&#39; 的第一次出现。 */
+    for (s = 0; s &lt; keylen; s++)
+        if (key[s] == &#39;{&#39;) break;
+
+    /* 没有 &#39;{&#39;？对整个键进行哈希。这是基本情况。 */
+    if (s == keylen) return crc16(key,keylen) &amp; 16383;
+
+    /* 找到 &#39;{&#39;？检查我们是否有对应的 &#39;}&#39;。 */
+    for (e = s+1; e &lt; keylen; e++)
+        if (key[e] == &#39;}&#39;) break;
+
+    /* 没有 &#39;}&#39; 或 {} 中间没有内容？对整个键进行哈希。 */
+    if (e == keylen || e == s+1) return crc16(key,keylen) &amp; 16383;
+
+    /* 如果我们到达这里，{ 的右侧有一个 }。对 { 和 } 之间的内容进行哈希。 */
+    return crc16(key+s+1,e-s-1) &amp; 16383;
+}
+</code></pre>
+
+<span id="集群节点属性" class=anchor></span><h2><a href="#集群节点属性" class=anchor-link>*</a>集群节点属性</h2>
+
+<p>每个节点在集群中都有一个唯一的名称。节点名称是 160 位随机数的十六进制表示，在节点第一次启动时获得（通常使用 /dev/urandom）。节点会将其 ID 保存在节点配置文件中，并将永远使用相同的 ID，或者至少只要系统管理员不删除节点配置文件，或者通过 <a href="/commands/cluster-reset.html">CLUSTER RESET</a> 命令请求 <em>硬重置</em>。</p>
+
+<p>节点 ID 用于在整个集群中识别每个节点。给定节点可以在不需要同时更改节点 ID 的情况下更改其 IP 地址。集群还能够使用在集群总线上运行的八卦协议检测 IP/端口的变化并重新配置。</p>
+
+<p>节点 ID 不是与每个节点关联的唯一信息，但它是始终全局一致的唯一信息。每个节点还关联以下一组信息。一些信息是关于此特定节点的集群配置细节，最终在集群中一致。其他一些信息，例如上次 ping 节点的时间，则是每个节点本地的。</p>
+
+<p>每个节点维护有关集群中它所知道的其他节点的以下信息：节点 ID、节点的 IP 和端口、一组标志、如果节点标记为 <code>slave</code> 则其主节点是什么、上次 ping 节点的时间以及上次接收 pong 的时间、节点的当前 <em>配置纪元</em>（在本规范的后面解释）、链接状态以及最后提供的一组哈希槽。</p>
+
+<p><a href="/commands/cluster-nodes.html">CLUSTER NODES</a> 文档中详细 <a href="https://redis.io/commands/cluster-nodes">解释了所有节点字段</a>。</p>
+
+<p><a href="/commands/cluster-nodes.html">CLUSTER NODES</a> 命令可以发送到集群中的任何节点，并根据查询节点的本地视图提供集群状态以及每个节点的信息。</p>
+
+<p>以下是在由三个节点组成的小型集群中的主节点上发送的 <a href="/commands/cluster-nodes.html">CLUSTER NODES</a> 命令的示例输出。</p>
+
+<pre><code>$ redis-cli cluster nodes
+d1861060fe6a534d42d8a19aeb36600e18785e04 127.0.0.1:6379 myself - 0 1318428930 1 connected 0-1364
+3886e65cc906bfd9b1f7e7bde468726a052d1dae 127.0.0.1:6380 master - 1318428930 1318428931 2 connected 1365-2729
+d289c575dcbc4bdd2931585fd4339089e461a27d 127.0.0.1:6381 master - 1318428931 1318428931 3 connected 2730-4095
+</code></pre>
+
+<p>在上面的列表中，不同字段的顺序为：节点 id、地址:端口、标志、上次发送 ping、上次接收 pong、配置纪元、链接状态、槽。关于上述字段的详细信息将在我们讨论 Redis 集群的特定部分时介绍。</p>
+
+<span id="集群总线" class=anchor></span><h2><a href="#集群总线" class=anchor-link>*</a>集群总线</h2>
+
+<p>每个 Redis 集群节点都有一个额外的 TCP 端口，用于接收来自其他 Redis 集群节点的传入连接。此端口与用于接收来自客户端的传入连接的正常 TCP 端口有固定的偏移量。要获取 Redis 集群端口，应将 10000 添加到正常命令端口。例如，如果 Redis 节点正在端口 6379 上监听客户端连接，则集群总线端口 16379 也将打开。</p>
+
+<p>节点到节点的通信完全使用集群总线和集群总线协议进行：一种由不同类型和大小的帧组成的二进制协议。集群总线二进制协议未公开记录，因为不打算让外部软件设备使用此协议与 Redis 集群节点通信。但是，你可以通过阅读 Redis 集群源代码中的 <code>cluster.h</code> 和 <code>cluster.c</code> 文件获得有关集群总线协议的更多详细信息。</p>
+
+<span id="集群拓扑" class=anchor></span><h2><a href="#集群拓扑" class=anchor-link>*</a>集群拓扑</h2>
+
+<p>Redis 集群是一个全网格，其中每个节点都使用 TCP 连接与每个其他节点连接。</p>
+
+<p>在 N 个节点的集群中，每个节点有 N-1 个传出 TCP 连接和 N-1 个传入连接。</p>
+
+<p>这些 TCP 连接始终保持活动状态，不会按需创建。当节点期望在集群总线中收到 ping 的 pong 回复时，在等待足够长时间将节点标记为不可达之前，它将尝试通过从头重新连接来刷新与该节点的连接。</p>
+
+<p>虽然 Redis 集群节点形成全网格，<strong>但节点使用八卦协议和配置更新机制，以避免在正常条件下在节点之间交换过多消息</strong>，因此交换的消息数量不是指数级的。</p>
+
+<span id="节点握手" class=anchor></span><h2><a href="#节点握手" class=anchor-link>*</a>节点握手</h2>
+
+<p>节点始终在集群总线端口上接受连接，甚至在收到 ping 时回复，即使 ping 节点不受信任。然而，如果发送节点不被视为集群的一部分，则接收节点将丢弃所有其他数据包。</p>
+
+<p>节点仅在两种方式下接受另一个节点作为集群的一部分：</p>
+
+<ul>
+<li><p>如果节点使用 <code>MEET</code> 消息介绍自己。MEET 消息与 <a href="/commands/ping.html">PING</a> 消息完全相同，但强制接收者接受节点作为集群的一部分。节点仅在系统管理员通过以下命令请求时才会向其他节点发送 <code>MEET</code> 消息：</p>
+
+<p>CLUSTER MEET ip port</p></li>
+<li><p>如果已经受信任的节点八卦另一个节点，节点也会将其注册为集群的一部分。因此，如果 A 知道 B，而 B 知道 C，最终 B 会向 A 发送关于 C 的八卦消息。当这种情况发生时，A 会将 C 注册为网络的一部分，并尝试与 C 连接。</p></li>
+</ul>
+
+<p>这意味着只要我们将节点加入任何连接图中，它们最终将自动形成完全连接的图。这意味着集群能够自动发现其他节点，但前提是存在由系统管理员强制建立的受信任关系。</p>
+
+<p>这种机制使集群更加健壮，但防止不同的 Redis 集群在 IP 地址更改或其他网络相关事件后意外混合。</p>
+
+<span id="重定向和重新分片" class=anchor></span><h1><a href="#重定向和重新分片" class=anchor-link>*</a>重定向和重新分片</h1>
+
+<span id="moved-重定向" class=anchor></span><h2><a href="#moved-重定向" class=anchor-link>*</a>MOVED 重定向</h2>
+
+<p>Redis 客户端可以自由地向集群中的每个节点发送查询，包括从节点。节点将分析查询，如果它是可接受的（即查询中只提到单个键，或提到的多个键都在同一个哈希槽中），它将查找负责键或键所属哈希槽的节点。</p>
+
+<p>如果哈希槽由该节点提供服务，查询将被简单处理，否则节点将检查其内部哈希槽到节点映射，并使用 MOVED 错误回复客户端，如下例所示：</p>
+
+<pre><code>GET x
+-MOVED 3999 127.0.0.1:6381
+</code></pre>
+
+<p>错误包括键的哈希槽（3999）以及可以服务查询的实例的 ip:port。客户端需要向指定节点的 IP 地址和端口重新发出查询。
+请注意，即使客户端在重新发出查询之前等待很长时间，并且在此期间集群配置发生更改，如果哈希槽 3999 现在由另一个节点提供服务，目标节点将再次使用 MOVED 错误回复。如果联系的节点没有更新信息，也会发生同样的情况。</p>
+
+<p>因此，虽然从集群节点的角度来看，节点由 ID 标识，但我们尝试通过仅公开哈希槽与由 IP:端口对标识的 Redis 节点之间的映射来简化与客户端的接口。</p>
+
+<p>客户端不需要，但应该尝试记住哈希槽 3999 由 127.0.0.1:6381 提供服务。这样，一旦需要发出新命令，它可以计算目标键的哈希槽并有更大机会选择正确的节点。</p>
+
+<p>另一种方法是，在收到 MOVED 重定向时，使用 <a href="/commands/cluster-nodes.html">CLUSTER NODES</a> 或 <a href="/commands/cluster-slots.html">CLUSTER SLOTS</a> 命令刷新整个客户端端集群布局。当遇到重定向时，很可能多个槽被重新配置而不是只有一个，因此尽快更新客户端配置通常是最佳策略。</p>
+
+<p>请注意，当集群稳定时（配置没有正在进行的更改），最终所有客户端都将获得哈希槽 -&gt; 节点的映射，使集群高效，客户端直接寻址正确的节点，无需重定向、代理或其他单点故障实体。</p>
+
+<p>客户端 <strong>还必须能够处理 -ASK 重定向</strong>，这些重定向在本文档后面描述，否则它不是一个完整的 Redis 集群客户端。</p>
+
+<span id="集群实时重新配置" class=anchor></span><h2><a href="#集群实时重新配置" class=anchor-link>*</a>集群实时重新配置</h2>
+
+<p>Redis 集群支持在集群运行时添加和移除节点的能力。添加或移除节点被抽象为相同的操作：将哈希槽从一个节点移动到另一个节点。这意味着可以使用相同的基本机制来重新平衡集群、添加或移除节点等等。</p>
+
+<ul>
+<li>要向集群添加新节点，将空节点添加到集群，并将一些哈希槽集从现有节点移动到新节点。</li>
+<li>要从集群中移除节点，分配给该节点的哈希槽将移动到其他现有节点。</li>
+<li>要重新平衡集群，给定的一组哈希槽在节点之间移动。</li>
+</ul>
+
+<p>实现的核心是移动哈希槽的能力。从实际角度来看，哈希槽只是一组键，因此 Redis 集群在 <em>重新分片</em> 期间真正做的是将键从一个实例移动到另一个实例。移动哈希槽意味着移动所有碰巧哈希到此哈希槽的键。</p>
+
+<p>要了解其工作原理，我们需要展示用于操作 Redis 集群节点中槽转换表的 <a href="/commands/cluster.html">CLUSTER</a> 子命令。</p>
+
+<p>以下子命令可用（其中一些在此情况下无用）：</p>
+
+<ul>
+<li><a href="/commands/cluster-addslots.html">CLUSTER ADDSLOTS</a> slot1 [slot2] ... [slotN]</li>
+<li><a href="/commands/cluster-delslots.html">CLUSTER DELSLOTS</a> slot1 [slot2] ... [slotN]</li>
+<li><a href="/commands/cluster-setslot.html">CLUSTER SETSLOT</a> slot NODE node</li>
+<li><a href="/commands/cluster-setslot.html">CLUSTER SETSLOT</a> slot MIGRATING node</li>
+<li><a href="/commands/cluster-setslot.html">CLUSTER SETSLOT</a> slot IMPORTING node</li>
+</ul>
+
+<p>前两个命令 <code>ADDSLOTS</code> 和 <code>DELSLOTS</code> 仅用于将槽分配（或移除）给 Redis 节点。分配槽意味着告诉给定主节点它将负责存储和服务指定哈希槽的内容。</p>
+
+<p>分配哈希槽后，它们将使用八卦协议在集群中传播，如后面 <em>配置传播</em> 部分所述。</p>
+
+<p><code>ADDSLOTS</code> 命令通常在从头创建新集群时使用，以将每个主节点分配给所有 16384 个可用哈希槽的子集。</p>
+
+<p><code>DELSLOTS</code> 主要用于手动修改集群配置或调试任务：在实践中很少使用。</p>
+
+<p>如果使用了 <code>SETSLOT &lt;slot&gt; NODE</code> 形式，<code>SETSLOT</code> 子命令用于将槽分配给特定节点 ID。否则，槽可以设置为两种特殊状态 <code>MIGRATING</code> 和 <code>IMPORTING</code>。这两种特殊状态用于将哈希槽从一个节点迁移到另一个节点。</p>
+
+<ul>
+<li>当槽设置为 MIGRATING 时，节点将接受有关此哈希槽的所有查询，但仅当所讨论的键存在时，否则查询将使用 <code>-ASK</code> 重定向转发到迁移的目标节点。</li>
+<li>当槽设置为 IMPORTING 时，节点将接受有关此哈希槽的所有查询，但仅当请求前面有 <a href="/commands/asking.html">ASKING</a> 命令时。如果客户端没有给出 <a href="/commands/asking.html">ASKING</a> 命令，查询将通过 <code>-MOVED</code> 重定向错误重定向到真正的哈希槽所有者，就像正常情况一样。</li>
+</ul>
+
+<p>让我们用一个哈希槽迁移示例来更清楚地说明这一点。假设我们有两个 Redis 主节点，称为 A 和 B。我们想要将哈希槽 8 从 A 移动到 B，因此我们发出如下命令：</p>
+
+<ul>
+<li>我们向 B 发送：CLUSTER SETSLOT 8 IMPORTING A</li>
+<li>我们向 A 发送：CLUSTER SETSLOT 8 MIGRATING B</li>
+</ul>
+
+<p>所有其他节点将继续在每次查询属于哈希槽 8 的键时将客户端指向节点 &quot;A&quot;，因此发生的情况是：</p>
+
+<ul>
+<li>所有关于现有键的查询都由 &quot;A&quot; 处理。</li>
+<li>所有关于 A 中不存在的键的查询都由 &quot;B&quot; 处理，因为 &quot;A&quot; 会将客户端重定向到 &quot;B&quot;。</li>
+</ul>
+
+<p>这样我们不再在 &quot;A&quot; 中创建新键。
+与此同时，一个称为 <code>redis-trib</code> 的特殊程序在重新分片和 Redis 集群配置期间使用，将哈希槽 8 中的现有键从 A 迁移到 B。
+这使用以下命令执行：</p>
+
+<pre><code>CLUSTER GETKEYSINSLOT slot count
+</code></pre>
+
+<p>上述命令将返回指定哈希槽中的 <code>count</code> 个键。对于返回的每个键，<code>redis-trib</code> 向节点 &quot;A&quot; 发送一个 <a href="/commands/migrate.html">MIGRATE</a> 命令，该命令将以原子方式将指定键从 A 迁移到 B（两个实例在迁移键所需的时间（通常非常短的时间）内被锁定，因此不存在竞争条件）。这就是 <a href="/commands/migrate.html">MIGRATE</a> 的工作原理：</p>
+
+<pre><code>MIGRATE target_host target_port key target_database id timeout
+</code></pre>
+
+<p><a href="/commands/migrate.html">MIGRATE</a> 将连接到目标实例，发送键的序列化版本，一旦收到 OK 代码，将从自己的数据集中删除旧键。从外部客户端的角度来看，键在任何给定时刻存在于 A 或 B 中。</p>
+
+<p>在 Redis 集群中，不需要指定数据库 0 以外的数据库，但 <a href="/commands/migrate.html">MIGRATE</a> 是一个通用命令，可用于不涉及 Redis 集群的其他任务。
+<a href="/commands/migrate.html">MIGRATE</a> 经过优化，即使移动复杂键（如长列表）也能尽可能快，但如果使用数据库的应用程序存在延迟约束，则在存在大键时重新配置 Redis 集群不被认为是明智的做法。</p>
+
+<p>当迁移过程最终完成时，<code>SETSLOT &lt;slot&gt; NODE &lt;node-id&gt;</code> 命令将发送到参与迁移的两个节点，以便将槽设置回正常状态。相同的命令通常发送到所有其他节点，以避免等待新配置在集群中的自然传播。</p>
+
+<span id="ask-重定向" class=anchor></span><h2><a href="#ask-重定向" class=anchor-link>*</a>ASK 重定向</h2>
+
+<p>在上一节中，我们简要讨论了 ASK 重定向。为什么我们不能简单地使用 MOVED 重定向？因为虽然 MOVED 意味着我们认为哈希槽永久由不同的节点提供服务，并且下一个查询应该针对指定节点尝试，但 ASK 意味着仅将下一个查询发送到指定节点。</p>
+
+<p>这是必需的，因为关于哈希槽 8 的下一个查询可能是关于仍在 A 中的键，因此我们总是希望客户端先尝试 A，然后在需要时尝试 B。由于这仅发生在 16384 个可用哈希槽中的一个哈希槽中，因此对集群的性能影响是可以接受的。</p>
+
+<p>我们需要强制该客户端行为，因此为了确保客户端仅在尝试 A 之后才尝试节点 B，如果客户端在发送查询之前发送 ASKING 命令，节点 B 将仅接受设置为 IMPORTING 的槽的查询。</p>
+
+<p>基本上，ASKING 命令在客户端上设置一次性标志，强制节点服务关于 IMPORTING 槽的查询。</p>
+
+<p>从客户端的角度来看，ASK 重定向的完整语义如下：</p>
+
+<ul>
+<li>如果收到 ASK 重定向，仅将重定向的查询发送到指定节点，但继续将后续查询发送到旧节点。</li>
+<li>使用 ASKING 命令启动重定向查询。</li>
+<li>不要更新本地客户端表以将哈希槽 8 映射到 B。</li>
+</ul>
+
+<p>一旦哈希槽 8 的迁移完成，A 将发送 MOVED 消息，客户端可以永久将哈希槽 8 映射到新的 IP 和端口对。
+请注意，如果有缺陷的客户端过早执行映射，这不是问题，因为它不会在发出查询之前发送 ASKING 命令，因此 B 将使用 MOVED 重定向错误将客户端重定向到 A。</p>
+
+<p>槽迁移在 <a href="/commands/cluster-setslot.html">CLUSTER SETSLOT</a> 命令文档中以类似但不同的措辞解释（为了文档中的冗余）。</p>
+
+<span id="客户端首次连接和重定向处理" class=anchor></span><h2><a href="#客户端首次连接和重定向处理" class=anchor-link>*</a>客户端首次连接和重定向处理</h2>
+
+<p>虽然可以有一个 Redis 集群客户端实现，它不在内存中记住槽配置（槽号与服务它的节点地址之间的映射），并且仅通过联系随机节点等待被重定向来工作，但这样的客户端效率非常低。</p>
+
+<p>Redis 集群客户端应该尝试足够智能以记住槽配置。然而，此配置不需要是最新的。由于联系错误节点只会导致重定向，这应该触发客户端视图的更新。</p>
+
+<p>客户端通常需要在两种不同情况下获取完整的槽和映射节点地址列表：</p>
+
+<ul>
+<li>在启动时填充初始槽配置。</li>
+<li>当收到 <code>MOVED</code> 重定向时。</li>
+</ul>
+
+<p>请注意，客户端可以通过在其表中仅更新移动的槽来处理 <code>MOVED</code> 重定向，但这通常效率不高，因为通常多个槽的配置会同时修改（例如，如果从节点被提升为主节点，旧主节点提供的所有槽都将重新映射）。对 <code>MOVED</code> 重定向做出反应的更简单方法是从头开始获取槽到节点的完整映射。</p>
+
+<p>为了检索槽配置，Redis 集群提供了一个替代 <a href="/commands/cluster-nodes.html">CLUSTER NODES</a> 命令的命令，它不需要解析，并且仅提供客户端严格需要的信息。</p>
+
+<p>新命令称为 <a href="/commands/cluster-slots.html">CLUSTER SLOTS</a>，提供槽范围数组以及服务指定范围的相关主从节点。</p>
+
+<p>以下是 <a href="/commands/cluster-slots.html">CLUSTER SLOTS</a> 的输出示例：</p>
+
+<pre><code>127.0.0.1:7000&gt; cluster slots
+1) 1) (integer) 5461
+   2) (integer) 10922
+   3) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7001
+   4) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7004
+2) 1) (integer) 0
+   2) (integer) 5460
+   3) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7000
+   4) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7003
+3) 1) (integer) 10923
+   2) (integer) 16383
+   3) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7002
+   4) 1) &quot;127.0.0.1&quot;
+      2) (integer) 7005
+</code></pre>
+
+<p>返回数组的每个元素的前两个子元素是范围的起始-结束槽。其他元素表示地址-端口对。第一个地址-端口对是服务槽的主节点，其他地址-端口对都是服务同一槽且未处于错误状态的从节点（即未设置 FAIL 标志）。</p>
+
+<p>例如，输出的第一个元素表示从 5461 到 10922 的槽（包括起始和结束）由 127.0.0.1:7001 提供服务，并且可以通过联系 127.0.0.1:7004 的从节点来扩展只读负载。</p>
+
+<p>如果集群配置错误，<a href="/commands/cluster-slots.html">CLUSTER SLOTS</a> 不保证返回覆盖完整 16384 个槽的范围，因此客户端应初始化槽配置映射，用 NULL 对象填充目标节点，并在用户尝试执行关于属于未分配槽的键的命令时报告错误。</p>
+
+<p>在发现槽未分配时向调用者返回错误之前，客户端应尝试再次获取槽配置以检查集群现在是否正确配置。</p>
+
+<span id="多键操作" class=anchor></span><h2><a href="#多键操作" class=anchor-link>*</a>多键操作</h2>
+
+<p>使用哈希标签，客户端可以自由使用多键操作。
+例如，以下操作是有效的：</p>
+
+<pre><code>MSET {user:1000}.name Angela {user:1000}.surname White
+</code></pre>
+
+<p>当键所属的哈希槽的重新分片正在进行时，多键操作可能变得不可用。</p>
+
+<p>更具体地说，即使在重新分片期间，针对所有存在且仍然哈希到同一槽（源节点或目标节点）的键的多键操作仍然可用。</p>
+
+<p>针对不存在或在重新分片期间在源节点和目标节点之间拆分的键的操作将生成 <code>-TRYAGAIN</code> 错误。客户端可以在一段时间后尝试操作，或将错误报告回去。</p>
+
+<p>一旦指定哈希槽的迁移终止，所有多键操作将再次可用于该哈希槽。</p>
+
+<span id="使用从节点扩展读取" class=anchor></span><h2><a href="#使用从节点扩展读取" class=anchor-link>*</a>使用从节点扩展读取</h2>
+
+<p>通常，从节点会将客户端重定向到涉及给定命令的哈希槽的权威主节点，但客户端可以使用从节点，通过 <a href="/commands/readonly.html">READONLY</a> 命令来扩展读取。</p>
+
+<p><a href="/commands/readonly.html">READONLY</a> 告诉 Redis 集群从节点，客户端可以读取可能过时的数据，并且对运行写入查询不感兴趣。</p>
+
+<p>当连接处于只读模式时，集群仅在操作涉及从节点主节点未服务的键时才向客户端发送重定向。这可能因为：</p>
+
+<ol>
+<li>客户端发送的命令涉及此从节点主节点从未服务的哈希槽。</li>
+<li>集群已重新配置（例如重新分片），从节点不再能够为给定哈希槽服务命令。</li>
+</ol>
+
+<p>当这种情况发生时，客户端应按照前面部分所述更新其哈希槽映射。</p>
+
+<p>可以使用 <a href="/commands/readwrite.html">READWRITE</a> 命令清除连接的只读状态。</p>
+
+<span id="容错" class=anchor></span><h1><a href="#容错" class=anchor-link>*</a>容错</h1>
+
+<span id="心跳和八卦消息" class=anchor></span><h2><a href="#心跳和八卦消息" class=anchor-link>*</a>心跳和八卦消息</h2>
+
+<p>Redis 集群节点持续交换 ping 和 pong 数据包。这两种数据包具有相同的结构，都携带重要的配置信息。唯一的实际区别是消息类型字段。我们将 ping 和 pong 数据包的总和称为 <em>心跳数据包</em>。</p>
+
+<p>通常节点发送 ping 数据包，触发接收者使用 pong 数据包回复。然而这不一定总是如此。节点可能只发送 pong 数据包以向其他节点发送有关其配置的信息，而不触发回复。这很有用，例如，为了尽快广播新配置。</p>
+
+<p>通常节点每秒会 ping 几个随机节点，以便每个节点发送的 ping 数据包总数（以及接收的 pong 数据包）是常量，无论集群中的节点数量如何。</p>
+
+<p>然而每个节点确保 ping 每个其他节点，这些节点在超过 <code>NODE_TIMEOUT</code> 时间的一半内没有发送 ping 或接收 pong。在 <code>NODE_TIMEOUT</code> 到期之前，节点还尝试重新连接与另一个节点的 TCP 链接，以确保节点不会因为当前 TCP 连接存在问题而被认为不可达。</p>
+
+<p>如果 <code>NODE_TIMEOUT</code> 设置为较小的值且节点数量（N）非常大，则全局交换的消息数量可能很大，因为每个节点将尝试 ping 每个其他节点，对于这些节点，它们在每半个 <code>NODE_TIMEOUT</code> 时间内没有新鲜信息。</p>
+
+<p>例如，在具有 100 个节点且节点超时设置为 60 秒的集群中，每个节点将尝试每 30 秒发送 99 个 ping，ping 总量为每秒 3.3 个。乘以 100 个节点，整个集群中总共为每秒 330 个 ping。</p>
+
+<p>有办法减少消息数量，然而目前还没有关于 Redis 集群故障检测当前使用的带宽的报告问题，因此目前使用明显直接的设计。请注意，即使在上述示例中，每秒交换的 330 个数据包也平均分配给 100 个不同的节点，因此每个节点接收的流量是可接受的。</p>
+
+<span id="心跳数据包内容" class=anchor></span><h2><a href="#心跳数据包内容" class=anchor-link>*</a>心跳数据包内容</h2>
+
+<p>Ping 和 pong 数据包包含一个对所有类型数据包通用的标头（例如请求故障转移投票的数据包），以及一个特定于 Ping 和 Pong 数据包的特殊八卦部分。</p>
+
+<p>通用标头具有以下信息：</p>
+
+<ul>
+<li>节点 ID，一个 160 位伪随机字符串，在节点第一次创建时分配，并在 Redis 集群节点的整个生命周期中保持不变。</li>
+<li>发送节点的 <code>currentEpoch</code> 和 <code>configEpoch</code> 字段，用于构建 Redis 集群使用的分布式算法（这在下一节中详细解释）。如果节点是从节点，则 <code>configEpoch</code> 是其主节点最后已知的 <code>configEpoch</code>。</li>
+<li>节点标志，指示节点是从节点、主节点，以及其他单比特节点信息。</li>
+<li>发送节点服务的哈希槽位图，或者如果节点是从节点，则为其主节点服务的槽位图。</li>
+<li>发送方 TCP 基础端口（即 Redis 用于接受客户端命令的端口；将此端口加 10000 以获得集群总线端口）。</li>
+<li>从发送方角度看的集群状态（down 或 ok）。</li>
+<li>发送节点的父主节点 ID（如果它是从节点）。</li>
+</ul>
+
+<p>Ping 和 pong 数据包还包含一个八卦部分。该部分向接收者提供发送节点对集群中其他节点的看法。八卦部分仅包含关于发送节点已知节点集中少数随机节点的信息。八卦部分中提到的节点数量与集群大小成正比。</p>
+
+<p>对于八卦部分中添加的每个节点，报告以下字段：</p>
+
+<ul>
+<li>节点 ID。</li>
+<li>节点的 IP 和端口。</li>
+<li>节点标志。</li>
+</ul>
+
+<p>八卦部分允许接收节点从发送者的角度获取有关其他节点状态的信息。这对故障检测和发现集群中的其他节点都很有用。</p>
+
+<span id="故障检测" class=anchor></span><h2><a href="#故障检测" class=anchor-link>*</a>故障检测</h2>
+
+<p>Redis 集群故障检测用于识别主节点或从节点何时不再被大多数节点可达，然后通过将从节点提升为主节点角色来响应。当从节点提升不可能时，集群将被置于错误状态，以停止接收来自客户端的查询。</p>
+
+<p>如前所述，每个节点都有一组与其他已知节点关联的标志。有两个用于故障检测的标志，称为 <code>PFAIL</code> 和 <code>FAIL</code>。<code>PFAIL</code> 表示 <em>可能的故障</em>，是一种未确认的故障类型。<code>FAIL</code> 表示节点正在故障，并且此状况已在固定时间内由大多数主节点确认。</p>
+
+<p><strong>PFAIL 标志：</strong></p>
+
+<p>当节点超过 <code>NODE_TIMEOUT</code> 时间不可达时，节点会将另一个节点标记为 <code>PFAIL</code> 标志。主节点和从节点都可以将另一个节点标记为 <code>PFAIL</code>，无论其类型如何。</p>
+
+<p>Redis 集群节点不可达的概念是我们有一个 <strong>活动 ping</strong>（我们发送的尚未收到回复的 ping）挂起超过 <code>NODE_TIMEOUT</code>。为了使此机制正常工作，<code>NODE_TIMEOUT</code> 必须相对于网络往返时间较大。为了在正常运行期间增加可靠性，节点将在没有回复 ping 的情况下经过半个 <code>NODE_TIMEOUT</code> 后尝试重新连接集群中的其他节点。此机制确保连接保持活动状态，因此断开的连接通常不会导致节点之间的虚假故障报告。</p>
+
+<p><strong>FAIL 标志：</strong></p>
+
+<p>仅 <code>PFAIL</code> 标志只是每个节点关于其他节点的本地信息，但它不足以触发从节点提升。要使节点被认为已关闭，需要将 <code>PFAIL</code> 状况升级为 <code>FAIL</code> 状况。</p>
+
+<p>如本文档的节点心跳部分所述，每个节点向每个其他节点发送八卦消息，包括少数随机已知节点的状态。每个节点最终都会收到每个其他节点的一组节点标志。这样，每个节点都有一种机制可以向其他节点信号它们检测到的故障状况。</p>
+
+<p>当满足以下条件时，<code>PFAIL</code> 状况升级为 <code>FAIL</code> 状况：</p>
+
+<ul>
+<li>某个节点，我们称之为 A，将另一个节点 B 标记为 <code>PFAIL</code>。</li>
+<li>节点 A 通过八卦部分，从集群中大多数主节点的角度收集了有关 B 状态的信息。</li>
+<li>大多数主节点在 <code>NODE_TIMEOUT * FAIL_REPORT_VALIDITY_MULT</code> 时间内信号了 <code>PFAIL</code> 或 <code>FAIL</code> 状况。（有效性因子在当前实现中设置为 2，因此这只是 <code>NODE_TIMEOUT</code> 时间的两倍）。</li>
+</ul>
+
+<p>如果上述所有条件都为真，节点 A 将：</p>
+
+<ul>
+<li>将节点标记为 <code>FAIL</code>。</li>
+<li>向所有可达节点发送 <code>FAIL</code> 消息。</li>
+</ul>
+
+<p><code>FAIL</code> 消息将强制每个接收节点将节点标记为 <code>FAIL</code> 状态，无论它是否已将节点标记为 <code>PFAIL</code> 状态。</p>
+
+<p>请注意 <em>FAIL 标志大多是单向的</em>。也就是说，节点可以从 <code>PFAIL</code> 变为 <code>FAIL</code>，但 <code>FAIL</code> 标志只能在以下情况下清除：</p>
+
+<ul>
+<li>节点已经可达并且是从节点。在这种情况下，可以清除 <code>FAIL</code> 标志，因为从节点不会被故障转移。</li>
+<li>节点已经可达并且是主节点，但不服务任何槽。在这种情况下，可以清除 <code>FAIL</code> 标志，因为不服务槽的主节点并不真正参与集群，正在等待配置以加入集群。</li>
+<li>节点已经可达并且是主节点，但长时间（N 倍的 <code>NODE_TIMEOUT</code>）过去后没有任何可检测到的从节点提升。在这种情况下，最好让它重新加入集群并继续运行。</li>
+</ul>
+
+<p>值得注意的是，虽然 <code>PFAIL</code> -&gt; <code>FAIL</code> 转换使用了一种协议形式，但使用的协议很弱：</p>
+
+<ol>
+<li>节点在一段时间内收集其他节点的视图，因此即使大多数主节点需要 &quot;同意&quot;，实际上这只是我们从不同节点在不同时间收集的状态，我们不确定，也不要求在给定时刻大多数主节点达成一致。然而我们丢弃旧的故障报告，因此故障是在时间窗口内由大多数主节点报告的。</li>
+<li>虽然每个检测到 <code>FAIL</code> 状况的节点都会使用 <code>FAIL</code> 消息在集群中的其他节点上强制该状况，但无法确保消息将到达所有节点。例如，一个节点可能检测到 <code>FAIL</code> 状况，但由于分区而无法到达任何其他节点。</li>
+</ol>
+
+<p>然而，Redis 集群故障检测具有活性要求：最终所有节点都应该对给定节点的状态达成一致。有两种情况可能源自脑裂状况。要么少数节点认为节点处于 <code>FAIL</code> 状态，要么少数节点认为节点不处于 <code>FAIL</code> 状态。在这两种情况下，最终集群将对给定节点的状态有单一视图：</p>
+
+<p><strong>情况 1</strong>：如果大多数主节点将节点标记为 <code>FAIL</code>，由于故障检测及其产生的 <em>链式效应</em>，每个其他节点最终将主节点标记为 <code>FAIL</code>，因为在指定的时间窗口内将报告足够多的故障。</p>
+
+<p><strong>情况 2</strong>：当只有少数主节点将节点标记为 <code>FAIL</code> 时，从节点提升不会发生（因为它使用更正式的算法，确保每个人最终都知道提升），并且每个节点将按照上述 <code>FAIL</code> 状态清除规则清除 <code>FAIL</code> 状态（即 N 倍 <code>NODE_TIMEOUT</code> 过去后没有提升）。</p>
+
+<p><strong><code>FAIL</code> 标志仅用作触发从节点提升算法安全部分运行的触发器</strong>。理论上，从节点可以独立行动，并在其主节点不可达时开始从节点提升，并等待主节点如果实际上被大多数节点可达则拒绝提供确认。然而，<code>PFAIL -&gt; FAIL</code> 状态、弱协议和 <code>FAIL</code> 消息的添加复杂性，以及 <code>FAIL</code> 消息在最短时间内在集群的可达部分强制传播状态，具有实际优势。由于这些机制，如果集群处于错误状态，通常所有节点将同时停止接受写入。从使用 Redis 集群的应用程序的角度来看，这是一个理想的特性。此外，避免了由由于本地问题而无法到达其主节点的从节点发起的错误选举尝试（主节点其他方面被大多数其他主节点节点可达）。</p>
+
+<span id="配置处理传播和故障转移" class=anchor></span><h1><a href="#配置处理传播和故障转移" class=anchor-link>*</a>配置处理、传播和故障转移</h1>
+
+<span id="集群当前纪元" class=anchor></span><h2><a href="#集群当前纪元" class=anchor-link>*</a>集群当前纪元</h2>
+
+<p>Redis 集群使用一个类似于 Raft 算法 &quot;term&quot; 的概念。在 Redis 集群中，这个 term 被称为纪元，用于给事件赋予增量版本。当多个节点提供冲突信息时，另一个节点能够理解哪个状态是最新的。</p>
+
+<p><code>currentEpoch</code> 是一个 64 位无符号数字。</p>
+
+<p>在节点创建时，每个 Redis 集群节点（包括从节点和主节点）都将 <code>currentEpoch</code> 设置为 0。</p>
+
+<p>每次从另一个节点接收到数据包时，如果发送者的纪元（集群总线消息标头的一部分）大于本地节点纪元，则 <code>currentEpoch</code> 将更新为发送者纪元。</p>
+
+<p>由于这些语义，最终所有节点都将同意集群中最大的 <code>currentEpoch</code>。</p>
+
+<p>此信息在集群状态更改且节点寻求一致以执行某些操作时使用。</p>
+
+<p>目前这仅在从节点提升期间发生，如下一节所述。基本上，纪元是集群的逻辑时钟，并规定给定信息胜过具有较小纪元的信息。</p>
+
+<span id="配置纪元" class=anchor></span><h2><a href="#配置纪元" class=anchor-link>*</a>配置纪元</h2>
+
+<p>每个主节点始终在 ping 和 pong 数据包中宣传其 <code>configEpoch</code>，以及宣传其服务的槽集的位图。</p>
+
+<p>创建新节点时，<code>configEpoch</code> 在主节点中设置为零。</p>
+
+<p>在从节点选举期间创建新的 <code>configEpoch</code>。试图替换故障主节点的从节点增加其纪元，并试图从大多数主节点获得授权。当从节点被授权时，将创建一个新的唯一 <code>configEpoch</code>，并且从节点使用新的 <code>configEpoch</code> 转变为主节点。</p>
+
+<p>如下一节所述，<code>configEpoch</code> 有助于解决不同节点声称不同配置时的冲突（这种情况可能由于网络分区和节点故障而发生）。</p>
+
+<p>从节点也在 ping 和 pong 数据包中宣传 <code>configEpoch</code> 字段，但在从节点的情况下，该字段代表其主节点截至上次交换数据包时的 <code>configEpoch</code>。这允许其他实例检测从节点是否具有需要更新的旧配置（主节点不会向具有旧配置的从节点授予投票）。</p>
+
+<p>每次某个已知节点的 <code>configEpoch</code> 发生更改时，所有接收到此信息的节点都会将其永久存储在 nodes.conf 文件中。<code>currentEpoch</code> 值也是如此。这两个变量在更新后保证被保存并 <code>fsync</code> 到磁盘，然后节点才继续其操作。</p>
+
+<p>在故障转移期间使用简单算法生成的 <code>configEpoch</code> 值保证是新的、增量的和唯一的。</p>
+
+<span id="从节点选举和提升" class=anchor></span><h2><a href="#从节点选举和提升" class=anchor-link>*</a>从节点选举和提升</h2>
+
+<p>从节点选举和提升由从节点处理，主节点通过投票支持要提升的从节点来帮助。
+当主节点从至少一个具有成为主节点前提条件的从节点的角度来看处于 <code>FAIL</code> 状态时，会发生从节点选举。</p>
+
+<p>为了使从节点提升为主节点，它需要开始选举并赢得选举。给定主节点的所有从节点都可以在主节点处于 <code>FAIL</code> 状态时开始选举，但只有一个从节点将赢得选举并提升为主节点。</p>
+
+<p>当满足以下条件时，从节点开始选举：</p>
+
+<ul>
+<li>从节点的主节点处于 <code>FAIL</code> 状态。</li>
+<li>主节点服务非零数量的槽。</li>
+<li>从节点复制链接与主节点断开的时间不超过给定时间量，以确保提升的从节点的数据相当新鲜。此时间是用户可配置的。</li>
+</ul>
+
+<p>为了被选举，从节点的第一步是增加其 <code>currentEpoch</code> 计数器，并请求主实例的投票。</p>
+
+<p>从节点通过向集群的每个主节点广播 <code>FAILOVER_AUTH_REQUEST</code> 数据包来请求投票。然后它等待最多两倍 <code>NODE_TIMEOUT</code> 时间以等待回复到达（但至少等待 2 秒）。</p>
+
+<span id="从节点排名" class=anchor></span><h2><a href="#从节点排名" class=anchor-link>*</a>从节点排名</h2>
+
+<p>一旦主节点处于 <code>FAIL</code> 状态，从节点会在尝试被选举之前等待一小段时间。该延迟计算如下：</p>
+
+<pre><code>DELAY = 500 毫秒 + 0 到 500 毫秒之间的随机延迟 +
+        SLAVE_RANK * 1000 毫秒。
+</code></pre>
+
+<p>固定延迟确保我们等待 <code>FAIL</code> 状态在集群中传播，否则从节点可能会在主节点仍然不知道 <code>FAIL</code> 状态时尝试被选举，拒绝授予它们的投票。</p>
+
+<p>随机延迟用于去同步从节点，使它们不太可能同时开始选举。</p>
+
+<p><code>SLAVE_RANK</code> 是该从节点根据从主节点处理的复制数据量而定的排名。从节点在主节点故障时交换消息以建立（尽力而为的）排名：拥有最新复制偏移量的从节点排名为 0，第二更新的排名为 1，依此类推。这样，最新的从节点会先于其他从节点尝试被选举。</p>
+
+<p>排名顺序不是严格执行的；如果排名较高的从节点未能被选举，其他从节点将很快尝试。</p>
+
+<p>一旦从节点赢得选举，它将获得一个新的唯一且递增的 <code>configEpoch</code>，该纪元高于任何其他现有主节点。它开始在 ping 和 pong 数据包中宣传自己是主节点，提供服务的槽集以及一个将胜过过去纪元的 <code>configEpoch</code>。</p>
+
+<p>为了加快其他节点的重新配置，pong 数据包会广播给集群中的所有节点。当前不可达的节点最终会在收到来自另一个节点的 ping 或 pong 数据包时重新配置，或者如果从其通过心跳数据包发布的信息被检测为过时的另一个节点发送 <code>UPDATE</code> 数据包，则它将收到 <code>UPDATE</code> 数据包。</p>
+
+<p>其他节点将检测到有新主节点服务旧主节点服务的相同槽，但具有更大的 <code>configEpoch</code>，并将升级其配置。旧主节点的从节点（或重新加入集群的故障转移主节点）不仅会升级配置，还会重新配置以从新主节点复制。重新加入集群的节点如何配置在下一节中解释。</p>
+
+<span id="主节点回复从节点投票请求" class=anchor></span><h2><a href="#主节点回复从节点投票请求" class=anchor-link>*</a>主节点回复从节点投票请求</h2>
+
+<p>上一节讨论了从节点如何尝试被选举。本节解释了从请求给定从节点投票的主节点的角度来看会发生什么。</p>
+
+<p>主节点以来自从节点的 <code>FAILOVER_AUTH_REQUEST</code> 请求形式接收投票请求。</p>
+
+<p>要授予投票，需要满足以下条件：</p>
+
+<ol>
+<li>主节点仅对给定纪元投票一次，并拒绝为旧纪元投票：每个主节点都有一个 lastVoteEpoch 字段，只要认证请求数据包中的 <code>currentEpoch</code> 不大于 lastVoteEpoch，就会拒绝再次投票。当主节点对投票请求做出肯定回复时，lastVoteEpoch 会相应更新，并安全地存储在磁盘上。</li>
+<li>主节点仅在从节点的主节点标记为 <code>FAIL</code> 时才为从节点投票。</li>
+<li>具有小于主节点 <code>currentEpoch</code> 的 <code>currentEpoch</code> 的认证请求将被忽略。因此，主节点回复将始终与认证请求具有相同的 <code>currentEpoch</code>。如果同一从节点再次请求投票，递增 <code>currentEpoch</code>，则保证主节点的旧延迟回复不能被接受用于新投票。</li>
+</ol>
+
+<p>不使用规则 3 导致的问题示例：</p>
+
+<p>主节点 <code>currentEpoch</code> 为 5，lastVoteEpoch 为 1（这可能发生在几次失败的选举之后）</p>
+
+<ul>
+<li>从节点 <code>currentEpoch</code> 为 3。</li>
+<li>从节点尝试以纪元 4（3+1）被选举，主节点以 <code>currentEpoch</code> 5 回复 ok，但回复延迟了。</li>
+<li>从节点稍后将再次尝试以纪元 5（4+1）被选举，延迟回复到达从节点，其 <code>currentEpoch</code> 为 5，并被接受为有效。</li>
+</ul>
+
+<ol>
+<li>如果该主节点的从节点已经被投票，主节点不会在 <code>NODE_TIMEOUT * 2</code> 过去之前为同一主节点的从节点投票。这不是严格要求的，因为同一纪元中两个从节点不可能赢得选举。然而，在实际中，它确保当从节点被选举时，它有足够的时间通知其他从节点，并避免另一个从节点赢得新选举的可能性，执行不必要的第二次故障转移。</li>
+<li>主节点不会以任何方式努力选择最佳从节点。如果从节点的主节点处于 <code>FAIL</code> 状态且主节点在当前任期中没有投票，则授予肯定投票。最佳从节点是最有可能开始选举并在其他从节点之前赢得选举的从节点，因为它通常由于更高的排名而能够更早开始投票过程，如上一节所述。</li>
+<li>当主节点拒绝为给定从节点投票时，没有否定响应，请求只是被忽略。</li>
+<li>主节点不会为发送的 <code>configEpoch</code> 小于主节点表中从节点声称的槽的任何 <code>configEpoch</code> 的从节点投票。请记住，从节点发送其主节点的 <code>configEpoch</code> 以及其主节点服务的槽位图。这意味着请求投票的从节点必须具有它想要故障转移的槽的配置，该配置比授予投票的主节点的配置更新或相同。</li>
+</ol>
+
+<span id="配置纪元在分区期间实用性的实际示例" class=anchor></span><h2><a href="#配置纪元在分区期间实用性的实际示例" class=anchor-link>*</a>配置纪元在分区期间实用性的实际示例</h2>
+
+<p>本节说明了纪元概念如何用于使从节点提升过程对分区更具抵抗力。</p>
+
+<ul>
+<li>主节点不再无限期可达。主节点有三个从节点 A、B、C。</li>
+<li>从节点 A 赢得选举并被提升为主节点。</li>
+<li>网络分区使 A 对集群的大多数不可达。</li>
+<li>从节点 B 赢得选举并被提升为主节点。</li>
+<li>分区使 B 对集群的大多数不可达。</li>
+<li>之前的分区修复，A 再次可用。</li>
+</ul>
+
+<p>此时 B 已关闭，A 再次可用，角色为主节点（实际上 <code>UPDATE</code> 消息会迅速重新配置它，但这里我们假设所有 <code>UPDATE</code> 消息都丢失了）。同时，从节点 C 将尝试被选举以故障转移 B。以下是发生的情况：</p>
+
+<ol>
+<li>C 将尝试被选举并会成功，因为对于大多数主节点来说，它的主节点实际上已关闭。它将获得一个新的递增 <code>configEpoch</code>。</li>
+<li>A 将无法声称自己是其哈希槽的主节点，因为其他节点已经将相同的哈希槽与比 A 发布的更高的配置纪元（B 的纪元）相关联。</li>
+<li>因此，所有节点都将升级其表以将哈希槽分配给 C，集群将继续运行。</li>
+</ol>
+
+<p>正如你在下一节中看到的，重新加入集群的陈旧节点通常会尽快收到有关配置更改的通知，因为一旦它 ping 任何其他节点，接收者就会检测到它具有陈旧信息并将发送 <code>UPDATE</code> 消息。</p>
+
+<span id="哈希槽配置传播" class=anchor></span><h2><a href="#哈希槽配置传播" class=anchor-link>*</a>哈希槽配置传播</h2>
+
+<p>Redis 集群的一个重要部分是用于传播有关哪个集群节点服务给定哈希槽集的信息的机制。这对新集群的启动以及从节点被提升以服务故障主节点的槽后升级配置的能力都至关重要。</p>
+
+<p>相同的机制允许被分区隔离不定时间的节点以合理的方式重新加入集群。</p>
+
+<p>哈希槽配置有两种传播方式：</p>
+
+<ol>
+<li>心跳消息。ping 或 pong 数据包的发送方始终添加有关其（或其主节点，如果它是从节点）服务的哈希槽集的信息。</li>
+<li><code>UPDATE</code> 消息。由于每个心跳数据包中都有关于发送方 <code>configEpoch</code> 和服务的哈希槽集的信息，如果心跳数据包的接收者发现发送方信息是过时的，它将发送一个包含新信息的数据包，强制陈旧节点更新其信息。</li>
+</ol>
+
+<p>心跳或 <code>UPDATE</code> 消息的接收者使用某些简单的规则来更新其将哈希槽映射到节点的表。当创建新的 Redis 集群节点时，其本地哈希槽表简单地初始化为 <code>NULL</code> 条目，以便每个哈希槽不绑定或链接到任何节点。这看起来类似于以下内容：</p>
+
+<pre><code>0 -&gt; NULL
+1 -&gt; NULL
+2 -&gt; NULL
+...
+16383 -&gt; NULL
+</code></pre>
+
+<p>节点更新其哈希槽表遵循的第一个规则如下：</p>
+
+<p><strong>规则 1</strong>：如果哈希槽未分配（设置为 <code>NULL</code>），并且已知节点声称拥有它，我将修改我的哈希槽表并将声称的哈希槽与之关联。</p>
+
+<p>因此，如果我们收到来自节点 A 的心跳，声称以配置纪元值 3 服务哈希槽 1 和 2，表将被修改为：</p>
+
+<pre><code>0 -&gt; NULL
+1 -&gt; A [3]
+2 -&gt; A [3]
+...
+16383 -&gt; NULL
+</code></pre>
+
+<p>当创建新集群时，系统管理员需要手动分配（使用 <a href="/commands/cluster-addslots.html">CLUSTER ADDSLOTS</a> 命令，通过 redis-trib 命令行工具，或通过任何其他方式）每个主节点服务的槽仅分配给节点本身，并且信息将迅速在集群中传播。</p>
+
+<p>然而这个规则不够。我们知道哈希槽映射可以在两个事件期间更改：</p>
+
+<ol>
+<li>从节点在故障转移期间替换其主节点。</li>
+<li>槽从节点重新分片到不同节点。</li>
+</ol>
+
+<p>现在让我们关注故障转移。当从节点故障转移其主节点时，它获得一个保证大于其主节点纪元（以及更一般地大于任何其他先前生成的配置纪元）的配置纪元。例如，节点 B 是 A 的从节点，可能以配置纪元 4 故障转移 B。它将开始发送心跳数据包（第一次集群范围内大规模广播），并且由于以下第二条规则，接收者将更新其哈希槽表：</p>
+
+<p><strong>规则 2</strong>：如果哈希槽已经分配，并且已知节点使用大于当前与该槽关联的主节点的 <code>configEpoch</code> 的 <code>configEpoch</code> 宣传它，我将重新绑定哈希槽到新节点。</p>
+
+<p>因此，在收到来自 B 的消息声称以配置纪元 4 服务哈希槽 1 和 2 后，接收者将以以下方式更新其表：</p>
+
+<pre><code>0 -&gt; NULL
+1 -&gt; B [4]
+2 -&gt; B [4]
+...
+16383 -&gt; NULL
+</code></pre>
+
+<p>活性属性：由于第二条规则，集群中的所有节点最终都会同意，槽的所有者是宣传它的节点中 <code>configEpoch</code> 最大的那个。</p>
+
+<p>此机制在 Redis 集群中称为 <strong>最后故障转移获胜</strong>。</p>
+
+<p>重新分片期间也会发生同样的情况。当导入哈希槽的节点完成导入操作时，其配置纪元会增加，以确保更改将在整个集群中传播。</p>
+
+<span id="update-消息深入了解" class=anchor></span><h2><a href="#update-消息深入了解" class=anchor-link>*</a>UPDATE 消息，深入了解</h2>
+
+<p>更新消息与心跳消息共享相同的消息格式，但它们由接收者仅对特定条件做出反应而发送。当发送者的心跳信息表明有关节点配置的陈旧信息时，就会触发此消息。例如，节点 A 可能重新配置以提供槽 1 和 2，使用纪元 4。然后在一段时间后其配置更改，所以它停止提供这些槽。然而节点 B 没有收到消息，并且仍然相信节点 A 服务于这些槽。在这种情况下，如果 B 收到来自 A 的心跳包，它将检测到 A 拥有这些槽的陈旧信息，因此它将发送一条 UPDATE 消息，强制 A 更新其配置。</p>
+
+<p>因此，UPDATE 消息非常具体地由发送者在检测到：</p>
+
+<ul>
+<li>发送者的配置纪元对于某些槽大于心跳发送者的纪元，并且</li>
+<li>发送者服务这些槽（注意：发送者必须是这些槽的主节点，因为主节点总是比其从节点拥有最新的配置）</li>
+</ul>
+
+<p>时发送。</p>
+
+<span id="节点如何重新加入集群" class=anchor></span><h2><a href="#节点如何重新加入集群" class=anchor-link>*</a>节点如何重新加入集群</h2>
+
+<p>当节点重新加入集群时（例如在一定时间后重新启动），它开始 ping 其他节点。如果其他节点将该节点识别为具有旧配置，它们会发送 UPDATE 消息，或者如果它们检测到该节点已重新启动并且正在重新加入集群，它们只是忽略它。</p>
+
+<p>集群中的节点不会尝试通过 ping 数据包与节点协商状态：只要一个节点重新加入，第一个节点向其发送 ping 数据包将检测它是否具有旧配置，并将通知该节点。此机制还用于使新节点尽快了解集群配置，即使它尚未与集群建立完全连接。</p>
+
+<span id="副本迁移" class=anchor></span><h2><a href="#副本迁移" class=anchor-link>*</a>副本迁移</h2>
+
+<p>Redis 集群实现了一个称为 <em>副本迁移</em> 的概念，以提高集群的可用性。这个想法是，在具有多个副本的主节点中，如果一个副本失败，其他副本可以用于替换它。</p>
+
+<p>副本迁移的工作原理如下：</p>
+
+<ul>
+<li>每个主节点都记住它有多少个副本。</li>
+<li>如果一个主节点检测到它不再有副本，它将尝试从拥有最多副本的主节点迁移一个副本。</li>
+<li>迁移的副本将停止复制其旧主节点，并开始复制新主节点。</li>
+<li>配置更新通过八卦传播到整个集群。</li>
+</ul>
+
+<span id="副本迁移算法" class=anchor></span><h2><a href="#副本迁移算法" class=anchor-link>*</a>副本迁移算法</h2>
+
+<p>副本迁移算法不需要任何协调。在集群中的每个主节点中，自动检查副本的数量，以查看是否需要将副本迁移到某个孤立的节点。</p>
+
+<p>该算法使用 <code>SLAVE_RANK</code> 概念，但这里使用它来选择 <em>最差</em> 的副本，即具有最低数据新鲜度的副本。然而，排名仅用作提示：最终，哪个副本被迁移取决于节点在需要时是否可用。</p>
+
+<span id="配置纪元冲突解决算法" class=anchor></span><h2><a href="#配置纪元冲突解决算法" class=anchor-link>*</a>配置纪元冲突解决算法</h2>
+
+<p>在故障转移期间使用 simple 算法生成的 <code>configEpoch</code> 值保证是新的、增量的和唯一的。然而，由于分区，两个不同的节点（实际上是两种不同配置的一部分）可能声称相同的配置纪元，并且可能声称同一组哈希槽。</p>
+
+<p>冲突解决算法由 <code>CONFIG EPOCH</code> 冲突处理使用，由 <a href="/commands/cluster-failover.html">CLUSTER FAILOVER</a> 命令使用，还用于修复脑裂情况。它不用于正常操作。然而，理解它是好的，因为它描述了 Redis 集群如何处理意外情况。</p>
+
+<p>当节点创建新的 <code>configEpoch</code> 时，它使用以下规则：</p>
+
+<ol>
+<li>如果内部节点表中没有其他节点宣传相同的配置纪元，并且该纪元大于节点自己的纪元，则创建新的配置纪元。</li>
+<li>如果节点宣传的配置纪元等于内部节点表中另一个节点的纪元，并且节点 ID 大于另一个节点的 ID，则增加纪元。</li>
+</ol>
+
+<p>最终所有节点都会同意同一组槽将由具有最高节点 ID 的节点提供服务。这不是问题，但通常意味着配置更改可能不会立即传播到所有节点。</p>
+
+<span id="节点重置" class=anchor></span><h2><a href="#节点重置" class=anchor-link>*</a>节点重置</h2>
+
+<p>节点可以使用 <a href="/commands/cluster-reset.html">CLUSTER RESET</a> 命令进行软重置或硬重置。命令可以发送到主节点和从节点，但当发送到主节点时，主节点必须为空（不服务任何槽）才能执行命令。</p>
+
+<p>当给定 <code>HARD</code> 选项时，命令以不同方式工作：</p>
+
+<ul>
+<li>节点配置被清除，节点恢复为刚刚启动的状态。</li>
+<li>当前纪元被设置为 0。</li>
+<li>节点 ID 更改为新的随机 ID。</li>
+</ul>
+
+<p>当使用 <code>SOFT</code> 选项时，仅重置节点配置，但保留节点 ID 和纪元。</p>
+
+<span id="从集群中移除节点" class=anchor></span><h2><a href="#从集群中移除节点" class=anchor-link>*</a>从集群中移除节点</h2>
+
+<p>可以使用 <code>CLUSTER FORGET &lt;node-id&gt;</code> 命令从集群中移除节点。此命令将节点标记为已遗忘。已遗忘的节点在 <code>NODE_TIMEOUT</code> 秒内不会被八卦。这提供了足够的时间来重新配置集群中的其他节点，以停止八卦此节点或与其交换八卦信息。</p>
+
+<p>没有自动的方式可以从所有节点中删除一个节点。系统管理员需要重新配置所有节点以忘记某个节点。然而，如果节点在一定时间内重新加入，其他节点会自动重新配置以再次八卦它。</p>
+
+<span id="发布订阅" class=anchor></span><h2><a href="#发布订阅" class=anchor-link>*</a>发布/订阅</h2>
+
+<p>在 Redis 集群中，客户端可以向任何节点订阅频道。集群将确保订阅请求的客户端将收到发布到该频道的所有消息，无论发布客户端连接到哪个节点，也无论订阅客户端连接到哪个节点。</p>
+
+<p>集群目前通过向所有其他节点转发每个发布的消息来实现此功能。在将来的某个时候，将使用八卦或类似结构来仅通知感兴趣的节点发布的消息，或者使用分发树，以便在大型集群中不需要向所有节点发送消息。</p>
+
+<span id="附录-acrc16-参考实现ansi-c" class=anchor></span><h2><a href="#附录-acrc16-参考实现ansi-c" class=anchor-link>*</a>附录 A：CRC16 参考实现（ANSI C）</h2>
+
+<pre><code class="c">/*
+ * Copyright 2001-2010 Georges Menie (www.menie.org)
+ * All rights reserved.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name &quot;Georges Menie&quot; nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS&#39;&#39; AND ANY
+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY
+ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/* CRC16 implementation according to CCITT standards.
+ *
+ * Note by @antirez: this is actually the XMODEM CRC 16 algorithm, using the
+ * following parameters:
+ *
+ * Name                       : &quot;XMODEM&quot;, also known as &quot;ZMODEM&quot;, &quot;CRC-16/ACORN&quot;
+ * Width                      : 16 bit
+ * Poly                       : 1021 (That is actually x^16 + x^12 + x^5 + 1)
+ * Initialization             : 0000
+ * Reflect Input byte         : False
+ * Reflect Output CRC         : False
+ * Xor constant to output CRC : 0000
+ * Output for &quot;123456789&quot;     : 31C3
+ */
+
+static const uint16_t crc16tab[256]= {
+    0x0000,0x1021,0x2042,0x3063,0x4084,0x50a5,0x60c6,0x70e7,
+    0x8108,0x9129,0xa14a,0xb16b,0xc18c,0xd1ad,0xe1ce,0xf1ef,
+    0x1231,0x0210,0x3273,0x2252,0x52b5,0x4294,0x72f7,0x62d6,
+    0x9339,0x8318,0xb37b,0xa35a,0xd3bd,0xc39c,0xf3ff,0xe3de,
+    0x2462,0x3443,0x0420,0x1401,0x64e6,0x74c7,0x44a4,0x5485,
+    0xa56a,0xb54b,0x8528,0x9509,0xe5ee,0xf5cf,0xc5ac,0xd58d,
+    0x3653,0x2672,0x1611,0x0630,0x76d7,0x66f6,0x5695,0x46b4,
+    0xb75b,0xa77a,0x9719,0x8738,0xf7df,0xe7fe,0xd79d,0xc7bc,
+    0x48c4,0x58e5,0x6886,0x78a7,0x0840,0x1861,0x2802,0x3823,
+    0xc9cc,0xd9ed,0xe98e,0xf9af,0x8948,0x9969,0xa90a,0xb92b,
+    0x5af5,0x4ad4,0x7ab7,0x6a96,0x1a71,0x0a50,0x3a33,0x2a12,
+    0xdbfd,0xcbdc,0xfbbf,0xeb9e,0x9b79,0x8b58,0xbb3b,0xab1a,
+    0x6ca6,0x7c87,0x4ce4,0x5cc5,0x2c22,0x3c03,0x0c60,0x1c41,
+    0xedae,0xfd8f,0xcdec,0xddcd,0xad2a,0xbd0b,0x8d68,0x9d49,
+    0x7e97,0x6eb6,0x5ed5,0x4ef4,0x3e13,0x2e32,0x1e51,0x0e70,
+    0xff9f,0xefbe,0xdfdd,0xcffc,0xbf1b,0xaf3a,0x9f59,0x8f78,
+    0x9188,0x81a9,0xb1ca,0xa1eb,0xd10c,0xc12d,0xf14e,0xe16f,
+    0x1080,0x00a1,0x30c2,0x20e3,0x5004,0x4025,0x7046,0x6067,
+    0x83b9,0x9398,0xa3fb,0xb3da,0xc33d,0xd31c,0xe37f,0xf35e,
+    0x02b1,0x1290,0x22f3,0x32d2,0x4235,0x5214,0x6277,0x7256,
+    0xb5ea,0xa5cb,0x95a8,0x8589,0xf56e,0xe54f,0xd52c,0xc50d,
+    0x34e2,0x24c3,0x14a0,0x0481,0x7466,0x6447,0x5424,0x4405,
+    0xa7db,0xb7fa,0x8799,0x97b8,0xe75f,0xf77e,0xc71d,0xd73c,
+    0x26d3,0x36f2,0x0691,0x16b0,0x6657,0x7676,0x4615,0x5634,
+    0xd94c,0xc96d,0xf90e,0xe92f,0x99c8,0x89e9,0xb98a,0xa9ab,
+    0x5844,0x4865,0x7806,0x6827,0x18c0,0x08e1,0x3882,0x28a3,
+    0xcb7d,0xdb5c,0xeb3f,0xfb1e,0x8bf9,0x9bd8,0xabbb,0xbb9a,
+    0x4a75,0x5a54,0x6a37,0x7a16,0x0af1,0x1ad0,0x2ab3,0x3a92,
+    0xfd2e,0xed0f,0xdd6c,0xcd4d,0xbdaa,0xad8b,0x9de8,0x8dc9,
+    0x7c26,0x6c07,0x5c64,0x4c45,0x3ca2,0x2c83,0x1ce0,0x0cc1,
+    0xef1f,0xff3e,0xcf5d,0xdf7c,0xaf9b,0xbfba,0x8fd9,0x9ff8,
+    0x6e17,0x7e36,0x4e55,0x5e74,0x2e93,0x3eb2,0x0ed1,0x1ef0
+};
+
+uint16_t crc16(const char *buf, int len) {
+    int counter;
+    uint16_t crc = 0;
+    for (counter = 0; counter &lt; len; counter++)
+            crc = (crc&lt;&lt;8) ^ crc16tab[((crc&gt;&gt;8) ^ *buf++)&amp;0x00FF];
+    return crc;
+}
+</code></pre>
+
+</article>
+</div>
+</div>
+
+<footer class='site-footer'>
+<div class='container'>
+<p>
+本站关于Redis的资料和教程整理或翻译自网络，内容或翻译不正确的地方欢迎大家指出。
+</p>
+<p>
+联系方式:
+<a class='social weixin' href='javascript:'>
+<img class='qrcode' src='https://redis.com.cn/wp-content/uploads/2019/06/标准二维码.jpg'>微信号</img>
+</a>
+</p>
+</div>
+</footer>
+</div>
+<script src='https://libs.baidu.com/jquery/1.4.3/jquery.min.js'></script>
+<script src='/app.js?1606485746'></script>
+<script src='/search.js'></script>
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?365afc578d51b66b6cc9104a0598015a";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+</body>
+</html>

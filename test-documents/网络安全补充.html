@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>网络安全补充知识</title>
+</head>
+<body>
+<div id="wrap">
+  <h1>HTTPS 证书校验流程</h1>
+  <div class="section">
+    <p>客户端收到服务器证书后，会逐级校验证书链，确认证书由受信任的 CA 签发
+    <p>证书校验包括签名验证、有效期检查、域名匹配和吊销状态查询四个步骤，任何一步失败都会终止握手并提示风险
+    <div class="detail">
+      <h2>证书链</h2>
+      <p>服务器证书由中间 CA 签发，中间 CA 由根 CA 签发，浏览器使用内置的根证书库逐级验证签名
+      <h2>域名匹配</h2>
+      <p>证书中的 Subject Alternative Name 必须包含当前访问的域名，否则浏览器会提示证书域名不匹配
+    </div>
+  </div>
+  <h2>HTTP 与 HTTPS 状态码对比</h2>
+  <table>
+    <tr><th>类别</th><th>含义</th><th>典型示例</th></tr>
+    <tr><td>2xx</td><td>成功</td><td>200 请求成功</td></tr>
+    <tr><td>4xx</td><td>客户端错误</td><td>401 未认证，403 禁止访问</td></tr>
+    <tr><td>5xx</td><td>服务端错误</td><td>500 内部错误，502 网关错误</td></tr>
+  </table>
+  <p>生产环境建议全站启用 HTTPS，并配合 HSTS 强制浏览器使用加密连接
+</div>
+</body>
+</html>

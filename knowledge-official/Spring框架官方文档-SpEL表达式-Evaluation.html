@@ -1,0 +1,3312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-domain-script="018ee325-b3a7-7753-937b-b8b3e643b1a7"></script><script>function OptanonWrapper() {}</script><script>function setGTM(w, d, s, l, i) { w[l] = w[l] || []; w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js"}); var f = d.getElementsByTagName(s)[0], j = d.createElement(s), dl = l != "dataLayer" ? "&l=" + l : ""; j.async = true; j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl; f.parentNode.insertBefore(j, f); } if (document.cookie.indexOf("OptanonConsent") > -1 && document.cookie.indexOf("groups=") > -1) { setGTM(window, document, "script", "dataLayer", "GTM-W8CQ8TL"); } else { waitForOnetrustActiveGroups(); } var timer; function waitForOnetrustActiveGroups() { if (document.cookie.indexOf("OptanonConsent") > -1 && document.cookie.indexOf("groups=") > -1) { clearTimeout(timer); setGTM(window, document, "script", "dataLayer", "GTM-W8CQ8TL"); } else { timer = setTimeout(waitForOnetrustActiveGroups, 250); }}</script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Evaluation :: Spring Framework</title>
+    <link rel="canonical" href="https://docs.spring.io/spring-framework/reference/core/expressions/evaluation.html">
+    <link rel="prev" href="../expressions.html">
+    <link rel="next" href="beandef.html">
+    <meta name="generator" content="Antora 3.2.0-alpha.12">
+    <script>
+!function (theme, navWidth) {
+  if (theme === 'dark') document.documentElement.classList.add('dark-theme')
+  if (navWidth) document.documentElement.style.setProperty('--nav-width', `${navWidth}px`)
+}(localStorage && localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)')?.matches && 'dark'),
+  localStorage && localStorage.getItem('nav-width'))
+    </script>
+    <link rel="stylesheet" href="../../_/css/site.css">
+    <link rel="stylesheet" href="../../_/css/vendor/search.css">
+    <link rel="stylesheet" href="../../_/css/vendor/page-search.css">
+    <link rel="stylesheet" href="../../_/css/vendor/onetrust.css">
+    <link rel="stylesheet" href="../../_/css/vendor/asciidoctor-tabs.css">
+
+    <meta name="antora-ui-version" content="v0.4.26"> 
+    <meta name="version" content="7.0.9">
+    <meta name="generation" content="7.0">
+    <meta name="versioned-url" content="https://docs.spring.io/spring-framework/reference/7.0/core/expressions/evaluation.html">
+    <meta name="component" content="framework">
+    <meta name="latest-version" content="true">
+    <link rel="icon" href="../../_/img/favicon.ico" type="image/vnd.microsoft.icon">
+  </head>
+  <body class="article">
+<header class="header"><base href="https://docs.spring.io/spring-framework/reference/core/expressions/evaluation.html">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://spring.io">
+        <img
+          id="springlogo"
+          class="block"
+          src="../../_/img/spring-logo.svg"
+          alt="Spring"
+        />
+      </a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Why Spring</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/why-spring">Overview</a>
+            <li class="navbar-item navbar-item-special-3">Trending</li>
+            <a class="navbar-item" href="https://spring.io/ai">Generative AI</a>
+            <a class="navbar-item" href="https://spring.io/cloud">Cloud</a>
+            <li class="navbar-item navbar-item-special-3">Architecture Patterns</li>
+            <a class="navbar-item" href="https://spring.io/microservices">Microservices</a>
+            <a class="navbar-item" href="https://spring.io/reactive">Reactive</a>
+            <a class="navbar-item" href="https://spring.io/event-driven">Event Driven</a>
+            <li class="navbar-item navbar-item-special-3">Application Types</li>
+            <a class="navbar-item" href="https://spring.io/web-applications">Web Applications</a>
+            <a class="navbar-item" href="https://spring.io/serverless">Serverless</a>
+            <a class="navbar-item" href="https://spring.io/batch">Batch</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Learn</a>
+          <div class="navbar-dropdown">
+            <li class="navbar-item navbar-item-special-3">Getting Started</li>
+            <a class="navbar-item" href="https://spring.io/quickstart">Quickstart</a>
+            <a class="navbar-item" href="https://spring.io/guides">Guides</a>
+            <li class="navbar-item navbar-item-special-3">Academy</li>
+            <a class="navbar-item" href="https://spring.academy/courses">Courses
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://spring.academy/learning-path">Get Certified
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Projects</a>
+          <div class="navbar-dropdown" style="min-width: 280px">
+            <a class="navbar-item" href="https://spring.io/projects">Overview</a>
+            <li class="navbar-item navbar-item-special-3">Projects</li>
+            <a class="navbar-item" href="https://spring.io/projects/spring-boot">Spring Boot</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-framework">Spring Framework</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-cloud">Spring Cloud</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-ai">Spring AI</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-data">Spring Data</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-integration">Spring Integration</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-batch">Spring Batch</a>
+            <a class="navbar-item" href="https://spring.io/projects/spring-security">Spring Security</a>
+            <li class="navbar-item navbar-item-special-3">Foundational Projects</li>
+            <a class="navbar-item" href="https://micrometer.io">Micrometer
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://projectreactor.io">Reactor
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <li class="navbar-item navbar-item-special-3">Development Tools</li>
+            <a class="navbar-item" href="https://spring.io/tools">Spring Tools</a>
+            <a class="navbar-item navbar-item-special-2" href="https://start.spring.io">Spring Initializr
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Resources</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/blog">Blog</a>
+            <a class="navbar-item" href="https://spring.io/projects#release-calendar">Release Calendar</a>
+            <a class="navbar-item" href="https://spring.io/projects/generations">Version Mappings</a>
+            <a class="navbar-item" href="https://spring.io/projects/release-highlights">Release Highlights</a>
+            <a class="navbar-item" href="https://spring.io/security">Security Advisories</a>
+            <li class="navbar-item navbar-item-special-3">GitHub Orgs</li>
+            <a class="navbar-item" href="https://github.com/spring-projects">Spring Projects
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+            <a class="navbar-item" href="https://github.com/spring-cloud">Spring Cloud
+              <svg class="external-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><polyline points="15 10.94 15 15 1 15 1 1 5.06 1" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><polyline points="8.93 1 15 1 15 7.07" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></polyline><line x1="15" y1="1" x2="8" y2="8" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="2"></line></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Community</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="https://spring.io/community">Overview</a>
+            <a class="navbar-item" href="https://spring.io/events">Events</a>
+            <a class="navbar-item" href="https://spring.io/authors">Authors</a>
+          </div>
+        </div>
+
+        <div class="navbar-item has-dropdown is-hoverable is-enterprise">
+          <a class="navbar-link" href="#">Enterprise</a>
+          <div class="navbar-dropdown lg is-right">
+            <a class="navbar-item" href="https://enterprise.spring.io/">Overview</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/lts-releases">Long-term Support</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/spring-application-advisor">Automated Upgrades</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/enterprise-extensions">Governance and Compliance</a>
+            <a class="navbar-item" href="https://enterprise.spring.io/enterprise-components">Modern App Development</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <label class="theme-toggler">
+      <input
+        type="checkbox"
+        type="checkbox"
+        id="switch-theme-checkbox"
+        name="switch-theme-checkbox"
+      />
+      <span class="icon"><svg
+          aria-hidden="true"
+          focusable="false"
+          data-prefix="fas"
+          data-icon="moon"
+          class="svg-inline--fa fa-moon moon"
+          role="img"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 384 512"
+        ><path
+            fill="currentColor"
+            d="M223.5 32C100 32 0 132.3 0 256S100 480 223.5 480c60.6 0 115.5-24.2 155.8-63.4c5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6c-96.9 0-175.5-78.8-175.5-176c0-65.8 36-123.1 89.3-153.3c6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"
+          ></path>
+        </svg>
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          data-prefix="fas"
+          data-icon="sun"
+          class="svg-inline--fa fa-sun sun"
+          role="img"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 512 512"
+        ><path
+            fill="currentColor"
+            d="M361.5 1.2c5 2.1 8.6 6.6 9.6 11.9L391 121l107.9 19.8c5.3 1 9.8 4.6 11.9 9.6s1.5 10.7-1.6 15.2L446.9 256l62.3 90.3c3.1 4.5 3.7 10.2 1.6 15.2s-6.6 8.6-11.9 9.6L391 391 371.1 498.9c-1 5.3-4.6 9.8-9.6 11.9s-10.7 1.5-15.2-1.6L256 446.9l-90.3 62.3c-4.5 3.1-10.2 3.7-15.2 1.6s-8.6-6.6-9.6-11.9L121 391 13.1 371.1c-5.3-1-9.8-4.6-11.9-9.6s-1.5-10.7 1.6-15.2L65.1 256 2.8 165.7c-3.1-4.5-3.7-10.2-1.6-15.2s6.6-8.6 11.9-9.6L121 121 140.9 13.1c1-5.3 4.6-9.8 9.6-11.9s10.7-1.5 15.2 1.6L256 65.1 346.3 2.8c4.5-3.1 10.2-3.7 15.2-1.6zM160 256a96 96 0 1 1 192 0 96 96 0 1 1 -192 0zm224 0a128 128 0 1 0 -256 0 128 128 0 1 0 256 0z"
+          ></path>
+        </svg></span>
+      <span class="text">light</span>
+    </label>
+  </nav>
+</header>
+<script>
+!function (theme) {
+  if (theme === 'dark') {
+    document.getElementById('switch-theme-checkbox').parentElement.classList.add('active')
+  }
+}(localStorage && localStorage.getItem('theme') || (matchMedia('(prefers-color-scheme: dark)')?.matches && 'dark'))
+</script>
+<div class="body">
+<div class="nav-container" data-component="framework" data-version="7.0.9">
+  <aside class="nav">
+    <div class="panels">
+      <div class="nav-panel-menu is-active" data-panel="menu">
+        <nav class="nav-menu">
+<div class="context">
+  <span class="title">Spring Framework</span>
+  <span class="version">7.0.9</span>
+  <button class="browse-version" id="browse-version">
+    <svg
+      height="24px"
+      id="Layer_1"
+      style="enable-background:new 0 0 512 512;"
+      version="1.1"
+      viewBox="0 0 512 512"
+      width="24px"
+      xml:space="preserve"
+    ><g><path
+          d="M256,224c-17.7,0-32,14.3-32,32s14.3,32,32,32c17.7,0,32-14.3,32-32S273.7,224,256,224L256,224z"
+        ></path><path
+          d="M128.4,224c-17.7,0-32,14.3-32,32s14.3,32,32,32c17.7,0,32-14.3,32-32S146,224,128.4,224L128.4,224z"
+        ></path><path
+          d="M384,224c-17.7,0-32,14.3-32,32s14.3,32,32,32s32-14.3,32-32S401.7,224,384,224L384,224z"
+        ></path></g></svg>
+  </button>
+  <div class="search">
+  <button class="DocSearch-Button search-button">
+    <svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path d="M27.414,24.586l-5.077-5.077C23.386,17.928,24,16.035,24,14c0-5.514-4.486-10-10-10S4,8.486,4,14  s4.486,10,10,10c2.035,0,3.928-0.614,5.509-1.663l5.077,5.077c0.78,0.781,2.048,0.781,2.828,0  C28.195,26.633,28.195,25.367,27.414,24.586z M7,14c0-3.86,3.14-7,7-7s7,3.14,7,7s-3.14,7-7,7S7,17.86,7,14z" id="XMLID_223_"/>
+    </svg>
+    <span>Search</span>
+    <span class="search-key"></span>
+  </button>
+</div>
+</div><ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link"  href="../../overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../core.html">Core Technologies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../beans.html">The IoC Container</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/introduction.html">Introduction to the Spring IoC Container and Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/basics.html">Container Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/definition.html">Bean Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../beans/dependencies.html">Dependencies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-collaborators.html">Dependency Injection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-properties-detailed.html">Dependencies and Configuration in Detail</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-dependson.html">Using <code>depends-on</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-lazy-init.html">Lazy-initialized Beans</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-autowire.html">Autowiring Collaborators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/dependencies/factory-method-injection.html">Method Injection</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/factory-scopes.html">Bean Scopes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/factory-nature.html">Customizing the Nature of a Bean</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/child-bean-definitions.html">Bean Definition Inheritance</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/factory-extension.html">Container Extension Points</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../beans/annotation-config.html">Annotation-based Container Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/autowired.html">Using <code>@Autowired</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/autowired-primary.html">Fine-tuning Annotation-based Autowiring with <code>@Primary</code> or <code>@Fallback</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/autowired-qualifiers.html">Fine-tuning Annotation-based Autowiring with Qualifiers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/generics-as-qualifiers.html">Using Generics as Autowiring Qualifiers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/custom-autowire-configurer.html">Using <code>CustomAutowireConfigurer</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/resource.html">Injection with <code>@Resource</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/value-annotations.html">Using <code>@Value</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/annotation-config/postconstruct-and-predestroy-annotations.html">Using <code>@PostConstruct</code> and <code>@PreDestroy</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/classpath-scanning.html">Classpath Scanning and Managed Components</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/standard-annotations.html">Using JSR-330 Standard Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../beans/java.html">Java-based Container Configuration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/basic-concepts.html">Basic Concepts: <code>@Bean</code> and <code>@Configuration</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/instantiating-container.html">Instantiating the Spring Container by Using <code>AnnotationConfigApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/bean-annotation.html">Using the <code>@Bean</code> Annotation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/configuration-annotation.html">Using the <code>@Configuration</code> annotation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/composing-configuration-classes.html">Composing Java-based Configurations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../beans/java/programmatic-bean-registration.html">Programmatic Bean Registration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/environment.html">Environment Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/context-load-time-weaver.html">Registering a <code>LoadTimeWeaver</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/context-introduction.html">Additional Capabilities of the <code>ApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../beans/beanfactory.html">The <code>BeanFactory</code> API</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../resources.html">Resources</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../validation.html">Validation, Data Binding, and Type Conversion</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/validator.html">Validation Using Spring&#8217;s Validator Interface</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/error-code-resolution.html">Resolving Error Codes to Error Messages</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/convert.html">Spring Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/format.html">Spring Field Formatting</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/format-configuring-formatting-globaldatetimeformat.html">Configuring a Global Date and Time Format</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../validation/beanvalidation.html">Java Bean Validation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../expressions.html">Spring Expression Language (SpEL)</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link"  href="evaluation.html">Evaluation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="beandef.html">Expressions in Bean Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="language-ref.html">Language Reference</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/literal.html">Literal Expressions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/properties-arrays.html">Properties, Arrays, Lists, Maps, and Indexers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/inline-lists.html">Inline Lists</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/inline-maps.html">Inline Maps</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/array-construction.html">Array Construction</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/methods.html">Methods</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/operators.html">Operators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/types.html">Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/constructors.html">Constructors</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/variables.html">Variables</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/functions.html">Functions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/varargs.html">Varargs Invocations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/bean-references.html">Bean References</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/operator-ternary.html">Ternary Operator (If-Then-Else)</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/operator-elvis.html">The Elvis Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/operator-safe-navigation.html">Safe Navigation Operator</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/collection-selection.html">Collection Selection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/collection-projection.html">Collection Projection</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="language-ref/templating.html">Expression Templating</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="example-classes.html">Classes Used in the Examples</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../aop.html">Aspect Oriented Programming with Spring</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/introduction-defn.html">AOP Concepts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/introduction-spring-defn.html">Spring AOP Capabilities and Goals</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/introduction-proxies.html">AOP Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../aop/ataspectj.html">@AspectJ support</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/aspectj-support.html">Enabling @AspectJ Support</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/at-aspectj.html">Declaring an Aspect</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/pointcuts.html">Declaring a Pointcut</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/advice.html">Declaring Advice</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/introductions.html">Introductions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/instantiation-models.html">Aspect Instantiation Models</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../aop/ataspectj/example.html">An AOP Example</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/schema.html">Schema-based AOP Support</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/choosing.html">Choosing which AOP Declaration Style to Use</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/mixing-styles.html">Mixing Aspect Types</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/proxying.html">Proxying Mechanisms</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/aspectj-programmatic.html">Programmatic Creation of @AspectJ Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/using-aspectj.html">Using AspectJ with Spring Applications</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../aop-api.html">Spring AOP APIs</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/pointcuts.html">Pointcut API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/advice.html">Advice API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/advisor.html">The Advisor API in Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/pfb.html">Using the <code>ProxyFactoryBean</code> to Create AOP Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/concise-proxy.html">Concise Proxy Definitions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/prog.html">Creating AOP Proxies Programmatically with the <code>ProxyFactory</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/advised.html">Manipulating Advised Objects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/autoproxy.html">Using the "auto-proxy" facility</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/targetsource.html">Using <code>TargetSource</code> Implementations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../aop-api/extensibility.html">Defining New Advice Types</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../resilience.html">Resilience Features</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../null-safety.html">Null-safety</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../databuffer-codec.html">Data Buffers and Codecs</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../aot.html">Ahead of Time Optimizations</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../appendix.html">Appendix</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../appendix/xsd-schemas.html">XML Schemas</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../appendix/xml-custom.html">XML Schema Authoring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../appendix/application-startup-steps.html">Application Startup Steps</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access.html">Data Access</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access/transaction.html">Transaction Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/motivation.html">Advantages of the Spring Framework&#8217;s Transaction Support Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/strategies.html">Understanding the Spring Framework Transaction Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/tx-resource-synchronization.html">Synchronizing Resources with Transactions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access/transaction/declarative.html">Declarative Transaction Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/tx-decl-explained.html">Understanding the Spring Framework&#8217;s Declarative Transaction Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/first-example.html">Example of Declarative Transaction Implementation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/rolling-back.html">Rolling Back a Declarative Transaction</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/diff-tx.html">Configuring Different Transactional Semantics for Different Beans</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/txadvice-settings.html">&lt;tx:advice/&gt; Settings</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/annotations.html">Using <code>@Transactional</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/tx-propagation.html">Transaction Propagation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/applying-more-than-just-tx-advice.html">Advising Transactional Operations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../data-access/transaction/declarative/aspectj.html">Using <code>@Transactional</code> with AspectJ</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/programmatic.html">Programmatic Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/tx-decl-vs-prog.html">Choosing Between Programmatic and Declarative Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/event.html">Transaction-bound Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/application-server-integration.html">Application server-specific integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/solutions-to-common-problems.html">Solutions to Common Problems</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/transaction/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../data-access/dao.html">DAO Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access/jdbc.html">Data Access with JDBC</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/choose-style.html">Choosing an Approach for JDBC Database Access</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/packages.html">Package Hierarchy</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/core.html">Using the JDBC Core Classes to Control Basic JDBC Processing and Error Handling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/connections.html">Controlling Database Connections</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/advanced.html">JDBC Batch Operations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/simple.html">Simplifying JDBC Operations with the <code>SimpleJdbc</code> Classes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/object.html">Modeling JDBC Operations as Java Objects</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/parameter-handling.html">Common Problems with Parameter and Data Value Handling</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/embedded-database-support.html">Embedded Database Support</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/jdbc/initializing-datasource.html">Initializing a <code>DataSource</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../data-access/r2dbc.html">Data Access with R2DBC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../data-access/orm.html">Object Relational Mapping (ORM) Data Access</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/orm/introduction.html">Introduction to ORM with Spring</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/orm/general.html">General ORM Integration Considerations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/orm/hibernate.html">Hibernate</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../data-access/orm/jpa.html">JPA</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../data-access/oxm.html">Marshalling XML by Using Object-XML Mappers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../data-access/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web.html">Web on Servlet Stack</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc.html">Spring Web MVC</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet.html">DispatcherServlet</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/context-hierarchy.html">Context Hierarchy</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/special-bean-types.html">Special Bean Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/config.html">Web MVC Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/container-config.html">Servlet Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/sequence.html">Processing</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/handlermapping-path.html">Path Matching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/handlermapping-interceptor.html">Interception</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/exceptionhandlers.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/viewresolver.html">View Resolution</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/localeresolver.html">Locale</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/multipart.html">Multipart Resolver</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-servlet/logging.html">Logging</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/filters.html">Filters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/message-converters.html">HTTP Message Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller.html">Annotated Controllers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann.html">Declaration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-requestmapping.html">Mapping Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods.html">Handler Methods</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/arguments.html">Method Arguments</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/return-types.html">Return Values</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/typeconversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/matrix-variables.html">Matrix Variables</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestparam.html"><code>@RequestParam</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestheader.html"><code>@RequestHeader</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/cookievalue.html"><code>@CookieValue</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/modelattrib-method-args.html"><code>@ModelAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/sessionattributes.html"><code>@SessionAttributes</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/sessionattribute.html"><code>@SessionAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestattrib.html"><code>@RequestAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/redirecting-passing-data.html">Redirect Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/flash-attributes.html">Flash Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/multipart-forms.html">Multipart</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/requestbody.html"><code>@RequestBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/httpentity.html">HttpEntity</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/responsebody.html"><code>@ResponseBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/responseentity.html">ResponseEntity</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-methods/jackson.html">Jackson JSON</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-modelattrib-methods.html">Model</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-initbinder.html"><code>@InitBinder</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-exceptionhandler.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-controller/ann-advice.html">Controller Advice</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-functional.html">Functional Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-uri-building.html">URI Links</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-ann-async.html">Asynchronous Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-range.html">Range Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-cors.html">CORS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc-versioning.html">API Versioning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-ann-rest-exceptions.html">Error Responses</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-security.html">Web Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-caching.html">HTTP Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc-view.html">View Technologies</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-thymeleaf.html">Thymeleaf</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-freemarker.html">FreeMarker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-groovymarkup.html">Groovy Markup</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-script.html">Script Views</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-fragments.html">HTML Fragments</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-jsp.html">JSP and JSTL</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-feeds.html">RSS and Atom</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-document.html">PDF and Excel</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-jackson.html">Jackson</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-xml-marshalling.html">XML Marshalling</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc-view/mvc-xslt.html">XSLT Views</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webmvc/mvc-config.html">MVC Config</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/enable.html">Enable MVC Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/customize.html">MVC Config API</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/conversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/interceptors.html">Interceptors</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/content-negotiation.html">Content Types</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/message-converters.html">Message Converters</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/view-controller.html">View Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/view-resolvers.html">View Resolvers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/static-resources.html">Static Resources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/default-servlet-handler.html">Default Servlet</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/path-matching.html">Path Matching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/api-version.html">API Version</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/advanced-java.html">Advanced Java Config</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webmvc/mvc-config/advanced-xml.html">Advanced XML Config</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webmvc/mvc-http2.html">HTTP/2</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webmvc-client.html">REST Clients</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webmvc-test.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/websocket.html">WebSockets</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/websocket/server.html">WebSocket API</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/websocket/fallback.html">SockJS Fallback</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/websocket/stomp.html">STOMP</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/benefits.html">Benefits</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/enable.html">Enable STOMP</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/server-config.html">WebSocket Transport</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/message-flow.html">Flow of Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-annotations.html">Annotated Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-send.html">Sending Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-simple-broker.html">Simple Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-broker-relay.html">External Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/handle-broker-relay-configure.html">Connecting to a Broker</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/destination-separator.html">Dots as Separators</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authentication.html">Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authentication-token-based.html">Token Authentication</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/authorization.html">Authorization</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/user-destination.html">User Destinations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/ordered-messages.html">Order of Messages</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/application-context-events.html">Events</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/interceptors.html">Interception</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/client.html">STOMP Client</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/scope.html">WebSocket Scope</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/configuration-performance.html">Performance</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/stats.html">Monitoring</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/websocket/stomp/testing.html">Testing</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web-reactive.html">Web on Reactive Stack</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux.html">Spring WebFlux</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/new-framework.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/reactive-spring.html">Reactive Core</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/dispatcher-handler.html"><code>DispatcherHandler</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux/controller.html">Annotated Controllers</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann.html"><code>@Controller</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-requestmapping.html">Mapping Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods.html">Handler Methods</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/arguments.html">Method Arguments</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/return-types.html">Return Values</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/typeconversion.html">Type Conversion</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/matrix-variables.html">Matrix Variables</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestparam.html"><code>@RequestParam</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestheader.html"><code>@RequestHeader</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/cookievalue.html"><code>@CookieValue</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/modelattrib-method-args.html"><code>@ModelAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/sessionattributes.html"><code>@SessionAttributes</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/sessionattribute.html"><code>@SessionAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestattrib.html"><code>@RequestAttribute</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/multipart-forms.html">Multipart Content</a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/requestbody.html"><code>@RequestBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/httpentity.html"><code>HttpEntity</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/responsebody.html"><code>@ResponseBody</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/responseentity.html"><code>ResponseEntity</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-methods/jackson.html">Jackson JSON</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-modelattrib-methods.html"><code>Model</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-initbinder.html"><code>DataBinder</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-validation.html">Validation</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-exceptions.html">Exceptions</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../web/webflux/controller/ann-advice.html">Controller Advice</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-functional.html">Functional Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/uri-building.html">URI Links</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/range.html">Range Requests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/data-binding.html">Data Binding</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-cors.html">CORS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-versioning.html">API Versioning</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/ann-rest-exceptions.html">Error Responses</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/security.html">Web Security</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/caching.html">HTTP Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-view.html">View Technologies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/config.html">WebFlux Config</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux/http2.html">HTTP/2</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../web/webflux-webclient.html">WebClient</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-builder.html">Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-retrieve.html"><code>retrieve()</code></a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-exchange.html">Exchange</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-body.html">Request Body</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-filter.html">Filters</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-attributes.html">Attributes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-context.html">Context</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-synchronous.html">Synchronous Use</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../web/webflux-webclient/client-testing.html">Testing</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-http-service-client.html">HTTP Service Client</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-websocket.html">WebSockets</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-test.html">Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../rsocket.html">RSocket</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../web/webflux-reactive-libraries.html">Reactive Libraries</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing.html">Testing</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/introduction.html">Introduction to Spring Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/unit.html">Unit Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/integration.html">Integration Testing</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/support-jdbc.html">JDBC Testing Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/testcontext-framework.html">Spring TestContext Framework</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/key-abstractions.html">Key Abstractions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/bootstrapping.html">Bootstrapping the TestContext Framework</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/tel-config.html"><code>TestExecutionListener</code> Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/application-events.html">Application Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/test-execution-events.html">Test Execution Events</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management.html">Context Management</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/javaconfig.html">Context Configuration with Component Classes</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/xml.html">Context Configuration with XML Resources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/groovy.html">Context Configuration with Groovy Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/default-config.html">Default Context Configuration</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/mixed-config.html">Mixing Component Classes, XML, and Groovy Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/context-customizers.html">Context Configuration with Context Customizers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/initializers.html">Context Configuration with Context Initializers</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/inheritance.html">Context Configuration Inheritance</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/env-profiles.html">Context Configuration with Environment Profiles</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/property-sources.html">Context Configuration with Test Property Sources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/dynamic-property-sources.html">Context Configuration with Dynamic Property Sources</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/web.html">Loading a <code>WebApplicationContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/web-mocks.html">Working with Web Mocks</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/caching.html">Context Caching</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/context-pausing.html">Context Pausing</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/failure-threshold.html">Context Failure Threshold</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/testcontext-framework/ctx-management/hierarchies.html">Context Hierarchies</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/fixture-di.html">Dependency Injection of Test Fixtures</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/bean-overriding.html">Bean Overriding in Tests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/web-scoped-beans.html">Testing Request- and Session-scoped Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/tx.html">Transaction Management</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/executing-sql.html">Executing SQL Scripts</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/parallel-test-execution.html">Parallel Test Execution</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/support-classes.html">TestContext Framework Support Classes</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/testcontext-framework/aot.html">Ahead of Time Support for Tests</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/webtestclient.html">WebTestClient</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/resttestclient.html">RestTestClient</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc.html">MockMvc</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/overview.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/setup-options.html">Setup Options</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest.html">Hamcrest Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/static-imports.html">Static Imports</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/setup.html">Configuring MockMvc</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/setup-steps.html">Setup Features</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/requests.html">Performing Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/expectations.html">Defining Expectations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/async-requests.html">Async Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/vs-streaming-response.html">Streaming Responses</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/hamcrest/filters.html">Filter Registrations</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/assertj.html">AssertJ Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/setup.html">Configuring MockMvcTester</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/requests.html">Performing Requests</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/assertions.html">Defining Expectations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/assertj/integration.html">MockMvc integration</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit.html">HtmlUnit Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/why.html">Why HtmlUnit Integration?</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/mah.html">MockMvc and HtmlUnit</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/webdriver.html">MockMvc and WebDriver</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/mockmvc/htmlunit/geb.html">MockMvc and Geb</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/vs-end-to-end-integration-tests.html">MockMvc vs End-to-End Tests</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/mockmvc/resources.html">Further Examples</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../testing/spring-mvc-test-client.html">Testing Client Applications</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/appendix.html">Appendix</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/annotations.html">Annotations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-standard.html">Standard Annotation Support</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../testing/annotations/integration-spring.html">Spring Testing Annotations</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-bootstrapwith.html"><code>@BootstrapWith</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contextconfiguration.html"><code>@ContextConfiguration</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-webappconfiguration.html"><code>@WebAppConfiguration</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contexthierarchy.html"><code>@ContextHierarchy</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-contextcustomizerfactories.html"><code>@ContextCustomizerFactories</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-activeprofiles.html"><code>@ActiveProfiles</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testpropertysource.html"><code>@TestPropertySource</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-dynamicpropertysource.html"><code>@DynamicPropertySource</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testbean.html"><code>@TestBean</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-mockitobean.html"><code>@MockitoBean</code> and <code>@MockitoSpyBean</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-dirtiescontext.html"><code>@DirtiesContext</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-testexecutionlisteners.html"><code>@TestExecutionListeners</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-recordapplicationevents.html"><code>@RecordApplicationEvents</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-commit.html"><code>@Commit</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-rollback.html"><code>@Rollback</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-beforetransaction.html"><code>@BeforeTransaction</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-aftertransaction.html"><code>@AfterTransaction</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sql.html"><code>@Sql</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlconfig.html"><code>@SqlConfig</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlmergemode.html"><code>@SqlMergeMode</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-sqlgroup.html"><code>@SqlGroup</code></a>
+  </li>
+  <li class="nav-item" data-depth="5">
+    <a class="nav-link"  href="../../testing/annotations/integration-spring/annotation-disabledinaotmode.html"><code>@DisabledInAotMode</code></a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-junit4.html">Spring JUnit 4 Testing Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-junit-jupiter.html">Spring JUnit Jupiter Testing Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link"  href="../../testing/annotations/integration-meta.html">Meta-Annotation Support for Testing</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../testing/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration.html">Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/rest-clients.html">REST Clients</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/jms.html">JMS (Java Message Service)</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/using.html">Using Spring JMS</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/sending.html">Sending a Message</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/receiving.html">Receiving a Message</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/jca-message-endpoint-manager.html">Support for JCA Message Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/annotated.html">Annotation-driven Listener Endpoints</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jms/namespace.html">JMS Namespace Support</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/jmx.html">JMX</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/exporting.html">Exporting Your Beans to JMX</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/interface.html">Controlling the Management Interface of Your Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/naming.html">Controlling  <code>ObjectName</code> Instances for Your Beans</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/jsr160.html">Using JSR-160 Connectors</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/proxy.html">Accessing MBeans through Proxies</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/notifications.html">Notifications</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/jmx/resources.html">Further Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/email.html">Email</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/scheduling.html">Task Execution and Scheduling</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../integration/cache.html">Cache Abstraction</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/strategies.html">Understanding the Cache Abstraction</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/annotations.html">Declarative Annotation-based Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/jsr-107.html">JCache (JSR-107) Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/declarative-xml.html">Declarative XML-based Caching</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/store-configuration.html">Configuring the Cache Storage</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/plug.html">Plugging-in Different Back-end Caches</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../integration/cache/specific-config.html">How can I Set the TTL/TTI/Eviction policy/XXX feature?</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/observability.html">Observability Support</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/aot-cache.html">JVM AOT Cache</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/checkpoint-restore.html">JVM Checkpoint Restore</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../integration/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../languages.html">Language Support</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link"  href="../../languages/kotlin.html">Kotlin</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/requirements.html">Requirements</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/extensions.html">Extensions</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/null-safety.html">Null-safety</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/classes-interfaces.html">Classes and Interfaces</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/annotations.html">Annotations</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/bean-registration-dsl.html">Bean Registration DSL</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/web.html">Web</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/coroutines.html">Coroutines</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/spring-projects-in.html">Spring Projects in Kotlin</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link"  href="../../languages/kotlin/resources.html">Resources</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link"  href="../../languages/groovy.html">Apache Groovy</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link"  href="../../appendix.html">Appendix</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://docs.spring.io/spring-framework/docs/7.0.9/javadoc-api/">Java API</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://docs.spring.io/spring-framework/docs/7.0.9/kdoc-api/">Kotlin API</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link link-external"  target="_blank" href="https://github.com/spring-projects/spring-framework/wiki">Wiki</a>
+  </li>
+</ul>
+  </li>
+</ul>
+          <div class="toggle-sm">
+            <button id="nav-toggle-2" class="nav-toggle"></button>
+          </div>
+        </nav>
+      </div>
+      <div class="nav-collapse">
+        <button id="nav-collapse-toggle"><span></span></button>        
+      </div>
+    </div>
+    <div class="nav-resize"></div>
+  </aside>
+</div>
+<script>
+!function (sidebar) {
+  if (sidebar) {
+    document.body.classList.add('nav-sm')
+  }
+}(localStorage && localStorage.getItem('sidebar') === 'close')
+</script><main class="article">
+<div class="toolbar" role="navigation">
+  <button id="nav-toggle-1" class="nav-toggle"></button>
+<div class="search">
+  <button class="DocSearch-Button search-button">
+    <svg enable-background="new 0 0 32 32" id="Glyph" version="1.1" viewBox="0 0 32 32" xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <path d="M27.414,24.586l-5.077-5.077C23.386,17.928,24,16.035,24,14c0-5.514-4.486-10-10-10S4,8.486,4,14  s4.486,10,10,10c2.035,0,3.928-0.614,5.509-1.663l5.077,5.077c0.78,0.781,2.048,0.781,2.828,0  C28.195,26.633,28.195,25.367,27.414,24.586z M7,14c0-3.86,3.14-7,7-7s7,3.14,7,7s-3.14,7-7,7S7,17.86,7,14z" id="XMLID_223_"/>
+    </svg>
+    <span>Search</span>
+    <span class="search-key"></span>
+  </button>
+</div>
+</div>
+  <div class="content">
+<aside class="sidebar">
+  <div class="content">
+    <div
+      class="toc"
+      data-title="Evaluation"
+      data-levels="2"
+    >
+      <div class="toc-menu"></div>
+    </div>
+    <div class="sidebar-links">
+        <a href="https://github.com/spring-projects/spring-framework/blob/v7.0.9/framework-docs/modules/ROOT/pages/core/expressions/evaluation.adoc">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="24"
+            viewBox="0 0 24 24"
+            width="24"
+          ><path
+              d="m16 2.012 3 3L16.713 7.3l-3-3zM4 14v3h3l8.299-8.287-3-3zm0 6h16v2H4z"
+            ></path></svg>
+          Edit this Page
+        </a>
+              <a href="https://github.com/spring-projects/spring-framework" title="GitHub">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            height="512px"
+            id="Layer_1"
+            version="1.1"
+            viewBox="0 0 512 512"
+            width="512px"
+          ><style type="text/css"><![CDATA[
+              .st0{fill-rule:evenodd;clip-rule:evenodd;} ]]></style><g><path
+                class="st0"
+                d="M256,32C132.3,32,32,134.8,32,261.7c0,101.5,64.2,187.5,153.2,217.9c11.2,2.1,15.3-5,15.3-11.1   c0-5.5-0.2-19.9-0.3-39.1c-62.3,13.9-75.5-30.8-75.5-30.8c-10.2-26.5-24.9-33.6-24.9-33.6c-20.3-14.3,1.5-14,1.5-14   c22.5,1.6,34.3,23.7,34.3,23.7c20,35.1,52.4,25,65.2,19.1c2-14.8,7.8-25,14.2-30.7c-49.7-5.8-102-25.5-102-113.5   c0-25.1,8.7-45.6,23-61.6c-2.3-5.8-10-29.2,2.2-60.8c0,0,18.8-6.2,61.6,23.5c17.9-5.1,37-7.6,56.1-7.7c19,0.1,38.2,2.6,56.1,7.7   c42.8-29.7,61.5-23.5,61.5-23.5c12.2,31.6,4.5,55,2.2,60.8c14.3,16.1,23,36.6,23,61.6c0,88.2-52.4,107.6-102.3,113.3   c8,7.1,15.2,21.1,15.2,42.5c0,30.7-0.3,55.5-0.3,63c0,6.1,4,13.3,15.4,11C415.9,449.1,480,363.1,480,261.7   C480,134.8,379.7,32,256,32z"
+              ></path></g></svg>
+          GitHub Project
+        </a>
+        <a href="https://stackoverflow.com/questions/tagged/spring">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path
+              d="M290.7 311L95 269.7 86.8 309l195.7 41zm51-87L188.2 95.7l-25.5 30.8 153.5 128.3zm-31.2 39.7L129.2 179l-16.7 36.5L293.7 300zM262 32l-32 24 119.3 160.3 32-24zm20.5 328h-200v39.7h200zm39.7 80H42.7V320h-40v160h359.5V320h-40z"
+            ></path></svg>
+          Stack Overflow
+        </a>
+    </div>
+  </div>
+</aside>
+<article class="doc">
+<div class="breadcrumbs-container">
+  <nav class="breadcrumbs" aria-label="breadcrumbs">
+    <ul>
+      <li id="copy-url" title="Copy versioned URL"></li>
+      <li><a href="../../index.html">Spring Framework</a></li>
+      <li><a href="../../core.html">Core Technologies</a></li>
+      <li><a href="../expressions.html">Spring Expression Language (SpEL)</a></li>
+      <li><a href="evaluation.html">Evaluation</a></li>
+    </ul>
+  </nav>
+</div><h1 id="page-title" class="page">Evaluation</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section introduces programmatic use of SpEL&#8217;s interfaces and its expression language.
+The complete language reference can be found in the
+<a href="language-ref.html" class="xref page">Language Reference</a>.</p>
+</div>
+<div class="paragraph">
+<p>The following code demonstrates how to use the SpEL API to evaluate the literal string
+expression, <code>Hello World</code>.</p>
+</div>
+<div id="_tabs_1" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_1_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_1_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_1_java--panel" class="tabpanel" aria-labelledby="_tabs_1_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("'Hello World'"); <i class="conum" data-value="1"></i><b>(1)</b>
+String message = (String) exp.getValue();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The value of the message variable is <code>"Hello World"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="_tabs_1_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_1_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val parser = SpelExpressionParser()
+val exp = parser.parseExpression("'Hello World'") <i class="conum" data-value="1"></i><b>(1)</b>
+val message = exp.value as String</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The value of the message variable is <code>"Hello World"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The SpEL classes and interfaces you are most likely to use are located in the
+<code>org.springframework.expression</code> package and its sub-packages, such as <code>spel.support</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>ExpressionParser</code> interface is responsible for parsing an expression string. In the
+preceding example, the expression string is a string literal denoted by the surrounding
+single quotation marks. The <code>Expression</code> interface is responsible for evaluating the
+defined expression string. The two types of exceptions that can be thrown when calling
+<code>parser.parseExpression(&#8230;&#8203;)</code> and <code>exp.getValue(&#8230;&#8203;)</code> are <code>ParseException</code> and
+<code>EvaluationException</code>, respectively.</p>
+</div>
+<div class="paragraph">
+<p>SpEL supports a wide range of features such as calling methods, accessing properties,
+and calling constructors.</p>
+</div>
+<div class="paragraph">
+<p>In the following method invocation example, we call the <code>concat</code> method on the string
+literal, <code>Hello World</code>.</p>
+</div>
+<div id="_tabs_2" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_2_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_2_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_2_java--panel" class="tabpanel" aria-labelledby="_tabs_2_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("'Hello World'.concat('!')"); <i class="conum" data-value="1"></i><b>(1)</b>
+String message = (String) exp.getValue();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The value of <code>message</code> is now <code>"Hello World!"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="_tabs_2_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_2_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val parser = SpelExpressionParser()
+val exp = parser.parseExpression("'Hello World'.concat('!')") <i class="conum" data-value="1"></i><b>(1)</b>
+val message = exp.value as String</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The value of <code>message</code> is now <code>"Hello World!"</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The following example demonstrates how to access the <code>Bytes</code> JavaBean property of the
+string literal, <code>Hello World</code>.</p>
+</div>
+<div id="_tabs_3" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_3_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_3_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_3_java--panel" class="tabpanel" aria-labelledby="_tabs_3_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ExpressionParser parser = new SpelExpressionParser();
+
+// invokes 'getBytes()'
+Expression exp = parser.parseExpression("'Hello World'.bytes"); <i class="conum" data-value="1"></i><b>(1)</b>
+byte[] bytes = (byte[]) exp.getValue();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This line converts the literal to a byte array.</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="_tabs_3_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_3_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val parser = SpelExpressionParser()
+
+// invokes 'getBytes()'
+val exp = parser.parseExpression("'Hello World'.bytes") <i class="conum" data-value="1"></i><b>(1)</b>
+val bytes = exp.value as ByteArray</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This line converts the literal to a byte array.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>SpEL also supports nested properties by using the standard dot notation (such as
+<code>prop1.prop2.prop3</code>) as well as the corresponding setting of property values.
+Public fields may also be accessed.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows how to use dot notation to get the length of a string literal.</p>
+</div>
+<div id="_tabs_4" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_4_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_4_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_4_java--panel" class="tabpanel" aria-labelledby="_tabs_4_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ExpressionParser parser = new SpelExpressionParser();
+
+// invokes 'getBytes().length'
+Expression exp = parser.parseExpression("'Hello World'.bytes.length"); <i class="conum" data-value="1"></i><b>(1)</b>
+int length = (Integer) exp.getValue();</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>'Hello World'.bytes.length</code> gives the length of the literal.</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="_tabs_4_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_4_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val parser = SpelExpressionParser()
+
+// invokes 'getBytes().length'
+val exp = parser.parseExpression("'Hello World'.bytes.length") <i class="conum" data-value="1"></i><b>(1)</b>
+val length = exp.value as Int</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>'Hello World'.bytes.length</code> gives the length of the literal.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The String&#8217;s constructor can be called instead of using a string literal, as the following
+example shows.</p>
+</div>
+<div id="_tabs_5" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_5_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_5_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_5_java--panel" class="tabpanel" aria-labelledby="_tabs_5_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">ExpressionParser parser = new SpelExpressionParser();
+Expression exp = parser.parseExpression("new String('hello world').toUpperCase()"); <i class="conum" data-value="1"></i><b>(1)</b>
+String message = exp.getValue(String.class);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Construct a new <code>String</code> from the literal and convert it to upper case.</td>
+</tr>
+</table>
+</div>
+</div>
+<div id="_tabs_5_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_5_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val parser = SpelExpressionParser()
+val exp = parser.parseExpression("new String('hello world').toUpperCase()")  <i class="conum" data-value="1"></i><b>(1)</b>
+val message = exp.getValue(String::class.java)</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Construct a new <code>String</code> from the literal and convert it to upper case.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Note the use of the generic method: <code>public &lt;T&gt; T getValue(Class&lt;T&gt; desiredResultType)</code>.
+Using this method removes the need to cast the value of the expression to the desired
+result type. An <code>EvaluationException</code> is thrown if the value cannot be cast to the
+type <code>T</code> or converted by using the registered type converter.</p>
+</div>
+<div class="paragraph">
+<p>The more common usage of SpEL is to provide an expression string that is evaluated
+against a specific object instance (called the root object). The following example shows
+how to retrieve the <code>name</code> property from an instance of the <code>Inventor</code> class and how to
+reference the <code>name</code> property in a boolean expression.</p>
+</div>
+<div id="_tabs_6" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_6_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_6_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_6_java--panel" class="tabpanel" aria-labelledby="_tabs_6_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// Create and set a calendar
+GregorianCalendar c = new GregorianCalendar();
+c.set(1856, 7, 9);
+
+// The constructor arguments are name, birthday, and nationality.
+Inventor tesla = new Inventor("Nikola Tesla", c.getTime(), "Serbian");
+
+ExpressionParser parser = new SpelExpressionParser();
+
+Expression exp = parser.parseExpression("name"); // Parse name as an expression
+String name = (String) exp.getValue(tesla);
+// name == "Nikola Tesla"
+
+exp = parser.parseExpression("name == 'Nikola Tesla'");
+boolean result = exp.getValue(tesla, Boolean.class);
+// result == true</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_6_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_6_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">// Create and set a calendar
+val c = GregorianCalendar()
+c.set(1856, 7, 9)
+
+// The constructor arguments are name, birthday, and nationality.
+val tesla = Inventor("Nikola Tesla", c.time, "Serbian")
+
+val parser = SpelExpressionParser()
+
+var exp = parser.parseExpression("name") // Parse name as an expression
+val name = exp.getValue(tesla) as String
+// name == "Nikola Tesla"
+
+exp = parser.parseExpression("name == 'Nikola Tesla'")
+val result = exp.getValue(tesla, Boolean::class.java)
+// result == true</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="expressions-evaluation-context"><a class="anchor" href="#expressions-evaluation-context"></a>Understanding <code>EvaluationContext</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>EvaluationContext</code> API is used when evaluating an expression to resolve properties,
+methods, or fields and to help perform type conversion. Spring provides two
+implementations.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>SimpleEvaluationContext</code></dt>
+<dd>
+<p>Exposes a subset of essential SpEL language features and configuration options, for
+categories of expressions that do not require the full extent of the SpEL language
+syntax and should be meaningfully restricted. Examples include but are not limited to
+data binding expressions and property-based filters.</p>
+</dd>
+<dt class="hdlist1"><code>StandardEvaluationContext</code></dt>
+<dd>
+<p>Exposes the full set of SpEL language features and configuration options. You can use
+it to specify a default root object and to configure every available evaluation-related
+strategy.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><code>SimpleEvaluationContext</code> is designed to support only a subset of the SpEL language
+syntax. For example, it excludes Java type references, constructors, and bean references.
+It also requires you to explicitly choose the level of support for properties and methods
+in expressions. When creating a <code>SimpleEvaluationContext</code> you need to choose the level of
+support that you need for data binding in SpEL expressions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Data binding for read-only access</p>
+</li>
+<li>
+<p>Data binding for read and write access</p>
+</li>
+<li>
+<p>A custom <code>PropertyAccessor</code> (typically not reflection-based), potentially combined with
+a <code>DataBindingPropertyAccessor</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Conveniently, <code>SimpleEvaluationContext.forReadOnlyDataBinding()</code> enables read-only access
+to properties via <code>DataBindingPropertyAccessor</code>. Similarly,
+<code>SimpleEvaluationContext.forReadWriteDataBinding()</code> enables read and write access to
+properties. Alternatively, configure custom accessors via
+<code>SimpleEvaluationContext.forPropertyAccessors(&#8230;&#8203;)</code>, potentially disable assignment, and
+optionally activate method resolution and/or a type converter through the builder.</p>
+</div>
+<div class="sect2">
+<h3 id="expressions-evaluation-context-security"><a class="anchor" href="#expressions-evaluation-context-security"></a>Security Considerations</h3>
+<div class="paragraph">
+<p>SpEL is a powerful expression language that can invoke constructors and methods, read and
+write properties and fields, and reference beans – all backed by reflection. Because of
+this power, evaluating a SpEL expression obtained from an untrusted source is inherently
+dangerous and should generally be avoided, since doing so can effectively grant that
+source the ability to execute arbitrary code within the application, regardless of which
+<code>EvaluationContext</code> implementation is used.</p>
+</div>
+<div class="paragraph">
+<p>Throughout this section, a source of a SpEL expression is considered "trusted" only if it
+is a developer of the application or an administrator responsible for configuring or
+operating the application. Any other source of a SpEL expression must be treated as
+untrusted – for example, an expression supplied by an end user of the application or
+received from an external system.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><code>StandardEvaluationContext</code> exposes the complete SpEL language and must <strong>never</strong> be used
+to evaluate an expression obtained from an untrusted source.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Although <code>SimpleEvaluationContext</code> restricts the SpEL language to a subset of its
+features, that restriction is provided on a best-effort basis and does not guarantee that
+expression evaluation is safe. Since an expression can potentially invoke any property,
+method, or function reachable via the configured root object, property accessors, method
+resolvers, variables, and functions, care must be taken if you choose to evaluate
+expressions from an untrusted source. It is therefore the responsibility of the code that
+configures an <code>EvaluationContext</code> – for example, by supplying a root object or by
+registering property accessors, resolvers, variables, or functions – to ensure that none
+of the objects reachable via the context expose operations that would be dangerous if
+invoked by an expression from an untrusted source.</p>
+</div>
+<div class="paragraph">
+<p>Furthermore, a property "getter" reachable from an expression is not necessarily a pure,
+side-effect-free read operation. A JavaBean-style accessor (such as <code>getName()</code> or
+<code>isActive()</code>) and a plain accessor method used to support data classes such as Java
+records and Kotlin data classes (such as <code>name()</code>) are indistinguishable from a method
+that performs an action and happens to return a value (that is, a method which is
+<strong>accessor-shaped</strong>). For example, the <code>public boolean delete()</code> method in <code>java.io.File</code>
+looks like a plain accessor method to SpEL. Specifically, neither
+<code>ReflectivePropertyAccessor</code> nor <code>DataBindingPropertyAccessor</code> can determine whether such
+a method is free of side effects. Moreover, restricting a <code>SimpleEvaluationContext</code> to
+read-only data binding governs only whether <strong>assignment</strong> to a property is permitted: it
+does not verify that reading a property is side-effect-free. When exposing a root object
+or other reachable object to an untrusted expression, you must ensure that none of its
+accessor-shaped methods perform an action that would be unsafe if triggered by that
+expression.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">What makes a method "accessor-shaped"?</div>
+<div class="paragraph">
+<p>A method is accessor-shaped if it is <code>public</code>, takes no arguments, and returns a value –
+the same shape that <code>ReflectivePropertyAccessor</code> and <code>DataBindingPropertyAccessor</code> look
+for when resolving a property "getter" by name. That shape says nothing about whether
+invoking the method is actually free of side effects. For example, the following methods
+are all accessor-shaped, but only some of them are safe to invoke as a property read.</p>
+</div>
+<div class="paragraph">
+<p>Side-effect-free (safe to expose as properties):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>getName()</code> and <code>isActive()</code>: conventional JavaBean-style accessors.</p>
+</li>
+<li>
+<p><code>name()</code> and <code>active()</code>: plain accessor methods used by data classes such as Java
+records and Kotlin data classes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Side-effecting (unsafe to expose as properties, despite the identical shape):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>java.io.File#delete()</code>: deletes the underlying file and returns whether the deletion
+succeeded.</p>
+</li>
+<li>
+<p><code>java.util.Queue#poll()</code>: removes and returns the head element, mutating the queue.</p>
+</li>
+<li>
+<p><code>java.util.concurrent.atomic.AtomicInteger#incrementAndGet()</code>: increments and returns
+a counter, mutating it.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If an untrusted expression can reference <code>someFile.delete</code>, <code>someQueue.poll</code>, or
+<code>someCounter.incrementAndGet</code> as a property, SpEL invokes the corresponding method just
+as readily as it would invoke a genuine getter.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expressions-evaluation-context-object-design"><a class="anchor" href="#expressions-evaluation-context-object-design"></a>Object Design</h3>
+<div class="paragraph">
+<p>Similar to the design guidance for
+<a href="../../web/webmvc/mvc-data-binding.html#mvc-data-binding-design" class="xref page">web data binding</a>, you
+should carefully design any object that may be reached from a SpEL expression evaluated
+against untrusted input. This applies not only to the root object supplied to an
+<code>EvaluationContext</code> but also to every object that such an expression can navigate to from
+that root object – for example, an object returned by a property, a method, an index
+operation, a variable, or a function.</p>
+</div>
+<div class="paragraph">
+<p>When exposing an object to expressions from an untrusted source, consider the following
+recommendations.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Use a dedicated type</dt>
+<dd>
+<p>Prefer a dedicated type, designed specifically to be evaluated against untrusted
+expressions, over passing an existing domain or infrastructure type "as is". A
+dedicated type lets you control exactly which properties and methods are reachable from
+an expression, rather than exposing the full surface area of a class such as a JPA
+entity, <code>java.io.File</code>, or a JDBC <code>Connection</code> – most of which were never designed with
+SpEL evaluation in mind.</p>
+</dd>
+<dt class="hdlist1">Prefer immutability</dt>
+<dd>
+<p>An immutable type – for example, a Java record or a Kotlin data class exposing only
+<code>val</code> properties – rules out property writes and eliminates any concern that a "getter"
+might mutate state as a side effect, since there is no mutable state to affect.
+Immutability does not, on its own, rule out an accessor-shaped method with an external
+side effect (such as a network call or a file system operation), but it removes an
+entire class of risk.</p>
+</dd>
+<dt class="hdlist1">Limit scope</dt>
+<dd>
+<p>Expose only the properties and methods that the expression is expected to use, and
+nothing more. Because a <code>PropertyAccessor</code> cannot restrict access to specific
+properties or methods on a per-expression basis, every accessor-shaped method reachable
+on an exposed object is reachable by any expression that can reach that object –
+regardless of which property or method the application intended the expression to use.</p>
+</dd>
+<dt class="hdlist1">Audit accessor-shaped methods</dt>
+<dd>
+<p>Review every accessor-shaped method exposed by a type before making it reachable from
+an untrusted expression, keeping the <a href="#expressions-evaluation-context-security">security considerations</a> discussed above in mind. None of the reachable methods should
+perform an action that would be unsafe if triggered by that expression.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>These recommendations apply transitively. If the root object exposes a property or method
+that returns another object, and an untrusted expression can navigate to it (for example,
+<code>rootObject.child.grandchild</code>), the nested object is just as reachable as the root object
+itself and must meet the same design requirements. The same is true for an object reached
+via indexing (for example, <code>rootObject.items[0]</code> or <code>rootObject.items['key']</code>): whatever
+is returned by the index operation is just as reachable as any other nested object.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expressions-evaluation-context-lifecycle"><a class="anchor" href="#expressions-evaluation-context-lifecycle"></a>Lifecycle and Reuse</h3>
+<div class="paragraph">
+<p>For performance, the AST nodes that make up a parsed <code>Expression</code> may cache the specific
+<code>PropertyAccessor</code>, <code>IndexAccessor</code>, <code>MethodExecutor</code>, or <code>ConstructorExecutor</code> that
+satisfied a previous evaluation, so that later evaluations of the same node can avoid
+asking every registered accessor or resolver in turn. Understanding this caching behavior
+is essential to using <code>Expression</code> and <code>EvaluationContext</code> correctly, in addition to the
+<a href="#expressions-evaluation-context-security">security considerations</a> discussed previously.</p>
+</div>
+<div class="paragraph">
+<p>A parsed <code>Expression</code> is designed to be created once and evaluated repeatedly, and doing
+so is both supported and encouraged. In particular:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A parsed <code>Expression</code> may be evaluated against different root objects, and against
+different <code>EvaluationContext</code> instances of the <strong>same type and with equivalent
+configuration</strong> – for example, several <code>StandardEvaluationContext</code> instances each
+registering the same kind of custom <code>PropertyAccessor</code>. Changing the accessors or
+resolvers registered with a context between evaluations of the same expression is
+atypical and generally not advised, but is expected to work correctly: the registered
+state of the <strong>current</strong> context is what is consulted, not a snapshot taken during an
+earlier evaluation.</p>
+</li>
+<li>
+<p>A parsed <code>Expression</code> must <strong>not</strong> be evaluated first against a context with one set of
+security implications and later against a context with different, typically more
+restrictive, security implications – for example, first against a
+<code>StandardEvaluationContext</code> and later against a <code>SimpleEvaluationContext</code>. Doing so is
+analogous to executing a database query on behalf of an administrator, caching the
+resulting administrator-privileged execution plan, and then reusing that cached plan for
+a lower-privileged user while expecting the lower-privileged user&#8217;s restrictions to
+apply: cached state from the first, more permissive evaluation may be reused during the
+second, and the second context&#8217;s restrictions cannot be reliably enforced as a result.
+If the same expression string must be evaluated under contexts with different security
+implications, parse it into <strong>distinct</strong> <code>Expression</code> instances, one per context.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Reusing a single parsed <code>Expression</code> across <code>EvaluationContext</code> instances with different
+security implications is not a supported usage pattern and must be avoided, regardless of
+which <code>EvaluationContext</code> implementations are involved.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expressions-type-conversion"><a class="anchor" href="#expressions-type-conversion"></a>Type Conversion</h3>
+<div class="paragraph">
+<p>By default, SpEL uses the conversion service available in Spring core
+(<code>org.springframework.core.convert.ConversionService</code>). This conversion service comes
+with many built-in converters for common conversions, but is also fully extensible so
+that you can add custom conversions between types. Additionally, it is generics-aware.
+This means that, when you work with generic types in expressions, SpEL attempts
+conversions to maintain type correctness for any objects it encounters.</p>
+</div>
+<div class="paragraph">
+<p>What does this mean in practice? Suppose assignment, using <code>setValue()</code>, is being used
+to set a <code>List</code> property. The type of the property is actually <code>List&lt;Boolean&gt;</code>. SpEL
+recognizes that the elements of the list need to be converted to <code>Boolean</code> before
+being placed in it. The following example shows how to do so.</p>
+</div>
+<div id="_tabs_7" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_7_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_7_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_7_java--panel" class="tabpanel" aria-labelledby="_tabs_7_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class Simple {
+	public List&lt;Boolean&gt; booleanList = new ArrayList&lt;&gt;();
+}
+
+Simple simple = new Simple();
+simple.booleanList.add(true);
+
+EvaluationContext context = SimpleEvaluationContext.forReadOnlyDataBinding().build();
+
+// "false" is passed in here as a String. SpEL and the conversion service
+// will recognize that it needs to be a Boolean and convert it accordingly.
+parser.parseExpression("booleanList[0]").setValue(context, simple, "false");
+
+// b is false
+Boolean b = simple.booleanList.get(0);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_7_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_7_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class Simple {
+	var booleanList: MutableList&lt;Boolean&gt; = ArrayList()
+}
+
+val simple = Simple()
+simple.booleanList.add(true)
+
+val context = SimpleEvaluationContext.forReadOnlyDataBinding().build()
+
+// "false" is passed in here as a String. SpEL and the conversion service
+// will recognize that it needs to be a Boolean and convert it accordingly.
+parser.parseExpression("booleanList[0]").setValue(context, simple, "false")
+
+// b is false
+val b = simple.booleanList[0]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="expressions-parser-configuration"><a class="anchor" href="#expressions-parser-configuration"></a>Parser Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is possible to configure the SpEL expression parser by using a parser configuration
+object (<code>org.springframework.expression.spel.SpelParserConfiguration</code>). The configuration
+object controls the behavior of some of the expression components. For example, if you
+index into a collection and the element at the specified index is <code>null</code>, SpEL can
+automatically create the element. This is useful when using expressions made up of a
+chain of property references. Similarly, if you index into a collection and specify an
+index that is greater than the current size of the collection, SpEL can automatically
+grow the collection to accommodate that index. In order to add an element at the
+specified index, SpEL will try to create the element using the element type&#8217;s default
+constructor before setting the specified value. If the element type does not have a
+default constructor, <code>null</code> will be added to the collection. If there is no built-in
+converter or custom converter that knows how to set the value, <code>null</code> will remain in the
+collection at the specified index. The following example demonstrates how to
+automatically grow a <code>List</code>.</p>
+</div>
+<div id="_tabs_8" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_8_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_8_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_8_java--panel" class="tabpanel" aria-labelledby="_tabs_8_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class Demo {
+	public List&lt;String&gt; list;
+}
+
+// Turn on:
+// - auto null reference initialization
+// - auto collection growing
+SpelParserConfiguration config = new SpelParserConfiguration(true, true);
+
+ExpressionParser parser = new SpelExpressionParser(config);
+
+Expression expression = parser.parseExpression("list[3]");
+
+Demo demo = new Demo();
+
+Object o = expression.getValue(demo);
+
+// demo.list will now be a real collection of 4 entries
+// Each entry is a new empty String</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_8_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_8_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">class Demo {
+	var list: List&lt;String&gt;? = null
+}
+
+// Turn on:
+// - auto null reference initialization
+// - auto collection growing
+val config = SpelParserConfiguration(true, true)
+
+val parser = SpelExpressionParser(config)
+
+val expression = parser.parseExpression("list[3]")
+
+val demo = Demo()
+
+val o = expression.getValue(demo)
+
+// demo.list will now be a real collection of 4 entries
+// Each entry is a new empty String</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>By default, a SpEL expression cannot contain more than 10,000 characters; however, the
+<code>maxExpressionLength</code> is configurable. If you create a <code>SpelExpressionParser</code>
+programmatically, you can specify a custom <code>maxExpressionLength</code> when creating the
+<code>SpelParserConfiguration</code> that you provide to the <code>SpelExpressionParser</code>. If you wish to
+set the <code>maxExpressionLength</code> used for parsing SpEL expressions within an
+<code>ApplicationContext</code>&#8201;&#8212;&#8201;for example, in XML bean definitions, <code>@Value</code>, etc.&#8201;&#8212;&#8201;you can
+set a JVM system property or Spring property named <code>spring.context.expression.maxLength</code>
+to the maximum expression length needed by your application (see
+<a href="../../appendix.html#appendix-spring-properties" class="xref page">Supported Spring Properties</a>).</p>
+</div>
+<div class="paragraph">
+<p>Similarly, the number of operations performed during the evaluation of a SpEL expression
+cannot exceed 10,000 by default; however, the <code>maxOperations</code> value is configurable. If
+you create a <code>SpelExpressionParser</code> programmatically (the recommend approach), you can
+specify a custom <code>maxOperations</code> value when creating the <code>SpelParserConfiguration</code> that
+you provide to the <code>SpelExpressionParser</code>. If you are not able to configure an explicit
+value for <code>maxOperations</code> via <code>SpelParserConfiguration</code>, you can set a JVM system
+property or Spring property named <code>spring.expression.maxOperations</code> to the maximum number
+of operations required by your application (see
+<a href="../../appendix.html#appendix-spring-properties" class="xref page">Supported Spring Properties</a>).</p>
+</div>
+<div class="paragraph">
+<p>In addition, the result of a <code>BigDecimal</code> or <code>BigInteger</code> power operation within a SpEL
+expression cannot exceed 1,000,000 bits by default – approximately equivalent to a
+decimal number with 300,000 digits. Power operations involving large base values or large
+exponents can be computationally expensive, and this limit ensures that evaluations
+remain bounded; however, the <code>maximumBigPowerBits</code> value is configurable. If you create a
+<code>SpelExpressionParser</code> programmatically (the recommended approach), you can specify a
+custom <code>maximumBigPowerBits</code> value when creating the <code>SpelParserConfiguration</code> that you
+provide to the <code>SpelExpressionParser</code>. To remove this limit entirely, pass
+<code>Integer.MAX_VALUE</code> as the <code>maximumBigPowerBits</code> value. If you are not able to configure
+an explicit value for <code>maximumBigPowerBits</code> via <code>SpelParserConfiguration</code>, you can set a
+JVM system property or Spring property named <code>spring.expression.maxBigPowerBits</code> to the
+maximum result size in bits (see <a href="../../appendix.html#appendix-spring-properties" class="xref page">Supported
+Spring Properties</a>).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="expressions-spel-compilation"><a class="anchor" href="#expressions-spel-compilation"></a>SpEL Compilation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Spring provides a basic compiler for SpEL expressions. Expressions are usually
+interpreted, which provides a lot of dynamic flexibility during evaluation but does not
+provide optimum performance. For occasional expression usage, this is fine, but, when
+used by other components such as Spring Integration, performance can be very important,
+and there is no real need for the dynamism.</p>
+</div>
+<div class="paragraph">
+<p>The SpEL compiler is intended to address this need. During evaluation, the compiler
+generates a Java class that embodies the expression behavior at runtime and uses that
+class to achieve much faster expression evaluation. Due to the lack of typing around
+expressions, the compiler uses information gathered during the interpreted evaluations
+of an expression when performing compilation. For example, it does not know the type
+of a property reference purely from the expression, but during the first interpreted
+evaluation, it finds out what it is. Of course, basing compilation on such derived
+information can cause trouble later if the types of the various expression elements
+change over time. For this reason, compilation is best suited to expressions whose
+type information is not going to change on repeated evaluations.</p>
+</div>
+<div class="paragraph">
+<p>Consider the following basic expression.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">someArray[0].someProperty.someOtherProperty &lt; 0.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Because the preceding expression involves array access, some property de-referencing, and
+numeric operations, the performance gain can be very noticeable. In an example micro
+benchmark run of 50,000 iterations, it took 75ms to evaluate by using the interpreter and
+only 3ms using the compiled version of the expression.</p>
+</div>
+<div class="sect2">
+<h3 id="expressions-compiler-configuration"><a class="anchor" href="#expressions-compiler-configuration"></a>Compiler Configuration</h3>
+<div class="paragraph">
+<p>The compiler is not turned on by default, but you can turn it on in either of two
+different ways. You can turn it on by using the parser configuration process
+(<a href="#expressions-parser-configuration">discussed
+earlier</a>) or by using a Spring property when SpEL usage is embedded inside another
+component. This section discusses both of these options.</p>
+</div>
+<div class="paragraph">
+<p>The compiler can operate in one of three modes, which are captured in the
+<code>org.springframework.expression.spel.SpelCompilerMode</code> enum. The modes are as follows.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>OFF</code> </dt>
+<dd>
+<p>The compiler is switched off, and all expressions will be evaluated in <em>interpreted</em>
+mode. This is the default mode.</p>
+</dd>
+<dt class="hdlist1"><code>IMMEDIATE</code> </dt>
+<dd>
+<p>In immediate mode, expressions are compiled as soon as possible, typically after the
+first interpreted evaluation. If evaluation of the compiled expression fails (for
+example, due to a type changing, as described earlier), the caller of the expression
+evaluation receives an exception. If the types of various expression elements change
+over time, consider switching to <code>MIXED</code> mode or turning off the compiler.</p>
+</dd>
+<dt class="hdlist1"><code>MIXED</code> </dt>
+<dd>
+<p>In mixed mode, expression evaluation silently switches between <em>interpreted</em> and
+<em>compiled</em> over time. After some number of successful interpreted runs, the expression
+gets compiled. If evaluation of the compiled expression fails (for example, due to a
+type changing), that failure will be caught internally, and the system will switch back
+to interpreted mode for the given expression. Basically, the exception that the caller
+receives in <code>IMMEDIATE</code> mode is instead handled internally. Sometime later, the
+compiler may generate another compiled form and switch to it. This cycle of switching
+between interpreted and compiled mode will continue until the system determines that it
+does not make sense to continue trying — for example, when a certain failure threshold
+has been reached — at which point the system will permanently switch to interpreted
+mode for the given expression.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><code>IMMEDIATE</code> mode exists because <code>MIXED</code> mode could cause issues for expressions that
+have side effects. If a compiled expression blows up after partially succeeding, it
+may have already done something that has affected the state of the system. If this
+has happened, the caller may not want it to silently re-run in interpreted mode,
+since part of the expression may be run twice.</p>
+</div>
+<div class="paragraph">
+<p>After selecting a mode, use the <code>SpelParserConfiguration</code> to configure the parser. The
+following example shows how to do so.</p>
+</div>
+<div id="_tabs_9" class="openblock tabs is-sync is-loading">
+<div class="content">
+<div class="ulist tablist">
+<ul>
+<li id="_tabs_9_java" class="tab">
+<p>Java</p>
+</li>
+<li id="_tabs_9_kotlin" class="tab">
+<p>Kotlin</p>
+</li>
+</ul>
+</div>
+<div id="_tabs_9_java--panel" class="tabpanel" aria-labelledby="_tabs_9_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">SpelParserConfiguration config = new SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
+		this.getClass().getClassLoader());
+
+SpelExpressionParser parser = new SpelExpressionParser(config);
+
+Expression expr = parser.parseExpression("payload");
+
+MyMessage message = new MyMessage();
+
+Object payload = expr.getValue(message);</code></pre>
+</div>
+</div>
+</div>
+<div id="_tabs_9_kotlin--panel" class="tabpanel" aria-labelledby="_tabs_9_kotlin">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin">val config = SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
+		this.javaClass.classLoader)
+
+val parser = SpelExpressionParser(config)
+
+val expr = parser.parseExpression("payload")
+
+val message = MyMessage()
+
+val payload = expr.getValue(message)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>When you specify the compiler mode, you can also specify a <code>ClassLoader</code> (passing <code>null</code>
+is allowed). Compiled expressions are defined in a child <code>ClassLoader</code> created under any
+that is supplied. It is important to ensure that, if a <code>ClassLoader</code> is specified, it can
+see all the types involved in the expression evaluation process. If you do not specify a
+<code>ClassLoader</code>, a default <code>ClassLoader</code> is used (typically the context <code>ClassLoader</code> for
+the thread that is running during expression evaluation).</p>
+</div>
+<div class="paragraph">
+<p>The second way to configure the compiler is for use when SpEL is embedded inside some
+other component and it may not be possible to configure it through a configuration
+object. In such cases, it is possible to set the <code>spring.expression.compiler.mode</code>
+property via a JVM system property (or via the
+<a href="../../appendix.html#appendix-spring-properties" class="xref page"><code>SpringProperties</code></a> mechanism) to one of the
+<code>SpelCompilerMode</code> enum values (<code>off</code>, <code>immediate</code>, or <code>mixed</code>).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expressions-compiler-limitations"><a class="anchor" href="#expressions-compiler-limitations"></a>Compiler Limitations</h3>
+<div class="paragraph">
+<p>Spring does not support compiling every kind of expression. The primary focus is on
+common expressions that are likely to be used in performance-critical contexts. The
+following kinds of expressions cannot be compiled.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Expressions involving assignment</p>
+</li>
+<li>
+<p>Expressions relying on the conversion service</p>
+</li>
+<li>
+<p>Expressions using custom resolvers</p>
+</li>
+<li>
+<p>Expressions using overloaded operators</p>
+</li>
+<li>
+<p>Expressions using <code>Optional</code> with the null-safe or Elvis operator</p>
+</li>
+<li>
+<p>Expressions using array construction syntax</p>
+</li>
+<li>
+<p>Expressions using selection or projection</p>
+</li>
+<li>
+<p>Expressions using bean references</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Compilation of additional kinds of expressions may be supported in the future.</p>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../expressions.html">Spring Expression Language (SpEL)</a></span>
+  <span class="next"><a href="beandef.html">Expressions in Bean Definitions</a></span>
+</nav>
+</article>  </div>
+</main>
+<div class="modal micromodal-slide" id="modal-versions" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true">
+            <main class="modal__content" id="modal-versions-content">
+              <button data-micromodal-close class="modal-versions-close">
+                <svg width="28px" height="28px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><style>.cls-1h{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1h" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1h" x1="7" x2="25" y1="25" y2="7"/></g></svg>
+              </button>
+              <div class="colset">
+                <div class="col-left">
+
+                  <ul class="nav-versions">
+                      <li class="component">
+                        <div>
+                          <a class="title" href="../../index.html">Spring Framework</a>
+                        </div>                        <div class="version-item is-active">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Stable
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="evaluation.html">
+      7.0.9
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../6.2/core/expressions/evaluation.html">
+      6.2.19
+    </a>
+  </li>
+</ul>                        </div>
+                        <div class="version-item">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Preview
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="../../7.1/core/expressions/evaluation.html">
+      7.1.0-M1
+    </a>
+  </li>
+</ul>                        </div>
+                        <div class="version-item">
+                          <div>
+                            <button class="version-toggle" type="button">
+                              <span></span>
+                              Snapshot
+                            </button>
+                          </div>
+                          <ul class="versions">
+  <li class="version">
+    <a href="../../7.1-SNAPSHOT/core/expressions/evaluation.html">
+      7.1.0-SNAPSHOT
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../7.0-SNAPSHOT/core/expressions/evaluation.html">
+      7.0.10-SNAPSHOT
+    </a>
+  </li>
+  <li class="version">
+    <a href="../../6.2-SNAPSHOT/core/expressions/evaluation.html">
+      6.2.20-SNAPSHOT
+    </a>
+  </li>
+</ul>                        </div>
+                        
+                      </li>
+                  </ul>
+                </div>
+                <div class="col-right">
+                  <ul class="projects">
+  <li>
+    Related Spring Documentation
+    <ul class="projects-list">
+        <li>
+<a href="https://docs.spring.io/spring-boot/">
+  Spring Boot
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-framework/reference/">
+  Spring Framework
+</a>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+  Spring Cloud
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-build/reference/">
+  Spring Cloud Build
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-bus/reference/">
+  Spring Cloud Bus
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-circuitbreaker/reference/">
+  Spring Cloud Circuit Breaker
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-commons/reference/">
+  Spring Cloud Commons
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-config/reference/">
+  Spring Cloud Config
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-consul/reference/">
+  Spring Cloud Consul
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-contract/reference/">
+  Spring Cloud Contract
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-function/reference/">
+  Spring Cloud Function
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-gateway/reference/">
+  Spring Cloud Gateway
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-kubernetes/reference/">
+  Spring Cloud Kubernetes
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-netflix/reference/">
+  Spring Cloud Netflix
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-openfeign/reference/">
+  Spring Cloud OpenFeign
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-stream/reference/">
+  Spring Cloud Stream
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-task/reference/">
+  Spring Cloud Task
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-vault/reference/">
+  Spring Cloud Vault
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-cloud-zookeeper/reference/">
+  Spring Cloud Zookeeper
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+  Spring Data
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-data/cassandra/reference/">
+  Spring Data Cassandra
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/commons/reference/">
+  Spring Data Commons
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/couchbase/reference/">
+  Spring Data Couchbase
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/elasticsearch/reference/">
+  Spring Data Elasticsearch
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/jpa/reference/">
+  Spring Data JPA
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/keyvalue/reference/">
+  Spring Data KeyValue
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/ldap/reference/">
+  Spring Data LDAP
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/mongodb/reference/">
+  Spring Data MongoDB
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/neo4j/reference/">
+  Spring Data Neo4j
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/redis/reference/">
+  Spring Data Redis
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/relational/reference/">
+  Spring Data JDBC &amp; R2DBC
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-data/rest/reference/">
+  Spring Data REST
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-integration/reference/">
+  Spring Integration
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-batch/reference/">
+  Spring Batch
+</a>
+</li>
+        <li>
+<a class="anchor"><i class="fa fa-angle-right" aria-hidden="true"></i></a>
+<a href="https://docs.spring.io/spring-security/reference/">
+  Spring Security
+</a>
+<ul>
+    <li>
+<a href="https://docs.spring.io/spring-authorization-server/reference/">
+  Spring Authorization Server
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-ldap/reference/">
+  Spring LDAP
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-security-kerberos/reference/">
+  Spring Security Kerberos
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-session/reference/">
+  Spring Session
+</a>
+</li>
+    <li>
+<a href="https://docs.spring.io/spring-vault/reference/">
+  Spring Vault
+</a>
+</li>
+</ul>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-ai/reference/">
+  Spring AI
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-amqp/reference/">
+  Spring AMQP
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-cli/reference/">
+  Spring CLI
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-graphql/reference/">
+  Spring GraphQL
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-kafka/reference/">
+  Spring for Apache Kafka
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-modulith/reference/">
+  Spring Modulith
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-pulsar/reference/">
+  Spring for Apache Pulsar
+</a>
+</li>
+        <li>
+<a href="https://docs.spring.io/spring-shell/reference/">
+  Spring Shell
+</a>
+</li>
+    </ul>
+  </li
+  <li><a href="../../spring-projects.html">All Docs...</a></li>
+</ul>
+                </div>
+              </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+</div>
+<footer class="footer flex">
+    <div id="spring-links flex">
+        <img id="springlogo" src="../../_/img/spring-logo.svg" alt="Spring">
+        <p class="smallest antialiased">Copyright © 2005 - <script>var d = new Date();
+        document.write(d.getFullYear());</script> Broadcom. All Rights Reserved. The term "Broadcom" refers to Broadcom Inc. and/or its subsidiaries.<br /><a href="https://www.vmware.com/help/legal.html">Terms of Use</a> • <a href="https://www.vmware.com/help/privacy.html" rel="noopener noreferrer">Privacy</a> • <a href="https://spring.io/trademarks">Trademark Guidelines</a> <span id="thank-you-mobile">• <a href="https://spring.io/thank-you">Thank you</a></span> • <a href="https://www.vmware.com/help/privacy/california-privacy-rights.html">Your California Privacy Rights</a> • <a class="ot-sdk-show-settings">Cookie Settings</a> <span id="teconsent"></span></p>
+        <p class="smallest antialiased has-gray-text">Apache®, Apache Tomcat®, Apache Kafka®, Apache Cassandra&trade;, and Apache Geode&trade; are trademarks or registered trademarks of the Apache Software Foundation in the United States and/or other countries. Java&trade;, Java&trade; SE, Java&trade; EE, and OpenJDK&trade; are trademarks of Oracle and/or its affiliates. Kubernetes® is a registered trademark of the Linux Foundation in the United States and other countries. Linux® is the registered trademark of Linus Torvalds in the United States and other countries. Windows® and Microsoft® Azure are registered trademarks of Microsoft Corporation. “AWS” and “Amazon Web Services” are trademarks or registered trademarks of Amazon.com Inc. or its affiliates. All other trademarks and copyrights are property of their respective owners and are only mentioned for informative purposes. Other names may be trademarks of their respective owners.</p>
+    </div>
+    <div id="social-icons" class="flex jc-between">
+        <a href="https://www.youtube.com/user/SpringSourceDev" title="Youtube"><svg id="youtube-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><circle class="cls-1" cx="20" cy="20" r="20"/><path class="cls-2" d="M30.91,14.53a2.89,2.89,0,0,0-2-2C27.12,12,20,12,20,12s-7.12,0-8.9.47a2.9,2.9,0,0,0-2,2A30.56,30.56,0,0,0,8.63,20a30.44,30.44,0,0,0,.46,5.47,2.89,2.89,0,0,0,2,2C12.9,28,20,28,20,28s7.12,0,8.9-.47a2.87,2.87,0,0,0,2-2A30.56,30.56,0,0,0,31.37,20,28.88,28.88,0,0,0,30.91,14.53ZM17.73,23.41V16.59L23.65,20Z"/></svg></a>
+        <a href="https://github.com/spring-projects" title="GitHub"><svg id="github-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.93 75.93"><path class="cls-1" d="M38,0a38,38,0,1,0,38,38A38,38,0,0,0,38,0Z"/></g><path class="cls-2" d="M38,15.59A22.95,22.95,0,0,0,30.71,60.3c1.15.21,1.57-.5,1.57-1.11s0-2,0-3.9c-6.38,1.39-7.73-3.07-7.73-3.07A6.09,6.09,0,0,0,22,48.86c-2.09-1.42.15-1.39.15-1.39a4.81,4.81,0,0,1,3.52,2.36c2,3.5,5.37,2.49,6.67,1.91a4.87,4.87,0,0,1,1.46-3.07c-5.09-.58-10.45-2.55-10.45-11.34a8.84,8.84,0,0,1,2.36-6.15,8.29,8.29,0,0,1,.23-6.07s1.92-.62,6.3,2.35a21.82,21.82,0,0,1,11.49,0c4.38-3,6.3-2.35,6.3-2.35a8.29,8.29,0,0,1,.23,6.07,8.84,8.84,0,0,1,2.36,6.15c0,8.81-5.37,10.75-10.48,11.32a5.46,5.46,0,0,1,1.56,4.25c0,3.07,0,5.54,0,6.29s.42,1.33,1.58,1.1A22.94,22.94,0,0,0,38,15.59Z"/></svg></a>
+        <a href="https://twitter.com/springcentral" title="Twitter"><svg id="twitter-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 75.93 75.93"><circle class="cls-1" cx="37.97" cy="37.97" r="37.97"/><path id="Twitter-2" data-name="Twitter" class="cls-2" d="M55.2,22.73a15.43,15.43,0,0,1-4.88,1.91,7.56,7.56,0,0,0-5.61-2.49A7.78,7.78,0,0,0,37,30a7.56,7.56,0,0,0,.2,1.79,21.63,21.63,0,0,1-15.84-8.23,8,8,0,0,0,2.37,10.52,7.66,7.66,0,0,1-3.48-1v.09A7.84,7.84,0,0,0,26.45,41a7.54,7.54,0,0,1-2,.28A7.64,7.64,0,0,1,23,41.09a7.71,7.71,0,0,0,7.18,5.47,15.21,15.21,0,0,1-9.55,3.37,15.78,15.78,0,0,1-1.83-.11,21.41,21.41,0,0,0,11.78,3.54c14.13,0,21.86-12,21.86-22.42,0-.34,0-.68,0-1a15.67,15.67,0,0,0,3.83-4.08,14.9,14.9,0,0,1-4.41,1.24A7.8,7.8,0,0,0,55.2,22.73Z"/></svg></a>
+    </div>
+</footer>
+<script src="../../_/js/vendor/import.js"></script>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+<script async src="../../_/js/vendor/asciidoctor-tabs.js" data-sync-storage-key="docs:preferred-tab"></script>
+
+<div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+    <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+            <main class="modal__content" id="modal-1-content">
+                <div id="searchbox"></div>
+                <div id="counter"></div>
+                <div class="search-link-box">
+                    <a class="search-link" href="../../search.html">Search in all Spring Docs</a>
+                </div>
+                <div class="search-by">
+                    <a target="_blank" rel="noopener noreferrer" href="https://www.algolia.com/" aria-label="Search by Algolia">
+                        <img class="light" width="140" src="../../_/img/algolia-light.svg" />
+                        <img class="dark" width="140" src="../../_/img/algolia-dark.svg" />
+                    </a>
+                </div>
+                <div id="hits"></div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<script src="../../_/js/vendor/hotkeys.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.17.0/dist/algoliasearch-lite.umd.js" integrity="sha256-Lf9DrpGmcRip6OQzbcL6lnvNmoZNSKpyQX5pMlwatWE=" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/instantsearch.js@4.54.1/dist/instantsearch.production.min.js" integrity="sha256-xYsZPDeNjYNTBWLvqD2Lxe98hOxcDgOHyMPfz4tVAbk=" crossorigin="anonymous"></script>
+<script async id="search-script" src="../../_/js/vendor/search.js" data-app-id="WB1FQYI187" data-api-key="c2e84f15fa630d534f1c62b1c413bb77" data-index-name="springdocs" data-stylesheet="../../_/css/vendor/search.css" data-page-version="7.0.9" data-page-generation="7.0" data-page-component="framework"></script>
+  <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"bffcb8a918ae4755926f76178bfbd26b","spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>

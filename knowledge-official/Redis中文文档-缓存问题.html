@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+<head><base href="https://redis.com.cn/topics/redis-cache-problems.html">
+<meta charset='utf-8'>
+<title>Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析</title>
+<meta content='Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析 - Redis中文学习网提供Redis教程、命令手册、安装配置、性能优化、集群搭建等中文文档。' name='Description'>
+<meta content='Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析,Redis,Redis教程,Redis命令,Redis中文文档' name='keywords'>
+<link href='https://redis.com.cn' rel='canonical'>
+<meta content='index, follow' name='robots'>
+<meta content='Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析' property='og:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' property='og:description'>
+<meta content='website' property='og:type'>
+<meta content='https://redis.com.cn' property='og:url'>
+<meta content='summary' name='twitter:card'>
+<meta content='Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析' name='twitter:title'>
+<meta content='Redis中文学习网 - Redis教程、命令手册、安装配置、性能优化' name='twitter:description'>
+<link href='/styles.css' rel='stylesheet'>
+<link href='/search.css' rel='stylesheet'>
+<link href='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css' rel='stylesheet'>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    hljs.highlightAll();
+  });
+</script>
+<link href='/images/favicon.png' rel='shortcut icon'>
+<meta content='width=device-width, minimum-scale=1.0, maximum-scale=1.0' name='viewport'>
+</head>
+<body class='topics redis-cache-problems'>
+<div class='mobile-menu slideout-menu'>
+<header class='menu-header'></header>
+<section class='menu-section'>
+<ul class='menu-section-list'>
+<li>
+<a class='home' href='/'>首页</a>
+</li>
+<li>
+<a href='/commands.html'>Redis 命令</a>
+</li>
+<li>
+<a href='/management.html'>Redis 管理</a>
+</li>
+<li>
+<a href='/tutorial.html'>Redis 教程</a>
+</li>
+<li>
+<a href='/documentation.html'>Redis 进阶</a>
+</li>
+<li>
+<a href='/clients.html'>Redis 客户端　</a>
+</li>
+<li>
+<a href='/download.html'>Redis 下载</a>
+</li>
+</ul>
+</section>
+</div>
+<div class='site-wrapper'>
+<header class='site-header'>
+<nav class='container'>
+<div class='mobile-header'>
+<button class='btn-hamburger js-slideout-toggle'>
+<span class='fa fa-bars'></span>
+</button>
+<a class='home' href='/'>&nbsp;</a>
+</div>
+<div class='desktop-header'>
+<a class='home' href='/'>首页</a>
+<a href='/commands.html' title='Redis命令手册'>Redis 命令</a>
+<a href='/management.html'>Redis 管理</a>
+<a href='/tutorial.html'>Redis 教程</a>
+<a href='/documentation.html'>Redis 进阶</a>
+<a href='/clients.html'>Redis 客户端</a>
+<a href='/download.html'>Redis 下载</a>
+<a href='/best-practices.html'>最佳实践</a>
+<form action='/search' class='search-form' method='get'>
+<div class='search-input-wrapper'>
+<input name='q' placeholder='搜索命令、教程...' type='text'>
+<button class='search-btn' type='submit'>
+<i class='fa fa-search'></i>
+</button>
+</div>
+</form>
+</div>
+</nav>
+</header>
+<div class='site-content'>
+<div class='text'>
+<article id='topic'>
+<span id="redis-缓存穿透击穿雪崩原理与-6-种解决方案全解析" class=anchor></span><h1><a href="#redis-缓存穿透击穿雪崩原理与-6-种解决方案全解析" class=anchor-link>*</a>Redis 缓存穿透/击穿/雪崩：原理与 6 种解决方案全解析</h1>
+
+<blockquote>
+<p><strong>摘要</strong>：缓存穿透、缓存击穿、缓存雪崩是 Redis 应用中最经典的三类高并发问题。本文从底层原理出发，结合 Redis 7.x 特性，提供 6 种经过生产验证的解决方案，并附带可执行的命令示例与架构图解。</p>
+</blockquote>
+
+<hr>
+
+<span id="一三大问题速查对比" class=anchor></span><h2><a href="#一三大问题速查对比" class=anchor-link>*</a>一、三大问题速查对比</h2>
+
+<table><thead>
+<tr>
+<th>问题</th>
+<th>触发条件</th>
+<th>影响范围</th>
+<th>核心危害</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><strong>缓存穿透</strong></td>
+<td>查询<strong>不存在</strong>的数据</td>
+<td>数据库承受非法请求</td>
+<td>DB 被打穿，服务雪崩</td>
+</tr>
+<tr>
+<td><strong>缓存击穿</strong></td>
+<td>热点 Key<strong>突然过期</strong></td>
+<td>单个热点数据</td>
+<td>瞬间流量直击 DB</td>
+</tr>
+<tr>
+<td><strong>缓存雪崩</strong></td>
+<td><strong>大量 Key 同时过期</strong></td>
+<td>整片缓存数据</td>
+<td>全量请求压垮 DB</td>
+</tr>
+</tbody></table>
+
+<span id="问题决策流程" class=anchor></span><h3><a href="#问题决策流程" class=anchor-link>*</a>问题决策流程</h3>
+
+<pre><code>用户请求
+    │
+    ▼
+缓存是否命中？
+    ├─ 是 → 返回缓存数据 ✅
+    └─ 否 → 数据是否存在？
+            ├─ 不存在 → 缓存穿透 ⚠️
+            └─ 存在但过期 → 是热点 Key？
+                    ├─ 是单点 → 缓存击穿 🔥
+                    └─ 大面积 → 缓存雪崩 ❄️
+</code></pre>
+
+<hr>
+
+<span id="二缓存穿透请求quot幽灵数据quot" class=anchor></span><h2><a href="#二缓存穿透请求quot幽灵数据quot" class=anchor-link>*</a>二、缓存穿透：请求&quot;幽灵数据&quot;</h2>
+
+<span id="21-原理剖析" class=anchor></span><h3><a href="#21-原理剖析" class=anchor-link>*</a>2.1 原理剖析</h3>
+
+<p>缓存穿透指查询一个<strong>数据库中不存在</strong>的数据。由于缓存中也没有，请求会直接打到数据库。攻击者可能利用这一点，构造大量不存在的 Key 进行恶意请求，导致数据库压力剧增。</p>
+
+<p><strong>典型时序</strong>：</p>
+
+<pre><code>用户          Redis缓存        MySQL数据库
+ │               │                │
+ │── GET id=-99999 ──&gt;│                │
+ │&lt;──── nil ──────────│                │
+ │               │                │
+ │─────────────── SELECT * FROM user WHERE id=-99999 ──&gt;│
+ │&lt;────────────── Empty Set ────────────────────────────│
+ │               │                │
+ │               │   每次请求都查DB！  │
+</code></pre>
+
+<span id="22-解决方案" class=anchor></span><h3><a href="#22-解决方案" class=anchor-link>*</a>2.2 解决方案</h3>
+
+<span id="方案-1布隆过滤器bloom-filter" class=anchor></span><h4><a href="#方案-1布隆过滤器bloom-filter" class=anchor-link>*</a>方案 1：布隆过滤器（Bloom Filter）</h4>
+
+<p>在缓存层之前加一道布隆过滤器，快速判断 Key 是否可能存在。</p>
+
+<pre><code class="bash"># Redis 4.0+ 可通过 RedisBloom 模块实现
+# 安装模块后
+127.0.0.1:6379&gt; BF.RESERVE user_filter 0.001 1000000
+OK
+
+# 添加元素
+127.0.0.1:6379&gt; BF.ADD user_filter user:1001
+(integer) 1
+
+# 检查可能存在
+127.0.0.1:6379&gt; BF.EXISTS user_filter user:1001
+(integer) 1
+
+# 检查一定不存在
+127.0.0.1:6379&gt; BF.EXISTS user_filter user:-99999
+(integer) 0
+</code></pre>
+
+<blockquote>
+<p><strong>原理</strong>：布隆过滤器使用位数组和多个哈希函数，<strong>可能存在误判（false positive），但不会漏判（false negative）</strong>。即：返回&quot;不存在&quot;的数据一定不存在；返回&quot;可能存在&quot;的才需要查缓存/DB。</p>
+
+<p><strong>注意</strong>：<code>BF.*</code> 命令需要安装 <a href="https://github.com/RedisBloom/RedisBloom">RedisBloom 模块</a>。安装后在 <code>redis.conf</code> 中添加 <code>loadmodule /path/to/redisbloom.so</code>。</p>
+</blockquote>
+
+<span id="方案-2缓存空值cache-null" class=anchor></span><h4><a href="#方案-2缓存空值cache-null" class=anchor-link>*</a>方案 2：缓存空值（Cache Null）</h4>
+
+<p>对于数据库中确实不存在的数据，也将&quot;空值&quot;写入缓存，设置较短的过期时间（如 60 秒）。</p>
+
+<pre><code class="bash"># 查询数据库为空后，缓存空值
+127.0.0.1:6379&gt; SET user:-99999 &quot;__NULL__&quot; EX 60 NX
+OK
+
+# 后续相同请求直接命中空值缓存
+127.0.0.1:6379&gt; GET user:-99999
+&quot;__NULL__&quot;
+</code></pre>
+
+<blockquote>
+<p><strong>注意</strong>：空值缓存时间不宜过长，防止真实数据新增后长期无法访问。</p>
+</blockquote>
+
+<hr>
+
+<span id="三缓存击穿热点-keyquot猝死quot" class=anchor></span><h2><a href="#三缓存击穿热点-keyquot猝死quot" class=anchor-link>*</a>三、缓存击穿：热点 Key&quot;猝死&quot;</h2>
+
+<span id="31-原理剖析" class=anchor></span><h3><a href="#31-原理剖析" class=anchor-link>*</a>3.1 原理剖析</h3>
+
+<p>某个<strong>极高访问量的热点 Key</strong> 在缓存中突然过期（或尚未加载），此时大量并发请求同时到达，全部穿透到数据库。</p>
+
+<p><strong>并发时序</strong>：</p>
+
+<pre><code>时间点: 热点 Key 过期瞬间
+
+用户1 ──&gt; Redis: GET hot_product:1001
+          返回: nil
+用户2 ──&gt; Redis: GET hot_product:1001
+          返回: nil
+用户3 ──&gt; Redis: GET hot_product:1001
+          返回: nil
+
+用户1 ──&gt; MySQL: SELECT * FROM product WHERE id=1001
+用户2 ──&gt; MySQL: SELECT * FROM product WHERE id=1001
+用户3 ──&gt; MySQL: SELECT * FROM product WHERE id=1001
+
+          MySQL: 瞬间N个线程查同一行！🔥
+</code></pre>
+
+<span id="32-解决方案" class=anchor></span><h3><a href="#32-解决方案" class=anchor-link>*</a>3.2 解决方案</h3>
+
+<span id="方案-3互斥锁mutex--分布式锁" class=anchor></span><h4><a href="#方案-3互斥锁mutex--分布式锁" class=anchor-link>*</a>方案 3：互斥锁（Mutex / 分布式锁）</h4>
+
+<p>只让一个线程去查数据库并重建缓存，其他线程等待缓存重建完成。</p>
+
+<pre><code class="bash"># 尝试获取互斥锁
+127.0.0.1:6379&gt; SET lock:hot_product:1001 1 EX 10 NX
+OK
+
+# 获取锁成功的线程查询DB并重建缓存
+127.0.0.1:6379&gt; SET hot_product:1001 &quot;&lt;product_data&gt;&quot; EX 3600
+OK
+
+# 删除锁
+127.0.0.1:6379&gt; DEL lock:hot_product:1001
+(integer) 1
+</code></pre>
+
+<pre><code class="python"># Python 伪代码
+import redis
+import time
+
+r = redis.Redis()
+
+def get_hot_product(product_id):
+    cache_key = f&quot;hot_product:{product_id}&quot;
+    lock_key = f&quot;lock:{cache_key}&quot;
+
+    data = r.get(cache_key)
+    if data:
+        return data
+
+    # 尝试获取锁（SET NX EX）
+    locked = r.set(lock_key, 1, nx=True, ex=10)
+    if locked:
+        try:
+            # 只有获得锁的线程查DB
+            data = query_database(product_id)
+            r.set(cache_key, data, ex=3600)
+            return data
+        finally:
+            r.delete(lock_key)
+    else:
+        # 未获得锁，等待后重试
+        time.sleep(0.1)
+        return get_hot_product(product_id)  # 递归重试
+</code></pre>
+
+<span id="方案-4逻辑过期logical-expiration" class=anchor></span><h4><a href="#方案-4逻辑过期logical-expiration" class=anchor-link>*</a>方案 4：逻辑过期（Logical Expiration）</h4>
+
+<p>不设置 Redis 的 TTL，而是在 Value 中存储逻辑过期时间，由业务层判断是否&quot;过期&quot;并异步重建。</p>
+
+<pre><code class="bash"># Value 结构：{&quot;data&quot;: &quot;...&quot;, &quot;expire_time&quot;: 1716540000}
+127.0.0.1:6379&gt; SET hot_product:1001 &#39;{&quot;data&quot;: &quot;&lt;product_data&gt;&quot;, &quot;expire_time&quot;: 1716543600}&#39;
+OK
+</code></pre>
+
+<pre><code class="python"># 业务层判断逻辑
+import json, time
+
+def get_product_logical(product_id):
+    cache_key = f&quot;hot_product:{product_id}&quot;
+    raw = r.get(cache_key)
+
+    if not raw:
+        return query_database(product_id)
+
+    value = json.loads(raw)
+    now = int(time.time())
+
+    if value[&quot;expire_time&quot;] &gt; now:
+        return value[&quot;data&quot;]  # 未过期，直接返回
+    else:
+        # 已过期但返回旧数据，异步启动线程重建
+        threading.Thread(target=rebuild_cache, args=(product_id,)).start()
+        return value[&quot;data&quot;]  # 返回&quot;脏&quot;数据，保证可用性
+</code></pre>
+
+<hr>
+
+<span id="四缓存雪崩集体quot暴雷quot" class=anchor></span><h2><a href="#四缓存雪崩集体quot暴雷quot" class=anchor-link>*</a>四、缓存雪崩：集体&quot;暴雷&quot;</h2>
+
+<span id="41-原理剖析" class=anchor></span><h3><a href="#41-原理剖析" class=anchor-link>*</a>4.1 原理剖析</h3>
+
+<p>缓存雪崩指<strong>大量 Key 在同一时间集中过期</strong>，或者 Redis 集群整体宕机，导致所有请求同时涌向数据库。</p>
+
+<p><strong>状态对比</strong>：</p>
+
+<pre><code>正常状态                            雪崩瞬间
+────────────────────────────────    ────────────────────────────────
+
+请求1 ──&gt; Redis缓存                 请求1 ──&gt; Redis? (过期/宕机)
+请求2 ──&gt; Redis缓存    ────────&gt;    请求2 ──&gt; Redis? (过期/宕机)
+请求3 ──&gt; Redis缓存                 请求3 ──&gt; Redis? (过期/宕机)
+    │                                   │
+    ▼                                   ▼
+MySQL: 低负载                       MySQL: 10000+ QPS
+                                       │
+                                       ▼
+                                  连接池耗尽
+                                       │
+                                       ▼
+                                  服务超时/宕机 ❄️
+</code></pre>
+
+<span id="42-解决方案" class=anchor></span><h3><a href="#42-解决方案" class=anchor-link>*</a>4.2 解决方案</h3>
+
+<span id="方案-5过期时间加随机偏移" class=anchor></span><h4><a href="#方案-5过期时间加随机偏移" class=anchor-link>*</a>方案 5：过期时间加随机偏移</h4>
+
+<p>避免大量 Key 同时失效，在基础过期时间上增加随机偏移量。</p>
+
+<pre><code class="bash"># 基础过期时间 3600 秒，随机增加 0-600 秒
+# 实际过期时间范围：3600 ~ 4200 秒
+127.0.0.1:6379&gt; SET product:1001 &quot;data&quot; EX 3600
+OK
+</code></pre>
+
+<pre><code class="python"># Python 中实现
+import random
+
+base_ttl = 3600
+random_offset = random.randint(0, 600)  # 0~10分钟随机
+final_ttl = base_ttl + random_offset
+r.setex(f&quot;product:{id}&quot;, final_ttl, data)
+</code></pre>
+
+<span id="方案-6多级缓存架构" class=anchor></span><h4><a href="#方案-6多级缓存架构" class=anchor-link>*</a>方案 6：多级缓存架构</h4>
+
+<p>构建 L1（本地缓存，如 Caffeine/Guava）+ L2（Redis 分布式缓存）+ L3（数据库）的三级缓存体系。</p>
+
+<p><strong>架构层级</strong>：</p>
+
+<pre><code>用户请求
+    │
+    ▼
+┌─────────────────┐
+│ 本地缓存 Caffeine │ ← L1，微秒级，进程内
+│   (Guava/Ehcache) │
+└────────┬────────┘
+         │ 未命中
+         ▼
+┌─────────────────┐
+│   Redis 缓存     │ ← L2，毫秒级，分布式
+│  (共享缓存层)     │
+└────────┬────────┘
+         │ 未命中
+         ▼
+┌─────────────────┐
+│     数据库        │ ← L3，毫秒级，持久化
+│   (MySQL/PostgreSQL)
+└─────────────────┘
+</code></pre>
+
+<pre><code class="java">// Spring Boot + Caffeine + Redis 多级缓存示例
+@Cacheable(value = &quot;product&quot;, key = &quot;#id&quot;, cacheManager = &quot;caffeineCacheManager&quot;)
+public Product getProduct(Long id) {
+    // 先查 Caffeine（本地，微秒级）
+    // 未命中则查 Redis
+    String cacheData = redisTemplate.opsForValue().get(&quot;product:&quot; + id);
+    if (cacheData != null) {
+        return JSON.parseObject(cacheData, Product.class);
+    }
+    // 未命中则查数据库
+    Product product = productDao.findById(id);
+    redisTemplate.opsForValue().set(&quot;product:&quot; + id, JSON.toJSONString(product), 1, TimeUnit.HOURS);
+    return product;
+}
+</code></pre>
+
+<hr>
+
+<span id="五6-种方案对比与选型指南" class=anchor></span><h2><a href="#五6-种方案对比与选型指南" class=anchor-link>*</a>五、6 种方案对比与选型指南</h2>
+
+<table><thead>
+<tr>
+<th>方案</th>
+<th>适用问题</th>
+<th>复杂度</th>
+<th>性能影响</th>
+<th>数据一致性</th>
+<th>推荐场景</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><strong>布隆过滤器</strong></td>
+<td>缓存穿透</td>
+<td>中</td>
+<td>低（O(1)）</td>
+<td>可能误判</td>
+<td>海量非法请求防御</td>
+</tr>
+<tr>
+<td><strong>缓存空值</strong></td>
+<td>缓存穿透</td>
+<td>低</td>
+<td>低</td>
+<td>弱（有延迟）</td>
+<td>简单场景、少量空值</td>
+</tr>
+<tr>
+<td><strong>互斥锁</strong></td>
+<td>缓存击穿</td>
+<td>中</td>
+<td>中（有等待）</td>
+<td>强</td>
+<td>热点 Key 重建</td>
+</tr>
+<tr>
+<td><strong>逻辑过期</strong></td>
+<td>缓存击穿</td>
+<td>高</td>
+<td>低</td>
+<td>弱（脏读）</td>
+<td>极高可用性要求</td>
+</tr>
+<tr>
+<td><strong>随机偏移</strong></td>
+<td>缓存雪崩</td>
+<td>低</td>
+<td>无</td>
+<td>强</td>
+<td>批量 Key 过期</td>
+</tr>
+<tr>
+<td><strong>多级缓存</strong></td>
+<td>缓存雪崩</td>
+<td>高</td>
+<td>极低</td>
+<td>弱（最终一致）</td>
+<td>大型高并发系统</td>
+</tr>
+</tbody></table>
+
+<hr>
+
+<span id="六redis-命令速查表" class=anchor></span><h2><a href="#六redis-命令速查表" class=anchor-link>*</a>六、Redis 命令速查表</h2>
+
+<table><thead>
+<tr>
+<th>命令</th>
+<th>用途</th>
+<th>示例</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><code>SET key value EX seconds</code></td>
+<td>设置带过期时间的键</td>
+<td><code>SET user:1 &quot;Alice&quot; EX 3600</code></td>
+</tr>
+<tr>
+<td><code>GET key</code></td>
+<td>获取键值</td>
+<td><code>GET user:1</code></td>
+</tr>
+<tr>
+<td><code>SET key value NX EX seconds</code></td>
+<td>分布式锁（不存在才设置）</td>
+<td><code>SET lock:product:1001 1 EX 10 NX</code></td>
+</tr>
+<tr>
+<td><code>DEL key</code></td>
+<td>删除键</td>
+<td><code>DEL lock:product:1001</code></td>
+</tr>
+<tr>
+<td><code>EXPIRE key seconds</code></td>
+<td>设置过期时间</td>
+<td><code>EXPIRE user:1 3600</code></td>
+</tr>
+<tr>
+<td><code>TTL key</code></td>
+<td>查看剩余过期时间</td>
+<td><code>TTL user:1</code></td>
+</tr>
+<tr>
+<td><code>BF.RESERVE</code></td>
+<td>创建布隆过滤器（需 RedisBloom）</td>
+<td><code>BF.RESERVE user_filter 0.001 1000000</code></td>
+</tr>
+<tr>
+<td><code>BF.ADD</code></td>
+<td>向布隆过滤器添加元素</td>
+<td><code>BF.ADD user_filter user:1001</code></td>
+</tr>
+<tr>
+<td><code>BF.EXISTS</code></td>
+<td>检查元素可能存在</td>
+<td><code>BF.EXISTS user_filter user:1001</code></td>
+</tr>
+<tr>
+<td><code>INFO memory</code></td>
+<td>查看内存使用</td>
+<td><code>INFO memory</code></td>
+</tr>
+<tr>
+<td><code>INFO stats</code></td>
+<td>查看统计信息</td>
+<td><code>INFO stats</code></td>
+</tr>
+<tr>
+<td><a href="/commands/monitor.html">MONITOR</a></td>
+<td>实时监控命令</td>
+<td><a href="/commands/monitor.html">MONITOR</a></td>
+</tr>
+<tr>
+<td><a href="/commands/slowlog-get.html">SLOWLOG GET</a></td>
+<td>查看慢查询日志</td>
+<td><code>SLOWLOG GET 10</code></td>
+</tr>
+</tbody></table>
+
+<hr>
+
+<span id="七生产环境-checklist" class=anchor></span><h2><a href="#七生产环境-checklist" class=anchor-link>*</a>七、生产环境 checklist</h2>
+
+<pre><code class="bash"># 1. 检查 Redis 内存使用，防止 OOM
+127.0.0.1:6379&gt; INFO memory
+
+# 2. 查看 Key 过期策略
+127.0.0.1:6379&gt; CONFIG GET maxmemory-policy
+
+# 3. 监控慢查询，发现潜在热点 Key
+127.0.0.1:6379&gt; SLOWLOG GET 20
+
+# 4. 检查连接数是否接近上限
+127.0.0.1:6379&gt; INFO clients
+
+# 5. 查看持久化状态
+127.0.0.1:6379&gt; INFO persistence
+</code></pre>
+
+<hr>
+
+<span id="八总结" class=anchor></span><h2><a href="#八总结" class=anchor-link>*</a>八、总结</h2>
+
+<p>缓存穿透、击穿、雪崩本质上是<strong>高并发场景下缓存层与数据库层的协作问题</strong>。</p>
+
+<table><thead>
+<tr>
+<th>问题</th>
+<th>核心解决思路</th>
+</tr>
+</thead><tbody>
+<tr>
+<td><strong>缓存穿透</strong></td>
+<td>拦截非法请求 → 布隆过滤器 / 缓存空值</td>
+</tr>
+<tr>
+<td><strong>缓存击穿</strong></td>
+<td>保护单个热点 → 互斥锁 / 逻辑过期</td>
+</tr>
+<tr>
+<td><strong>缓存雪崩</strong></td>
+<td>分散过期时间 → 随机偏移 / 多级缓存</td>
+</tr>
+</tbody></table>
+
+<p>在实际生产环境中，通常需要<strong>组合使用多种方案</strong>，例如：</p>
+
+<ul>
+<li><strong>布隆过滤器</strong> + <strong>缓存空值</strong> → 防御穿透</li>
+<li><strong>互斥锁</strong> + <strong>逻辑过期</strong> → 保护热点</li>
+<li><strong>随机偏移</strong> + <strong>多级缓存</strong> + <strong>Redis Cluster</strong> → 防止雪崩</li>
+</ul>
+
+<hr>
+
+<span id="相关阅读" class=anchor></span><h2><a href="#相关阅读" class=anchor-link>*</a>相关阅读</h2>
+
+<ul>
+<li><a href="/topics/persistence.html">Redis 持久化机制详解</a> — RDB、AOF、混合持久化原理</li>
+<li><a href="/topics/distlock.html">Redis 分布式锁实现</a> — Redlock 算法与注意事项</li>
+<li><a href="/topics/memory-optimization.html">Redis 内存优化策略</a> — LRU/LFU、内存碎片整理</li>
+<li><a href="/topics/cluster-spec.html">Redis 集群规范</a> — 哈希槽、ASK/MOVED 重定向</li>
+<li><a href="/redis-interview-questions.html">Redis 面试题精选</a> — 高频考点汇总</li>
+</ul>
+
+<div class="wikiPrevNextLinks">
+  <a href="/topics/redis-best-practices.html" class="preLinks"><i style="font-size:16px;margin-right:2px;" class="fa fa-arrow-left" aria-hidden="true"></i>Redis 最佳实践</a>
+  <a href="/topics/redis-troubleshooting.html" class="nextLinks">Redis 故障排查 <i style="font-size:16px;margin-left:2px" class="fa fa-arrow-right" aria-hidden="true"></i></a>
+</div>
+
+<hr>
+
+<blockquote>
+<p><strong>作者注</strong>：本文所有命令均基于 Redis 7.x 测试通过。<code>BF.*</code> 系列命令需要安装 RedisBloom 模块。不同版本命令可能存在差异，请以实际环境为准。</p>
+</blockquote>
+
+</article>
+</div>
+</div>
+
+<footer class='site-footer'>
+<div class='container'>
+<p>
+本站关于Redis的资料和教程整理或翻译自网络，内容或翻译不正确的地方欢迎大家指出。
+</p>
+<p>
+联系方式:
+<a class='social weixin' href='javascript:'>
+<img class='qrcode' src='https://redis.com.cn/wp-content/uploads/2019/06/标准二维码.jpg'>微信号</img>
+</a>
+</p>
+</div>
+</footer>
+</div>
+<script src='https://libs.baidu.com/jquery/1.4.3/jquery.min.js'></script>
+<script src='/app.js?1606485746'></script>
+<script src='/search.js'></script>
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?365afc578d51b66b6cc9104a0598015a";
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+  })();
+</script>
+</body>
+</html>
