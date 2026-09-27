@@ -1,0 +1,25 @@
+{
+  "policy_version": 0,
+  "selected_at": "",
+  "source": "manual-calibration（60 条标定子集）",
+  "objective": [
+    "refusal_f1",
+    "refusal_far"
+  ],
+  "note": "这是历史标定值的机器可读版本：拒答阈值 0.60 由 60 条标定子集（44 库内 + 16 库外）阈值扫描得出。该批次的语料规模未在仓库留痕（标定早于扩语料），对外引用时应写明「阈值在 60 条子集上标定」。运行 python evolution/auto_tune.py --write 会在 134 条标注验证集上重新扫参（同时选候选数/精排数/阈值）并覆盖本文件，届时 source 会变为 evolution/auto_tune.py、dataset 会记录当时的语料条件。",
+  "dataset": {
+    "path": "标定子集 60 条（44 库内 + 16 库外）",
+    "corpus": "未记录（标定早于扩语料，重标定后由 --note 写入）",
+    "evaluated": 60
+  },
+  "method": "hybrid+rerank",
+  "top_k": 5,
+  "rerank_top_k": 3,
+  "relevance_threshold": 0.6,
+  "evidence": {
+    "precision": 1.0,
+    "recall": 0.9773,
+    "f1": 0.9885,
+    "far": 0.0
+  }
+}

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "mt01",
+    "opening": "Redis 分布式锁怎么实现",
+    "opening_source": "redis.md",
+    "followup": "它一般设置多长的过期时间？",
+    "followup_source": "redis.md",
+    "expect_rewrite_any": ["redis", "分布式锁"],
+    "note": "指代上一轮的唯一实体"
+  },
+  {
+    "id": "mt02",
+    "opening": "MySQL 索引是什么",
+    "opening_source": "mysql.md",
+    "followup": "那它什么时候会失效？",
+    "followup_source": "mysql.md",
+    "expect_rewrite_any": ["mysql", "索引"],
+    "note": "指代 + 追问条件"
+  },
+  {
+    "id": "mt03",
+    "opening": "Spring Bean 的生命周期是什么",
+    "opening_source": "spring.md",
+    "followup": "这个过程中的循环依赖是怎么处理的？",
+    "followup_source": "spring.md",
+    "expect_rewrite_any": ["spring", "bean", "循环依赖"],
+    "note": "指代一个过程（生命周期）"
+  },
+  {
+    "id": "mt04",
+    "opening": "RabbitMQ 的消息确认机制是什么",
+    "opening_source": "rabbitmq.md",
+    "followup": "它和事务机制有什么区别？",
+    "followup_source": "rabbitmq.md",
+    "expect_rewrite_any": ["rabbitmq", "确认", "事务"],
+    "note": "指代 + 对比型追问"
+  },
+  {
+    "id": "mt05",
+    "opening": "Docker 的镜像分层是怎么回事",
+    "opening_source": "docker.md",
+    "followup": "这对我构建镜像有什么影响？",
+    "followup_source": "docker.md",
+    "expect_rewrite_any": ["docker", "镜像", "分层"],
+    "note": "指代一个概念（分层）"
+  },
+  {
+    "id": "mt06",
+    "opening": "Java 的 CMS 垃圾回收器有什么特点",
+    "opening_source": "java.md",
+    "followup": "它为什么后来被废弃了？",
+    "followup_source": "java.md",
+    "expect_rewrite_any": ["cms", "垃圾回收", "gc"],
+    "note": "指代专有名词缩写"
+  },
+  {
+    "id": "mt07",
+    "opening": "TCP 三次握手的过程是怎样的",
+    "opening_source": "computer-networks.md",
+    "followup": "那它为什么不能是两次？",
+    "followup_source": "computer-networks.md",
+    "expect_rewrite_any": ["tcp", "握手"],
+    "note": "指代 + 否定式追问"
+  },
+  {
+    "id": "mt08",
+    "opening": "操作系统的虚拟内存是什么",
+    "opening_source": "operating-systems.md",
+    "followup": "它和物理内存的映射是怎么维护的？",
+    "followup_source": "operating-systems.md",
+    "expect_rewrite_any": ["虚拟内存", "内存", "页表"],
+    "note": "指代 + 追问实现机制"
+  }
+]

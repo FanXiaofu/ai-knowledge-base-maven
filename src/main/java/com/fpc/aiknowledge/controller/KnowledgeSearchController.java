@@ -4,6 +4,7 @@ import com.fpc.aiknowledge.service.Bm25Service;
 import com.fpc.aiknowledge.service.HybridRetrievalService;
 import com.fpc.aiknowledge.service.QueryExpansionService;
 import com.fpc.aiknowledge.service.RerankerClient;
+import com.fpc.aiknowledge.service.RetrievalPolicyService;
 import com.fpc.aiknowledge.service.RetrievalService;
 import org.springframework.ai.document.Document;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,19 +23,22 @@ public class KnowledgeSearchController {
     private final HybridRetrievalService hybridRetrievalService;
     private final RerankerClient rerankerClient;
     private final QueryExpansionService queryExpansionService;
+    private final RetrievalPolicyService retrievalPolicyService;
 
     public KnowledgeSearchController(
             RetrievalService retrievalService,
             Bm25Service bm25Service,
             HybridRetrievalService hybridRetrievalService,
             RerankerClient rerankerClient,
-            QueryExpansionService queryExpansionService) {
+            QueryExpansionService queryExpansionService,
+            RetrievalPolicyService retrievalPolicyService) {
 
         this.retrievalService = retrievalService;
         this.bm25Service = bm25Service;
         this.hybridRetrievalService = hybridRetrievalService;
         this.rerankerClient = rerankerClient;
         this.queryExpansionService = queryExpansionService;
+        this.retrievalPolicyService = retrievalPolicyService;
     }
 
     @GetMapping("/search")
@@ -88,22 +92,36 @@ public class KnowledgeSearchController {
 
     /**
      * 原始 Hybrid + Reranker。
+     *
+     * candidateK / rerankTopK 省略时取当前生效策略的取值（与 /api/chat 主链路一致）；
+     * 显式传入则用于参数敏感性实验（evolution/auto_tune.py 扫参走这里）。
      */
     @GetMapping("/rerank-test")
     public List<Document> rerankTest(
-            @RequestParam String query)
+            @RequestParam String query,
+            @RequestParam(required = false) Integer candidateK,
+            @RequestParam(required = false) Integer rerankTopK)
             throws Exception {
+
+        RetrievalPolicyService.Policy policy =
+                retrievalPolicyService.current();
+
+        int effectiveCandidateK =
+                candidateK == null ? policy.topK() : candidateK;
+
+        int effectiveRerankTopK =
+                rerankTopK == null ? policy.rerankTopK() : rerankTopK;
 
         List<Document> candidates =
                 hybridRetrievalService.search(
                         query,
-                        5
+                        effectiveCandidateK
                 );
 
         return rerankerClient.rerank(
                 query,
                 candidates,
-                3
+                effectiveRerankTopK
         );
     }
 

@@ -1,5 +1,7 @@
+import argparse
 import json
 import statistics
+from datetime import datetime
 from pathlib import Path
 
 import requests
@@ -8,6 +10,8 @@ import requests
 BASE_URL = "http://localhost:8080/api/knowledge"
 
 DATASET_PATH = Path(__file__).parent / "evaluation_questions.json"
+
+RUN_LOG_PATH = Path(__file__).parent / "evaluation_runs.jsonl"
 
 TOP_K = 5
 RERANK_TOP_K = 3
@@ -763,8 +767,57 @@ def print_threshold_sweep(records):
         f"{best['threshold']:.2f}"
     )
 
+    return best
 
-def main():
+
+def write_run_log(note, dataset, results, threshold_choices):
+    """
+    追加一行运行日志（evaluation_runs.jsonl）。
+
+    动机：历史上出现过"同一指标有两套数字、说不清是哪版语料测的"——
+    语料从 27 篇扩到 172 篇后，章节命中率的分母完全变了，
+    旧数字与新数字混用会直接误导判断。
+
+    因此每次评测都把"语料条件（--note）+ 验证集规模 + 各方案指标 + 推荐阈值"
+    一起落盘，指标从此自带上下文。
+    """
+    entry = {
+        "run_at": datetime.now().isoformat(timespec="seconds"),
+        "note": note or "",
+        "dataset": {
+            "path": str(DATASET_PATH.name),
+            "size": len(dataset),
+            "in_kb": sum(1 for item in dataset if item.get("relevant_source")),
+            "out_of_kb": sum(1 for item in dataset if not item.get("relevant_source")),
+        },
+        "methods": {},
+        "recommended_thresholds": {
+            name: (row["threshold"] if row else None)
+            for name, row in threshold_choices.items()
+        },
+    }
+
+    for method_name, records in results.items():
+        source = aggregate_metrics(records, "source")
+        section = aggregate_metrics(records, "section")
+        errors = sum(1 for record in records if record.get("error"))
+
+        entry["methods"][method_name] = {
+            "source_recall@1": round(source["recall@1"], 4) if source else None,
+            "source_recall@3": round(source["recall@3"], 4) if source else None,
+            "source_mrr@3": round(source["mrr@3"], 4) if source else None,
+            "section_recall@1": round(section["recall@1"], 4) if section else None,
+            "section_recall@3": round(section["recall@3"], 4) if section else None,
+            "errors": errors,
+        }
+
+    with open(RUN_LOG_PATH, "a", encoding="utf-8") as handle:
+        handle.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+    return RUN_LOG_PATH
+
+
+def main(note=""):
 
     dataset = load_dataset()
 
@@ -925,7 +978,7 @@ def main():
     print("Hybrid + Reranker Threshold Evaluation")
     print("=" * 72)
 
-    print_threshold_sweep(
+    hybrid_best = print_threshold_sweep(
         results["Hybrid + Reranker"]
     )
 
@@ -934,10 +987,9 @@ def main():
     print("Expansion + Reranker Threshold Evaluation")
     print("=" * 72)
 
-    print_threshold_sweep(
+    expansion_best = print_threshold_sweep(
         results["Expansion + Reranker"]
     )
-
     # --------------------------------------------------
     # Save complete result
     # --------------------------------------------------
@@ -976,6 +1028,30 @@ def main():
     )
     print("=" * 72)
 
+    run_log = write_run_log(
+        note,
+        dataset,
+        results,
+        {
+            "Hybrid + Reranker": hybrid_best,
+            "Expansion + Reranker": expansion_best,
+        },
+    )
+
+    print()
+    print(
+        f"运行日志已追加：{run_log}"
+        f"（note={note or '未填写'}；建议写明语料条件，如 '172 篇：27 自建 + 142 官方 + 3 测试'）"
+    )
+
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(
+        description="检索方案评测（含阈值扫描与运行日志）"
+    )
+    parser.add_argument(
+        "--note",
+        default="",
+        help="本次评测的语料条件说明（写进 evaluation_runs.jsonl，避免数字脱离上下文）",
+    )
+    main(note=parser.parse_args().note)
