@@ -2,102 +2,213 @@
   {
     "query": "Redis分布式锁怎么实现",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 分布式锁"
+    "relevant_section": "Redis 分布式锁",
+    "expected_points": [
+      "使用 SET 命令实现分布式锁",
+      "需要考虑锁的原子性",
+      "需要设置过期时间",
+      "需要避免误删锁"
+    ]
   },
   {
     "query": "Redis缓存击穿怎么解决",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 缓存击穿"
+    "relevant_section": "Redis 缓存击穿",
+    "expected_points": [
+      "说明缓存击穿是热点 Key 过期的瞬间，大量请求同时打到数据库",
+      "互斥锁（只让一个请求去重建缓存）",
+      "逻辑过期",
+      "热点数据永不过期"
+    ]
   },
   {
     "query": "Redis有哪些常见数据类型",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 数据类型"
+    "relevant_section": "Redis 数据类型",
+    "expected_points": [
+      "String",
+      "Hash",
+      "List",
+      "Set",
+      "Sorted Set"
+    ]
   },
   {
     "query": "MySQL索引是什么",
     "relevant_source": "mysql.md",
-    "relevant_section": "MySQL 索引"
+    "relevant_section": "MySQL 索引",
+    "expected_points": [
+      "索引是用于提高数据库查询效率的数据结构",
+      "常见类型包括 B+Tree、Hash、联合索引、唯一索引",
+      "InnoDB 默认使用 B+Tree 索引"
+    ]
   },
   {
     "query": "MySQL索引有什么作用",
     "relevant_source": "mysql.md",
-    "relevant_section": "MySQL 索引"
+    "relevant_section": "MySQL 索引",
+    "expected_points": [
+      "提高数据库查询效率",
+      "避免退化为全表扫描"
+    ]
   },
   {
     "query": "Java虚拟机的垃圾回收器有哪些",
     "relevant_source": "java.md",
-    "relevant_section": "垃圾回收器"
+    "relevant_section": "垃圾回收器",
+    "expected_points": [
+      "Serial：单线程、全程 STW，适合客户端场景",
+      "Parallel：多线程、以吞吐量为目标，JDK 8 的默认组合",
+      "CMS：并发低停顿、标记-清除，存在内存碎片",
+      "G1：分代收集、支持可预测停顿，JDK 9 默认",
+      "ZGC：极低停顿，适合大堆内存"
+    ]
   },
   {
     "query": "Spring IoC是什么",
     "relevant_source": "spring.md",
-    "relevant_section": "IoC"
+    "relevant_section": "IoC",
+    "expected_points": [
+      "IoC 即控制反转",
+      "Spring IoC 容器负责创建和管理对象",
+      "而不是由业务代码直接创建对象"
+    ]
   },
   {
     "query": "Spring Bean的生命周期是什么",
     "relevant_source": "spring.md",
-    "relevant_section": "Bean 生命周期"
+    "relevant_section": "Bean 生命周期",
+    "expected_points": [
+      "实例化",
+      "依赖注入",
+      "初始化（可用 @PostConstruct / InitializingBean 介入）",
+      "就绪使用",
+      "销毁（可用 @PreDestroy / DisposableBean 介入）"
+    ]
   },
   {
     "query": "RabbitMQ消息可靠性怎么保证",
     "relevant_source": "rabbitmq.md",
-    "relevant_section": "消息可靠性"
+    "relevant_section": "消息可靠性",
+    "expected_points": [
+      "生产端：Publisher Confirm",
+      "Broker：消息持久化",
+      "消费端：Consumer Ack",
+      "重试机制"
+    ]
   },
   {
     "query": "RabbitMQ有哪些核心组件",
     "relevant_source": "rabbitmq.md",
-    "relevant_section": "RabbitMQ 核心组件"
+    "relevant_section": "RabbitMQ 核心组件",
+    "expected_points": [
+      "Producer",
+      "Consumer",
+      "Exchange",
+      "Queue",
+      "Binding"
+    ]
   },
   {
     "query": "Docker容器是什么",
     "relevant_source": "docker.md",
-    "relevant_section": "Docker 容器"
+    "relevant_section": "Docker 容器",
+    "expected_points": [
+      "容器是镜像运行后的实例",
+      "容器具有隔离性",
+      "可以独立运行应用程序"
+    ]
   },
   {
     "query": "Docker Compose有什么作用",
     "relevant_source": "docker.md",
-    "relevant_section": "Docker Compose"
+    "relevant_section": "Docker Compose",
+    "expected_points": [
+      "用于定义和运行由多个容器组成的应用",
+      "可以用一个 Compose 同时编排多个服务（如 MySQL、Redis、RabbitMQ、Web 应用）"
+    ]
   },
   {
     "query": "多个服务实例如何控制对共享资源的并发访问？",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 分布式锁"
+    "relevant_section": "Redis 分布式锁",
+    "expected_points": [
+      "使用分布式锁实现互斥",
+      "Redis 可以用 SET 命令实现分布式锁",
+      "需要设置过期时间并避免误删他人的锁"
+    ]
   },
   {
     "query": "Redis中怎样实现分布式锁？",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 分布式锁"
+    "relevant_section": "Redis 分布式锁",
+    "expected_points": [
+      "使用 SET 命令实现分布式锁",
+      "需要考虑锁的原子性",
+      "需要设置过期时间",
+      "需要避免误删锁"
+    ]
   },
   {
     "query": "Redis缓存击穿时应该采取什么措施？",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 缓存击穿"
+    "relevant_section": "Redis 缓存击穿",
+    "expected_points": [
+      "说明缓存击穿是热点 Key 过期的瞬间，大量请求同时打到数据库",
+      "互斥锁（只让一个请求去重建缓存）",
+      "逻辑过期",
+      "热点数据永不过期"
+    ]
   },
   {
     "query": "Redis支持哪些常用的数据结构？",
     "relevant_source": "redis.md",
-    "relevant_section": "Redis 数据类型"
+    "relevant_section": "Redis 数据类型",
+    "expected_points": [
+      "String",
+      "Hash",
+      "List",
+      "Set",
+      "Sorted Set"
+    ]
   },
   {
     "query": "为什么MySQL需要建立索引？",
     "relevant_source": "mysql.md",
-    "relevant_section": "MySQL 索引"
+    "relevant_section": "MySQL 索引",
+    "expected_points": [
+      "提高数据库查询效率",
+      "避免退化为全表扫描"
+    ]
   },
   {
     "query": "MySQL索引通常使用什么数据结构？",
     "relevant_source": "mysql.md",
-    "relevant_section": "MySQL 索引"
+    "relevant_section": "MySQL 索引",
+    "expected_points": [
+      "B+Tree（InnoDB 默认的索引结构）"
+    ]
   },
   {
     "query": "JVM中有哪些常见的垃圾收集器？",
     "relevant_source": "java.md",
-    "relevant_section": "垃圾回收器"
+    "relevant_section": "垃圾回收器",
+    "expected_points": [
+      "Serial：单线程、全程 STW，适合客户端场景",
+      "Parallel：多线程、以吞吐量为目标，JDK 8 的默认组合",
+      "CMS：并发低停顿、标记-清除，存在内存碎片",
+      "G1：分代收集、支持可预测停顿，JDK 9 默认",
+      "ZGC：极低停顿，适合大堆内存"
+    ]
   },
   {
     "query": "Spring容器中的对象是由谁负责创建和管理的？",
     "relevant_source": "spring.md",
-    "relevant_section": "IoC"
+    "relevant_section": "IoC",
+    "expected_points": [
+      "由 Spring IoC 容器负责创建和管理",
+      "不是由业务代码直接创建"
+    ]
   },
   {
     "query": "Spring Bean从创建到销毁经历哪些阶段？",

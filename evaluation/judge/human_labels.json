@@ -1,0 +1,242 @@
+[
+  {
+    "index": 1,
+    "question": "Redis分布式锁怎么实现",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 2,
+    "question": "Redis缓存击穿怎么解决",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 3,
+    "question": "Redis有哪些常见数据类型",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 4,
+    "question": "MySQL索引是什么",
+    "expected_source": "mysql.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 4
+    },
+    "comment": ""
+  },
+  {
+    "index": 5,
+    "question": "MySQL索引有什么作用",
+    "expected_source": "mysql.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 3
+    },
+    "comment": ""
+  },
+  {
+    "index": 6,
+    "question": "Java虚拟机的垃圾回收器有哪些",
+    "expected_source": "java.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 7,
+    "question": "Spring IoC是什么",
+    "expected_source": "spring.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 4
+    },
+    "comment": ""
+  },
+  {
+    "index": 8,
+    "question": "Spring Bean的生命周期是什么",
+    "expected_source": "spring.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 9,
+    "question": "RabbitMQ消息可靠性怎么保证",
+    "expected_source": "rabbitmq.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 10,
+    "question": "RabbitMQ有哪些核心组件",
+    "expected_source": "rabbitmq.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 11,
+    "question": "Docker容器是什么",
+    "expected_source": "docker.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 4
+    },
+    "comment": ""
+  },
+  {
+    "index": 12,
+    "question": "Docker Compose有什么作用",
+    "expected_source": "docker.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 13,
+    "question": "多个服务实例如何控制对共享资源的并发访问？",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 3
+    },
+    "comment": ""
+  },
+  {
+    "index": 14,
+    "question": "Redis中怎样实现分布式锁？",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 4
+    },
+    "comment": ""
+  },
+  {
+    "index": 15,
+    "question": "Redis缓存击穿时应该采取什么措施？",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 4
+    },
+    "comment": ""
+  },
+  {
+    "index": 16,
+    "question": "Redis支持哪些常用的数据结构？",
+    "expected_source": "redis.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 17,
+    "question": "为什么MySQL需要建立索引？",
+    "expected_source": "mysql.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 18,
+    "question": "MySQL索引通常使用什么数据结构？",
+    "expected_source": "mysql.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 19,
+    "question": "JVM中有哪些常见的垃圾收集器？",
+    "expected_source": "java.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  },
+  {
+    "index": 20,
+    "question": "Spring容器中的对象是由谁负责创建和管理的？",
+    "expected_source": "spring.md",
+    "refused": false,
+    "scores": {
+      "faithfulness": 5,
+      "relevancy": 5,
+      "correctness": 5
+    },
+    "comment": ""
+  }
+]
